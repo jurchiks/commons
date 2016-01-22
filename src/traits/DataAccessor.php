@@ -10,6 +10,46 @@ trait DataAccessor
 		$this->data = $data;
 	}
 	
+	public function exists(string $name)
+	{
+		if (isset($this->data[$name]))
+		{
+			return true;
+		}
+		
+		if (strpos($name, '.') === false)
+		{
+			return false;
+		}
+		
+		$parts = explode('.', $name);
+		$found = [];
+		$value = null;
+		
+		foreach ($parts as $key)
+		{
+			if (is_null($value))
+			{
+				// first level
+				if (isset($this->data[$key]))
+				{
+					$value = $this->data[$key];
+					$found[$key] = true;
+				}
+			}
+			else if (isset($value[$key]))
+			{
+				// nested levels, e.g. $name = "database.host"
+				$value = $value[$key];
+				$found[$key] = true;
+			}
+		}
+		
+		unset($value);
+		
+		return ($parts === array_keys($found));
+	}
+	
 	/**
 	 * @param string $name : the name of the config property to retrieve. Can be dot-separated for access to nested
 	 *     properties, e.g. "database.host" will retrieve $config["database"]["host"] if it exists

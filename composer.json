@@ -1,0 +1,16 @@
+{
+  "name": "jurchiks/commons",
+  "type": "library",
+  "description": "A collection of common tools",
+  "keywords": [
+    "utility",
+    "common",
+    "tools",
+    "php7"
+  ],
+  "license": "MIT",
+  "require": {
+    "php": ">=7.0.0",
+    "ext-fileinfo": "*"
+  }
+}

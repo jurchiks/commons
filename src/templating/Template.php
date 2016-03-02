@@ -66,9 +66,14 @@ class Template
 		throw new TemplateException('Template values are read-only');
 	}
 	
-	public function __call($name, $arguments)
+	public function __call(string $name, array $arguments)
 	{
-		// TODO custom template methods
+		if ($this->engine === null)
+		{
+			throw new TemplateException('Callbacks are only available with Engine');
+		}
+		
+		return $this->engine->callFunction($name, $arguments);
 	}
 	
 	protected function start(string $name)

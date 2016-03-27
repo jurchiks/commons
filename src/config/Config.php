@@ -5,7 +5,7 @@ use js\tools\commons\exceptions\ConfigException;
 use js\tools\commons\traits\DataAccessor;
 
 /**
- * This config class provides basic support for 
+ * This config class provides basic support for application configuration.
  */
 class Config
 {

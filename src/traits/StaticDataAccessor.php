@@ -10,9 +10,16 @@ trait StaticDataAccessor
 		self::$data = $data;
 	}
 	
-	public static function exists(string $name)
+	protected static function getData(): array
 	{
-		if (isset(self::$data[$name]))
+		return self::$data;
+	}
+	
+	public static function exists(string $name): bool
+	{
+		$data = self::getData();
+		
+		if (isset($data[$name]))
 		{
 			return true;
 		}
@@ -31,9 +38,9 @@ trait StaticDataAccessor
 			if (is_null($value))
 			{
 				// first level
-				if (isset(self::$data[$key]))
+				if (isset($data[$key]))
 				{
-					$value = self::$data[$key];
+					$value = $data[$key];
 					$found[$key] = true;
 				}
 			}
@@ -58,9 +65,11 @@ trait StaticDataAccessor
 	 */
 	public static function get(string $name, $default = null)
 	{
-		if (isset(self::$data[$name]))
+		$data = self::getData();
+		
+		if (isset($data[$name]))
 		{
-			return self::$data[$name];
+			return $data[$name];
 		}
 		
 		if (strpos($name, '.') === false)
@@ -76,9 +85,9 @@ trait StaticDataAccessor
 			if (is_null($value))
 			{
 				// first level
-				if (isset(self::$data[$key]))
+				if (isset($data[$key]))
 				{
-					$value = self::$data[$key];
+					$value = $data[$key];
 				}
 			}
 			else if (isset($value[$key]))

@@ -10,9 +10,16 @@ trait DataAccessor
 		$this->data = $data;
 	}
 	
-	public function exists(string $name)
+	protected function getData(): array
 	{
-		if (isset($this->data[$name]))
+		return $this->data;
+	}
+	
+	public function exists(string $name): bool
+	{
+		$data = $this->getData();
+		
+		if (isset($data[$name]))
 		{
 			return true;
 		}
@@ -31,9 +38,9 @@ trait DataAccessor
 			if (is_null($value))
 			{
 				// first level
-				if (isset($this->data[$key]))
+				if (isset($data[$key]))
 				{
-					$value = $this->data[$key];
+					$value = $data[$key];
 					$found[$key] = true;
 				}
 			}
@@ -58,9 +65,11 @@ trait DataAccessor
 	 */
 	public function get(string $name, $default = null)
 	{
-		if (isset($this->data[$name]))
+		$data = $this->getData();
+		
+		if (isset($data[$name]))
 		{
-			return $this->data[$name];
+			return $data[$name];
 		}
 		
 		if (strpos($name, '.') === false)
@@ -76,9 +85,9 @@ trait DataAccessor
 			if (is_null($value))
 			{
 				// first level
-				if (isset($this->data[$key]))
+				if (isset($data[$key]))
 				{
-					$value = $this->data[$key];
+					$value = $data[$key];
 				}
 			}
 			else if (isset($value[$key]))

@@ -1,23 +1,38 @@
 <?php
 namespace js\tools\commons\traits;
 
+/**
+ * This trait adds the ability to access array data in a convenient manner, i.e. by using dot notation for nested
+ * arrays. There are also convenience methods for casting to a specific data type.
+ * Data can be loaded either by calling the init() method or by overriding the load() method for lazy loading.
+ */
 trait DataAccessor
 {
-	private $data = [];
+	private $data = null;
 	
 	protected function init(array $data)
 	{
 		$this->data = $data;
 	}
 	
-	protected function getData(): array
+	protected function load(): array
 	{
+		return [];
+	}
+	
+	public function getAll(): array
+	{
+		if ($this->data === null)
+		{
+			$this->data = $this->load();
+		}
+		
 		return $this->data;
 	}
 	
 	public function exists(string $name): bool
 	{
-		$data = $this->getData();
+		$data = $this->getAll();
 		
 		if (isset($data[$name]))
 		{
@@ -65,7 +80,7 @@ trait DataAccessor
 	 */
 	public function get(string $name, $default = null)
 	{
-		$data = $this->getData();
+		$data = $this->getAll();
 		
 		if (isset($data[$name]))
 		{

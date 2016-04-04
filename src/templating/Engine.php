@@ -5,7 +5,7 @@ use js\tools\commons\exceptions\TemplateException;
 
 class Engine
 {
-	private $templateRoot;
+	private $templateRoots = [];
 	/** @var callable[] */
 	private $functions = [];
 	/** @var Extension[] */
@@ -13,7 +13,18 @@ class Engine
 	
 	public function __construct(string $templateRoot)
 	{
-		$this->templateRoot = rtrim($templateRoot, '\\/') . DIRECTORY_SEPARATOR;
+		$this->addRoot($templateRoot);
+	}
+	
+	/**
+	 * Add another template root. Note that the roots are searched through in the order they were added,
+	 * and if a template was found in the first root then the following roots will not be searched.
+	 * 
+	 * @param string $templateRoot
+	 */
+	public function addRoot(string $templateRoot)
+	{
+		$this->templateRoots[] = rtrim($templateRoot, '\\/') . DIRECTORY_SEPARATOR;
 	}
 	
 	public function addExtension(Extension $extension)
@@ -52,7 +63,28 @@ class Engine
 	 */
 	public function getTemplate(string $path, array $data = [])
 	{
-		return new Template($this->templateRoot . $path, $data, $this);
+		if (substr($path, -6) !== '.phtml')
+		{
+			$path .= '.phtml';
+		}
+		
+		$found = '';
+		
+		foreach ($this->templateRoots as $root)
+		{
+			if (is_readable($root . $path))
+			{
+				$found = $root . $path;
+				break;
+			}
+		}
+		
+		if ($found === '')
+		{
+			throw new TemplateException('Invalid template path ' . $path);
+		}
+		
+		return new Template($found, $data, $this);
 	}
 	
 	/**

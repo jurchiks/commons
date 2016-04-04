@@ -151,7 +151,7 @@ class Template
 		return $content;
 	}
 	
-	public function __toString()
+	public function __toString(): string
 	{
 		return $this->render();
 	}

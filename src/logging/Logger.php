@@ -20,10 +20,88 @@ abstract class Logger
 	 */
 	public final function log(int $level, string $message, ...$parameters)
 	{
-		$this->write($this->formatMessage(sprintf(trim($message), ...$parameters)), $level);
+		$message = $this->prepareMessage($message, ...$parameters);
+		$message = $this->formatMessage($message, $level);
+		
+		$this->write($message, $level);
 	}
 	
-	protected function formatMessage(string $message)
+	/**
+	 * @param string $message : the message to log; may contain parameter placeholders in sprintf()-accepted format
+	 * @param string[] $parameters : the message parameters
+	 * @see log
+	 */
+	public final function debug(string $message, ...$parameters)
+	{
+		$this->log(self::DEBUG, $message, ...$parameters);
+	}
+	
+	/**
+	 * @param string $message : the message to log; may contain parameter placeholders in sprintf()-accepted format
+	 * @param string[] $parameters : the message parameters
+	 * @see log
+	 */
+	public final function notice(string $message, ...$parameters)
+	{
+		$this->log(self::NOTICE, $message, ...$parameters);
+	}
+	
+	/**
+	 * @param string $message : the message to log; may contain parameter placeholders in sprintf()-accepted format
+	 * @param string[] $parameters : the message parameters
+	 * @see log
+	 */
+	public final function info(string $message, ...$parameters)
+	{
+		$this->log(self::INFO, $message, ...$parameters);
+	}
+	
+	/**
+	 * @param string $message : the message to log; may contain parameter placeholders in sprintf()-accepted format
+	 * @param string[] $parameters : the message parameters
+	 * @see log
+	 */
+	public final function warning(string $message, ...$parameters)
+	{
+		$this->log(self::WARNING, $message, ...$parameters);
+	}
+	
+	/**
+	 * @param string $message : the message to log; may contain parameter placeholders in sprintf()-accepted format
+	 * @param string[] $parameters : the message parameters
+	 * @see log
+	 */
+	public final function error(string $message, ...$parameters)
+	{
+		$this->log(self::ERROR, $message, ...$parameters);
+	}
+	
+	/**
+	 * @param string $message : the message to log; may contain parameter placeholders in sprintf()-accepted format
+	 * @param string[] $parameters : the message parameters
+	 * @see log
+	 */
+	public final function critical(string $message, ...$parameters)
+	{
+		$this->log(self::CRITICAL, $message, ...$parameters);
+	}
+	
+	/**
+	 * @param string $message : the message to log; may contain parameter placeholders in sprintf()-accepted format
+	 * @param string[] $parameters : the message parameters
+	 * @see log
+	 */
+	public final function fatal(string $message, ...$parameters)
+	{
+		$this->log(self::FATAL, $message, ...$parameters);
+	}
+	
+	protected function prepareMessage(string $message, ...$parameters)
+	{
+		return sprintf(trim($message), ...$parameters);
+	}
+	
+	protected function formatMessage(string $message, int $level)
 	{
 		return $message;
 	}

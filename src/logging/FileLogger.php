@@ -28,7 +28,7 @@ class FileLogger extends Logger
 		$this->logDirectory = rtrim($logDirectory, '\\/');
 	}
 	
-	protected function formatMessage(string $message)
+	protected function formatMessage(string $message, int $level)
 	{
 		return '[' . date('Y-m-d H:i:s') . '] ' . $message . PHP_EOL;
 	}

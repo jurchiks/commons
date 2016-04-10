@@ -1,0 +1,111 @@
+<?php
+namespace js\tools\commons\collections;
+
+abstract class ArrayMap extends Collection
+{
+	/**
+	 * Clone this collection into another, mutable collection.
+	 *
+	 * @return MutableMap a mutable collection containing the same data as this collection
+	 */
+	public function mutable(): MutableMap
+	{
+		return new MutableMap($this->data);
+	}
+	
+	/**
+	 * Clone this collection into another, immutable collection.
+	 *
+	 * @return ImmutableMap an immutable collection containing the same data as this collection
+	 */
+	public function immutable(): ImmutableMap
+	{
+		return new ImmutableMap($this->data);
+	}
+	
+	/**
+	 * Copy the values of this collection into a list. Keys are not preserved.
+	 *
+	 * @param bool $mutable : if true, will return a MutableList, otherwise an ImmutableList
+	 * @return ArrayList
+	 */
+	public function toList(bool $mutable): ArrayList
+	{
+		if ($mutable)
+		{
+			return new MutableList(array_values($this->data));
+		}
+		else
+		{
+			return new ImmutableList(array_values($this->data));
+		}
+	}
+	
+	/**
+	 * @param callable $callback : the callback function to apply to each item in the collection.
+	 * Callback signature - ($value, $key) => mixed
+	 * @return ArrayMap
+	 */
+	public abstract function map(callable $callback): ArrayMap;
+	
+	/**
+	 * @param callable $predicate : the callback function to apply to each item in the collection.
+	 * Callback signature - ($value, $key) => bool
+	 * @param bool $preserveKeys : if true, the original keys of the values will be maintained in the newly grouped
+	 * arrays
+	 * @return ArrayMap
+	 */
+	public abstract function filter(callable $predicate, bool $preserveKeys = false): ArrayMap;
+	
+	/**
+	 * Group items together.
+	 *
+	 * @param callable $callback : the callback function to apply to each item in the collection.
+	 * Callback signature - ($value, $key) => scalar
+	 * @param bool $preserveKeys : if true, the original keys of the values will be maintained in the newly grouped
+	 * arrays
+	 * @return ArrayMap
+	 */
+	public abstract function group(callable $callback, bool $preserveKeys = false): ArrayMap;
+	
+	/**
+	 * Flatten nested collections into a single-level collection.
+	 *
+	 * @param bool $preserveKeys : if true, the original keys of the values will be maintained in the newly flattened
+	 * array. Note that this may cause loss of data if the same key exists in multiple nested arrays. In this case,
+	 * the last element with the duplicate key is the resulting value.
+	 * @return ArrayMap
+	 */
+	public abstract function flatten(bool $preserveKeys = false): ArrayMap;
+	
+	/**
+	 * Sort the collection using built-in comparison functions.
+	 *
+	 * @param bool $ascending : true if the values are to be sorted in ascending order, false otherwise
+	 * @param int $flags : one of the following flags:
+	 * <ul>
+	 * <li>SORT_REGULAR - compare items normally (don't change types)</li>
+	 * <li>SORT_NUMERIC - compare items numerically</li>
+	 * <li>SORT_STRING - compare items as strings</li>
+	 * <li>SORT_LOCALE_STRING - compare items as strings, based on the current locale</li>
+	 * <li>SORT_NATURAL - compare items as strings using "natural ordering"</li>
+	 * <li>SORT_FLAG_CASE - can be combined with SORT_STRING or SORT_NATURAL to sort strings case-insensitively</li>
+	 * </ul>
+	 * @param bool $sortByKeys : if true, the sorting will occur based on keys, not values
+	 * @param bool $preserveKeys : if true, keys will be preserved as the values are reordered
+	 * @return ArrayMap
+	 */
+	public abstract function sort(bool $ascending, int $flags, bool $sortByKeys, bool $preserveKeys): ArrayMap;
+	
+	/**
+	 * Sort the collection using a custom comparison function.
+	 * Callback returns the standard string comparison values (-1, 0, 1).
+	 *
+	 * @param bool $sortByKeys : if true, the sorting will occur based on keys, not values
+	 * @param bool $preserveKeys : if true, keys will be preserved as the values are reordered
+	 * @param callable $callback : the callback function to determine the sort order.
+	 * Callback signature - ($value) => int
+	 * @return ArrayMap
+	 */
+	public abstract function sortManual(bool $sortByKeys, bool $preserveKeys, callable $callback): ArrayMap;
+}

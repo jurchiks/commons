@@ -93,6 +93,7 @@ trait DataAccessor
 		}
 		
 		$parts = explode('.', $name);
+		$found = [];
 		$value = null;
 		
 		foreach ($parts as $key)
@@ -103,16 +104,18 @@ trait DataAccessor
 				if (isset($data[$key]))
 				{
 					$value = $data[$key];
+					$found[$key] = true;
 				}
 			}
 			else if (isset($value[$key]))
 			{
 				// nested levels, e.g. $name = "database.host"
 				$value = $value[$key];
+				$found[$key] = true;
 			}
 		}
 		
-		return (is_null($value) ? $default : $value);
+		return (($parts === array_keys($found)) ? $value : $default);
 	}
 	
 	public function getInt(string $name, int $default = 0): int

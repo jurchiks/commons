@@ -1,8 +1,40 @@
 <?php
 namespace js\tools\commons\collections;
 
-class MutableList extends ArrayList
+use ArrayAccess;
+use InvalidArgumentException;
+
+class MutableList extends ArrayList implements ArrayAccess
 {
+	// ============== ArrayAccess methods - START ==============
+	
+	public function offsetExists($offset): bool
+	{
+		return array_key_exists($this->data, $offset);
+	}
+	
+	public function offsetGet($offset)
+	{
+		return ($this->data[$offset] ?? null);
+	}
+	
+	public function offsetSet($offset, $value)
+	{
+		if (!$this->offsetExists($offset))
+		{
+			throw new InvalidArgumentException('offset does not exist; only modifications are allowed. Consider using add() instead.');
+		}
+		
+		$this->data[$offset] = $value;
+	}
+	
+	public function offsetUnset($offset)
+	{
+		unset($this->data[$offset]);
+	}
+	
+	// ============== ArrayAccess methods - END ==============
+	
 	public function map(callable $callback): ArrayList
 	{
 		$this->data = $this->mapData($callback);

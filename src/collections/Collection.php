@@ -3,13 +3,14 @@ namespace js\tools\commons\collections;
 
 use InvalidArgumentException;
 use Iterator;
+use Traversable;
 
 abstract class Collection implements Iterator
 {
 	protected $data;
 	
 	/**
-	 * @param array|Iterator $data
+	 * @param array|Traversable $data
 	 */
 	public function __construct($data)
 	{
@@ -17,7 +18,7 @@ abstract class Collection implements Iterator
 		{
 			$this->data = $data;
 		}
-		else if ($data instanceof Iterator)
+		else if ($data instanceof Traversable)
 		{
 			$this->data = $this->generateData($data);
 		}
@@ -159,6 +160,8 @@ abstract class Collection implements Iterator
 		return $this->findAll($predicate, true, $limit);
 	}
 	
+	// ============== Iterator methods - START ==============
+	
 	public function rewind()
 	{
 		reset($this->data);
@@ -185,6 +188,8 @@ abstract class Collection implements Iterator
 	{
 		next($this->data);
 	}
+	
+	// ============== Iterator methods - END ==============
 	
 	public abstract function mutable();
 	
@@ -260,7 +265,7 @@ abstract class Collection implements Iterator
 		return new Option($data, $found);
 	}
 	
-	protected final function generateData(Iterator $source): array
+	protected final function generateData(Traversable $source): array
 	{
 		$newData = [];
 		

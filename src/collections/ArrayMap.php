@@ -3,6 +3,18 @@ namespace js\tools\commons\collections;
 
 abstract class ArrayMap extends Collection
 {
+	public abstract function set($key, $value): ArrayMap;
+	
+	public abstract function unset(...$keys): ArrayMap;
+	
+	public function remove($value): ArrayMap
+	{
+		return $this->filter(function ($v, $k) use ($value)
+		{
+			return ($v !== $value);
+		}, true);
+	}
+	
 	/**
 	 * Clone this collection into another, mutable collection.
 	 *
@@ -51,8 +63,7 @@ abstract class ArrayMap extends Collection
 	/**
 	 * @param callable $predicate : the callback function to apply to each item in the collection.
 	 * Callback signature - ($value, $key) => bool
-	 * @param bool $preserveKeys : if true, the original keys of the values will be maintained in the newly grouped
-	 * arrays
+	 * @param bool $preserveKeys : if true, the original keys of the values will be preserved
 	 * @return ArrayMap
 	 */
 	public abstract function filter(callable $predicate, bool $preserveKeys = false): ArrayMap;
@@ -62,7 +73,7 @@ abstract class ArrayMap extends Collection
 	 *
 	 * @param callable $callback : the callback function to apply to each item in the collection.
 	 * Callback signature - ($value, $key) => scalar
-	 * @param bool $preserveKeys : if true, the original keys of the values will be maintained in the newly grouped
+	 * @param bool $preserveKeys : if true, the original keys of the values will be preserved in the newly grouped
 	 * arrays
 	 * @return ArrayMap
 	 */

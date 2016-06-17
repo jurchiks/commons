@@ -29,6 +29,23 @@ class MutableMap extends ArrayMap implements ArrayAccess
 	
 	// ============== ArrayAccess methods - END ==============
 	
+	public function set($key, $value): ArrayMap
+	{
+		$this->data[$key] = $value;
+		
+		return $this;
+	}
+	
+	public function unset(...$keys): ArrayMap
+	{
+		foreach ($keys as $key)
+		{
+			unset($this->data[$key]);
+		}
+		
+		return $this;
+	}
+	
 	public function map(callable $callback): ArrayMap
 	{
 		$this->data = $this->mapData($callback);

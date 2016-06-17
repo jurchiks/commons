@@ -10,6 +10,18 @@ abstract class ArrayList extends Collection
 		$this->data = array_values($this->data);
 	}
 	
+	public abstract function append(...$values): ArrayList;
+	
+	public abstract function prepend(...$values): ArrayList;
+	
+	public function remove($value): ArrayList
+	{
+		return $this->filter(function ($v, $k) use ($value)
+		{
+			return ($v !== $value);
+		});
+	}
+	
 	/**
 	 * Clone this collection into another, mutable collection.
 	 *

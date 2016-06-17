@@ -3,6 +3,20 @@ namespace js\tools\commons\collections;
 
 class ImmutableList extends ArrayList
 {
+	public function append(...$values): ArrayList
+	{
+		$data = array_merge($this->data, $values);
+		
+		return new static($data);
+	}
+	
+	public function prepend(...$values): ArrayList
+	{
+		$data = array_merge($values, $this->data);
+		
+		return new static($data);
+	}
+	
 	public function map(callable $callback): ArrayList
 	{
 		return new static($this->mapData($callback));

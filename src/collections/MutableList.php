@@ -35,6 +35,20 @@ class MutableList extends ArrayList implements ArrayAccess
 	
 	// ============== ArrayAccess methods - END ==============
 	
+	public function append(...$values): ArrayList
+	{
+		$this->data = array_merge($this->data, $values);
+		
+		return $this;
+	}
+	
+	public function prepend(...$values): ArrayList
+	{
+		$this->data = array_merge($values, $this->data);
+		
+		return $this;
+	}
+	
 	public function map(callable $callback): ArrayList
 	{
 		$this->data = $this->mapData($callback);

@@ -3,6 +3,27 @@ namespace js\tools\commons\collections;
 
 class ImmutableMap extends ArrayMap
 {
+	public function set($key, $value): ArrayMap
+	{
+		$data = $this->data;
+		
+		$data[$key] = $value;
+		
+		return new static($data);
+	}
+	
+	public function unset(...$keys): ArrayMap
+	{
+		$data = $this->data;
+		
+		foreach ($keys as $key)
+		{
+			unset($data[$key]);
+		}
+		
+		return new static($data);
+	}
+	
 	public function map(callable $callback): ArrayMap
 	{
 		return new static($this->mapData($callback));

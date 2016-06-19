@@ -119,4 +119,23 @@ abstract class ArrayMap extends Collection
 	 * @return ArrayMap
 	 */
 	public abstract function sortManual(bool $sortByKeys, bool $preserveKeys, callable $callback): ArrayMap;
+	
+	/**
+	 * Reduce the map to a single value using a user-provided callback.
+	 * @param callable $callback : the callback function to apply.
+	 * Callback signature - ($value, $key, $previous) => mixed
+	 * @param mixed $initialValue : the initial value to provide for parameter $previous
+	 * @return mixed
+	 */
+	public function reduce(callable $callback, $initialValue = null)
+	{
+		$data = $initialValue;
+		
+		foreach ($this->data as $key => $value)
+		{
+			$data = $callback($value, $key, $data);
+		}
+		
+		return $data;
+	}
 }

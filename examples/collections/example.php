@@ -141,6 +141,11 @@ $test(
 	'ArrayList::remove()', (new MutableList([1, 2, 3]))->remove(3)->get(), [1, 2]
 );
 $test(
+	'ArrayList::reduce()',
+	(new MutableList(range(0, 100, 5)))->reduce(function ($value, $previous) { return $previous + $value; }, 0),
+	1050
+);
+$test(
 	'ArrayMap::set()', (new MutableMap(['foo' => 'bar']))->set('bar', 'baz')->get(), ['foo' => 'bar', 'bar' => 'baz']
 );
 $test(
@@ -148,6 +153,12 @@ $test(
 );
 $test(
 	'ArrayMap::remove()', (new MutableList(['foo' => 'bar', 'baz' => 'bar']))->remove('bar')->get(), []
+);
+$test(
+	'ArrayMap::reduce()',
+	(new MutableMap([['age' => 25], ['age' => 14], ['age' => 72], ['age' => 37]]))
+		->reduce(function ($value, $key, $previous) { return $previous + $value['age']; }, 0),
+	148
 );
 
 $testResults();

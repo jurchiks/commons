@@ -120,4 +120,23 @@ abstract class ArrayList extends Collection
 	 * @return ArrayList
 	 */
 	public abstract function sortManual(callable $callback): ArrayList;
+	
+	/**
+	 * Reduce the list to a single value using a user-provided callback.
+	 * @param callable $callback : the callback function to apply.
+	 * Callback signature - ($value, $previous) => mixed
+	 * @param mixed $initialValue : the initial value to provide for parameter $previous
+	 * @return mixed
+	 */
+	public function reduce(callable $callback, $initialValue = null)
+	{
+		$data = $initialValue;
+		
+		foreach ($this->data as $value)
+		{
+			$data = $callback($value, $data);
+		}
+		
+		return $data;
+	}
 }

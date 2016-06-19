@@ -35,6 +35,9 @@ abstract class Collection implements Iterator
 		return new static($this->data);
 	}
 	
+	/**
+	 * Get all the data contained in this collection.
+	 */
 	public function get(): array
 	{
 		return $this->data;
@@ -121,7 +124,7 @@ abstract class Collection implements Iterator
 			return ($v === $value);
 		};
 		
-		return $this->findAll($predicate, true, $limit);
+		return $this->find($predicate, true, $limit);
 	}
 	
 	/**
@@ -134,7 +137,9 @@ abstract class Collection implements Iterator
 	 */
 	public function findValue(callable $predicate, bool $findFirst = true): Option
 	{
-		return $this->findOne($predicate, $findFirst, false);
+		$data = $this->find($predicate, false, $findFirst ? 1 : -1);
+		
+		return new Option($data[0] ?? null, isset($data[0]));
 	}
 	
 	/**
@@ -147,17 +152,118 @@ abstract class Collection implements Iterator
 	 */
 	public function findKey(callable $predicate, bool $findFirst = true): Option
 	{
-		return $this->findOne($predicate, $findFirst, true);
+		$data = $this->find($predicate, true, $findFirst ? 1 : -1);
+		
+		return new Option($data[0] ?? null, isset($data[0]));
 	}
 	
+	/**
+	 * Find all values that match the given criteria.
+	 *
+	 * @param callable $predicate : the callback function to use to find the value.
+	 * Callback signature - ($value, $key) => bool
+	 * @param int $limit : maximum amount of values to return. If positive, will return the first N values, otherwise
+	 * the last N values.
+	 * @return array an array containing the matches found
+	 */
 	public function findValues(callable $predicate, int $limit = 0): array
 	{
-		return $this->findAll($predicate, false, $limit);
+		return $this->find($predicate, false, $limit);
 	}
 	
+	/**
+	 * Find all keys that match the given criteria.
+	 *
+	 * @param callable $predicate : the callback function to use to find the value.
+	 * Callback signature - ($value, $key) => bool
+	 * @param int $limit : maximum amount of keys to return. If positive, will return the first N keys, otherwise
+	 * the last N keys.
+	 * @return array an array containing the matches found
+	 */
 	public function findKeys(callable $predicate, int $limit = 0): array
 	{
-		return $this->findAll($predicate, true, $limit);
+		return $this->find($predicate, true, $limit);
+	}
+	
+	/**
+	 * Find all entries that match the given criteria.
+	 *
+	 * @param callable $predicate : the callback function to use to find the match.
+	 * Callback signature - ($value, $key) => bool
+	 * @param bool $findKeys : if true, return an array containing only the matched keys; if false,
+	 * return matched values; and if NULL - return the original key => value pairs.
+	 * @param int $limit : maximum amount of keys to return. If positive, will return the first N keys, otherwise
+	 * the last N keys.
+	 * @return array an array containing the matches found
+	 */
+	public function find(callable $predicate, bool $findKeys = null, int $limit = 0): array
+	{
+		$data = [];
+		$found = 0;
+		
+		if ($limit >= 0)
+		{
+			foreach ($this->data as $key => $value)
+			{
+				if ($predicate($value, $key) === true)
+				{
+					$found++;
+					
+					if ($findKeys === null)
+					{
+						$data[$key] = $value;
+					}
+					else
+					{
+						$data[] = $findKeys ? $key : $value;
+					}
+					
+					if ($found === $limit)
+					{
+						break;
+					}
+				}
+			}
+		}
+		else
+		{
+			// iterate in reverse rather than reversing the whole array or trimming all matches to the limit
+			end($this->data);
+			
+			for ($i = 0; $i < count($this->data); $i++)
+			{
+				$key = $this->key();
+				$value = $this->current();
+				
+				if ($predicate($value, $key) === true)
+				{
+					$found++;
+					
+					if ($findKeys === null)
+					{
+						$data[$key] = $value;
+					}
+					else
+					{
+						$data[] = $findKeys ? $key : $value;
+					}
+					
+					if ($found === -$limit)
+					{
+						break;
+					}
+				}
+				
+				$this->prev();
+			}
+			
+			$this->rewind();
+			
+			// entries need to be reversed otherwise they'll be in the wrong order
+			$data = array_reverse($data, ($findKeys === null));
+		}
+		
+		return $data;
 	}
 	
 	// ============== Iterator methods - START ==============
@@ -191,178 +297,107 @@ abstract class Collection implements Iterator
 	
 	// ============== Iterator methods - END ==============
 	
+	// not officially part of the Iterator interface, but good to have just in case
+	public function prev()
+	{
+		prev($this->data);
+	}
+	
 	public abstract function mutable();
 	
 	public abstract function immutable();
 	
-	protected final function findOne(callable $predicate, bool $findFirst, bool $findKey): Option
+	protected final function generateData(Traversable $source): array
 	{
-		$found = false;
-		$data = null;
+		$data = [];
 		
-		foreach ($this->data as $key => $value)
+		foreach ($source as $key => $value)
 		{
-			if ($predicate($value, $key) === true)
-			{
-				$found = true;
-				$data = $findKey ? $key : $value;
-				
-				if ($findFirst)
-				{
-					break;
-				}
-			}
+			$data[$key] = $value;
 		}
 		
-		return new Option($data, $found);
+		return $data;
 	}
 	
-	protected final function findAll(callable $predicate, bool $findKey, int $limit = 0): array
+	protected final function mapData(callable $callback): array
 	{
 		$data = [];
 		
 		foreach ($this->data as $key => $value)
 		{
-			if ($predicate($value, $key) === true)
-			{
-				$data[] = $findKey ? $key : $value;
-			}
+			$data[$key] = $callback($value, $key);
 		}
 		
-		if (($limit > 0) && ($limit < count($data)))
-		{
-			return array_slice($data, 0, $limit);
-		}
-		else if (($limit < 0) && (-$limit < count($data)))
-		{
-			return array_slice($data, $limit);
-		}
-		else
-		{
-			return $data;
-		}
+		return $data;
 	}
 	
-	protected final function findData(callable $callback, bool $findFirst, bool $findKey): Option
+	protected final function filterData(callable $callback, bool $preserveKeys): array
 	{
-		$found = false;
-		$data = null;
+		$data = [];
 		
 		foreach ($this->data as $key => $value)
 		{
 			if ($callback($value, $key) === true)
 			{
-				$found = true;
-				$data = $findKey ? $key : $value;
-				
-				if ($findFirst)
-				{
-					break;
-				}
-			}
-		}
-		
-		return new Option($data, $found);
-	}
-	
-	protected final function generateData(Traversable $source): array
-	{
-		$newData = [];
-		
-		foreach ($source as $key => $value)
-		{
-			$newData[$key] = $value;
-		}
-		
-		return $newData;
-	}
-	
-	protected final function mapData(callable $callback): array
-	{
-		$newData = [];
-		
-		foreach ($this->data as $key => $value)
-		{
-			$newData[$key] = $callback($value, $key);
-		}
-		
-		return $newData;
-	}
-	
-	protected final function filterData(callable $callback, bool $preserveKeys): array
-	{
-		$newData = [];
-		
-		foreach ($this->data as $key => $value)
-		{
-			$keep = $callback($value, $key);
-			
-			if (!is_bool($keep))
-			{
-				throw new InvalidArgumentException('filter() callback must return a boolean');
-			}
-			
-			if ($keep)
-			{
 				if ($preserveKeys)
 				{
-					$newData[$key] = $value;
+					$data[$key] = $value;
 				}
 				else
 				{
-					$newData[] = $value;
+					$data[] = $value;
 				}
 			}
 		}
 		
-		return $newData;
+		return $data;
 	}
 	
 	protected final function groupData(callable $callback, bool $preserveKeys): array
 	{
-		$newData = [];
+		$data = [];
 		
 		foreach ($this->data as $key => $value)
 		{
-			$newKey = $callback($value, $key);
+			$groupKey = $callback($value, $key);
 			
-			if (!is_scalar($newKey))
+			if (!is_scalar($groupKey))
 			{
 				throw new InvalidArgumentException('group() callback must return a scalar value');
 			}
 			
 			if ($preserveKeys)
 			{
-				$newData[$newKey][$key] = $value;
+				$data[$groupKey][$key] = $value;
 			}
 			else
 			{
-				$newData[$newKey][] = $value;
+				$data[$groupKey][] = $value;
 			}
 		}
 		
-		return $newData;
+		return $data;
 	}
 	
 	protected final function flattenData(bool $preserveKeys): array
 	{
-		$newData = [];
+		$data = [];
 		
-		$callback = function ($value, $key) use (&$newData, $preserveKeys)
+		$callback = function ($value, $key) use (&$data, $preserveKeys)
 		{
 			if ($preserveKeys)
 			{
-				$newData[$key] = $value;
+				$data[$key] = $value;
 			}
 			else
 			{
-				$newData[] = $value;
+				$data[] = $value;
 			}
 		};
 		
 		array_walk_recursive($this->data, $callback);
 		
-		return $newData;
+		return $data;
 	}
 	
 	protected final function sortData(

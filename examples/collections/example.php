@@ -1,5 +1,6 @@
 <?php
 use js\tools\commons\collections\MutableList;
+use js\tools\commons\collections\MutableMap;
 
 require __DIR__ . '/../autoloader.php';
 
@@ -22,6 +23,12 @@ $test = function (string $message, $data, $expectedValue) use (&$counter, &$fail
 	{
 		$failed++;
 		echo 'fail', PHP_EOL;
+		echo 'expected: ';
+		var_dump($expectedValue);
+		echo PHP_EOL;
+		echo 'actual: ';
+		var_dump($data);
+		echo PHP_EOL;
 	}
 	
 	echo PHP_EOL;
@@ -122,6 +129,25 @@ $test(
 		return ($value % 3 === 0);
 	}, -2
 ), [19, 22]
+);
+
+$test(
+	'ArrayList::append()', (new MutableList([1, 2]))->append(3)->get(), [1, 2, 3]
+);
+$test(
+	'ArrayList::prepend()', (new MutableList([1, 2]))->prepend(3)->get(), [3, 1, 2]
+);
+$test(
+	'ArrayList::remove()', (new MutableList([1, 2, 3]))->remove(3)->get(), [1, 2]
+);
+$test(
+	'ArrayMap::set()', (new MutableMap(['foo' => 'bar']))->set('bar', 'baz')->get(), ['foo' => 'bar', 'bar' => 'baz']
+);
+$test(
+	'ArrayMap::unset()', (new MutableMap(['foo' => 'bar', 'bar' => 'baz']))->unset('bar')->get(), ['foo' => 'bar']
+);
+$test(
+	'ArrayMap::remove()', (new MutableList(['foo' => 'bar', 'baz' => 'bar']))->remove('bar')->get(), []
 );
 
 $testResults();

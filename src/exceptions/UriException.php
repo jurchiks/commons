@@ -3,6 +3,7 @@ namespace js\tools\commons\exceptions;
 
 use Exception;
 
-class TemplateException extends Exception
+class UriException extends Exception
 {
+	
 }

@@ -392,7 +392,7 @@ class Uri
 	
 	private static function validateQueryParameter(string $key, $value)
 	{
-		if (!is_array($value))
+		if (is_array($value))
 		{
 			foreach ($value as $k => $v)
 			{

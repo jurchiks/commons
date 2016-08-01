@@ -20,6 +20,16 @@ trait DataAccessor
 		return [];
 	}
 	
+	public function isEmpty(): bool
+	{
+		return empty($this->data);
+	}
+	
+	public function size(): int
+	{
+		return count($this->data);
+	}
+	
 	public function getAll(): array
 	{
 		if ($this->data === null)

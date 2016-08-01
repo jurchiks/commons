@@ -20,6 +20,16 @@ trait StaticDataAccessor
 		return [];
 	}
 	
+	public static function isEmpty(): bool
+	{
+		return empty(self::$data);
+	}
+	
+	public static function size(): int
+	{
+		return count(self::$data);
+	}
+	
 	public static function getAll(): array
 	{
 		if (self::$data === null)

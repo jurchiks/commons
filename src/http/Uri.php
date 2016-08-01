@@ -1,6 +1,7 @@
 <?php
 namespace js\tools\commons\http;
 
+use js\tools\commons\exceptions\HttpException;
 use js\tools\commons\exceptions\UriException;
 
 class Uri
@@ -17,10 +18,9 @@ class Uri
 	
 	/**
 	 * @param string $url : a complete or partial URL
-	 * @param bool $useServerVariables : if true and scheme or host are missing, take them from $_SERVER variables
 	 * @throws UriException
 	 */
-	public function __construct(string $url, bool $useServerVariables = false)
+	public function __construct(string $url)
 	{
 		$parts = parse_url($url);
 		
@@ -34,26 +34,6 @@ class Uri
 		$this->password = $parts['pass'] ?? '';
 		$this->host = $parts['host'] ?? '';
 		$this->port = $parts['port'] ?? 0;
-		
-		if ($useServerVariables)
-		{
-			if ($this->scheme === '')
-			{
-				$this->scheme = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http');
-			}
-			
-			if (($this->host === '') && isset($_SERVER['HTTP_HOST']))
-			{
-				$data = parse_url('http://' . $_SERVER['HTTP_HOST']);
-				$this->host = $data['host'];
-				
-				if (isset($data['port']))
-				{
-					$this->port = $data['port'];
-				}
-			}
-		}
-		
 		$this->path = $parts['path'] ?? '/';
 		$this->fragment = $parts['fragment'] ?? '';
 		
@@ -69,6 +49,21 @@ class Uri
 		}
 		
 		$this->parameters = new Parameters($parameters);
+	}
+	
+	public static function createFromGlobals()
+	{
+		if (!isset($_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']))
+		{
+			throw new HttpException('Missing required fields in global $_SERVER - [HTTP_HOST, REQUEST_URI]');
+		}
+		
+		$url = ((!empty($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] !== 'off')) ? 'https' : 'http');
+		$url .= '://';
+		$url .= $_SERVER['HTTP_HOST'];
+		$url .= $_SERVER['REQUEST_URI'];
+		
+		return new Uri($url);
 	}
 	
 	public function getScheme(): string
@@ -257,6 +252,11 @@ class Uri
 		return $this;
 	}
 	
+	public function isAbsolute(): bool
+	{
+		return !empty($this->getHost());
+	}
+	
 	/**
 	 * @param bool $isRawUrl : if true, spaces in query parameters are encoded as %20, otherwise as +
 	 * @return string the relative part of the URL, e.g. "/foo/bar?baz=random#hash"
@@ -275,7 +275,7 @@ class Uri
 	 */
 	public function getAbsolute(bool $isRawUrl = false): string
 	{
-		if (empty($this->getHost()))
+		if (!$this->isAbsolute())
 		{
 			throw new UriException('Cannot make an absolute URL without host');
 		}

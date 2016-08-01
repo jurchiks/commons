@@ -44,7 +44,7 @@ class Uri
 			
 			if (($this->host === '') && isset($_SERVER['HTTP_HOST']))
 			{
-				$data = parse_str('http://' . $_SERVER['HTTP_HOST']);
+				$data = parse_url('http://' . $_SERVER['HTTP_HOST']);
 				$this->host = $data['host'];
 				
 				if (isset($data['port']))

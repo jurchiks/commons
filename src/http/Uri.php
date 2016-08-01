@@ -318,10 +318,10 @@ class Uri
 	{
 		if ($this->sourceChanged)
 		{
-			return $this->getAbsolute();
+			return $this->getAbsolute($isRawUrl);
 		}
 		
-		return $this->getRelative();
+		return $this->getRelative($isRawUrl);
 	}
 	
 	public function __toString()

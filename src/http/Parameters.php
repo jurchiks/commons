@@ -13,6 +13,11 @@ class Parameters implements JsonSerializable
 		$this->init($data);
 	}
 	
+	public function copy()
+	{
+		return clone $this;
+	}
+	
 	function jsonSerialize()
 	{
 		return $this->getAll();

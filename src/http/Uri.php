@@ -66,6 +66,11 @@ class Uri
 		return new Uri($url);
 	}
 	
+	public function copy()
+	{
+		return clone $this;
+	}
+	
 	public function getScheme(): string
 	{
 		return $this->scheme;

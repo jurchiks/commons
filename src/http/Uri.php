@@ -61,12 +61,14 @@ class Uri
 		{
 			// note: parse_str() converts dots and spaces in parameter names into underscores,
 			// i.e. "?foo.ba r=baz" will result in ['foo_ba_r' => 'baz']
-			parse_str($parts['query'], $this->parameters);
+			parse_str($parts['query'], $parameters);
 		}
 		else
 		{
-			$this->parameters = [];
+			$parameters = [];
 		}
+		
+		$this->parameters = new Parameters($parameters);
 	}
 	
 	public function getScheme(): string
@@ -184,13 +186,13 @@ class Uri
 	 */
 	public function getQuery(bool $isRawUrl = false): string
 	{
-		if (empty($this->parameters))
+		if ($this->parameters->isEmpty())
 		{
 			return '';
 		}
 		
 		return '?' . http_build_query(
-			$this->parameters,
+			$this->parameters->getAll(),
 			'',
 			'&',
 			$isRawUrl ? PHP_QUERY_RFC3986 : PHP_QUERY_RFC1738
@@ -203,19 +205,21 @@ class Uri
 		
 		if (empty($query))
 		{
-			$this->parameters = [];
+			$parameters = [];
 		}
 		else
 		{
 			self::validateQuery($query);
 			
-			parse_str($query, $this->parameters);
+			parse_str($query, $parameters);
 		}
+		
+		$this->parameters = new Parameters($parameters);
 		
 		return $this;
 	}
 	
-	public function getQueryParameters(): array
+	public function getQueryParameters(): Parameters
 	{
 		return $this->parameters;
 	}
@@ -224,8 +228,10 @@ class Uri
 	{
 		foreach ($parameters as $key => $value)
 		{
-			$this->setQueryParameter($key, $value);
+			self::validateQueryParameter($key, $value);
 		}
+		
+		$this->parameters = new Parameters($parameters);
 		
 		return $this;
 	}
@@ -234,7 +240,7 @@ class Uri
 	{
 		self::validateQueryParameter($key, $value);
 		
-		$this->parameters[$key] = $value;
+		$this->parameters->set($key, $value);
 		
 		return $this;
 	}
@@ -308,7 +314,7 @@ class Uri
 	/**
 	 * Get the URL contained in this object. May return a relative or absolute URL depending on
 	 * whether the absolute part has changed.
-	 * 
+	 *
 	 * @param bool $isRawUrl : if true, spaces in query parameters are encoded as %20, otherwise as +
 	 * @return string the link to the required route
 	 * @see getRelative
@@ -381,13 +387,6 @@ class Uri
 		{
 			throw new UriException('Invalid query "' . $query . '"');
 		}
-		
-		parse_str($query, $parameters);
-		
-		foreach ($parameters as $key => $value)
-		{
-			self::validateQueryParameter($key, $value);
-		}
 	}
 	
 	private static function validateQueryParameter(string $key, $value)
@@ -396,7 +395,7 @@ class Uri
 		{
 			foreach ($value as $k => $v)
 			{
-				self::validateQueryParameter($key, $v);
+				self::validateQueryParameter($k, $v);
 			}
 		}
 		else if (!is_scalar($value))

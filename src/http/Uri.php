@@ -6,6 +6,8 @@ use js\tools\commons\exceptions\UriException;
 
 class Uri
 {
+	const SUPPORTED_SCHEMES = ['http', 'https', 'ftp', 'ftps', 'sftp'];
+	
 	private $scheme;
 	private $username;
 	private $password;
@@ -27,6 +29,11 @@ class Uri
 		if ($parts === false)
 		{
 			throw new UriException('Invalid URL "' . $url . '"');
+		}
+		
+		if (isset($parts['scheme']))
+		{
+			self::validateScheme($parts['scheme']);
 		}
 		
 		$this->scheme = $parts['scheme'] ?? '';
@@ -79,6 +86,12 @@ class Uri
 	public function setScheme(string $scheme): Uri
 	{
 		$scheme = strtolower(trim($scheme));
+		
+		if ($scheme !== '')
+		{
+			// empty scheme is allowed for "//domain.tld" URLs where protocol is taken from referer
+			self::validateScheme($scheme);
+		}
 		
 		if ($this->scheme !== $scheme)
 		{
@@ -338,6 +351,14 @@ class Uri
 	public function __toString()
 	{
 		return $this->get();
+	}
+	
+	private static function validateScheme(string $scheme)
+	{
+		if (!in_array($scheme, self::SUPPORTED_SCHEMES))
+		{
+			throw new UriException('Unsupported URI scheme');
+		}
 	}
 	
 	private static function validateAuth(string $username, string $password)

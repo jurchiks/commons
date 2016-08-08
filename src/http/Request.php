@@ -6,7 +6,7 @@ use js\tools\commons\upload\UploadedFileCollection;
 
 class Request
 {
-	const METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options'];
+	const METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'];
 	
 	private $method;
 	private $uri;
@@ -21,9 +21,15 @@ class Request
 	 * the same data is available via the $uri object
 	 * @param array $files : the $_FILES array or its equivalent
 	 * @param string $referer : the URL that referred to this URL
+	 * @throws HttpException if the request method is invalid
 	 */
 	public function __construct(string $method, Uri $uri, array $data, array $files = [], string $referer = '')
 	{
+		if (!in_array($method, self::METHODS))
+		{
+			throw new HttpException('Unsupported request method');
+		}
+		
 		$this->method = $method;
 		$this->uri = $uri;
 		$this->data = new Parameters($data);
@@ -109,7 +115,11 @@ class Request
 	
 	public function isSecure(): bool
 	{
-		return ($this->uri->getScheme() === 'https');
+		static $secureProtocols = ['https', 'ftps', 'sftp'];
+		
+		$scheme = strtolower($this->uri->getScheme());
+		
+		return in_array($scheme, $secureProtocols);
 	}
 	
 	/**

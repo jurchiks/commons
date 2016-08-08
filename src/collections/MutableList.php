@@ -70,7 +70,7 @@ class MutableList extends ArrayList implements ArrayAccess
 	
 	public function flatten(): ArrayList
 	{
-		$this->flattenData(false);
+		$this->data = $this->flattenData(false);
 		
 		return $this;
 	}

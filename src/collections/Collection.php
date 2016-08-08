@@ -266,6 +266,17 @@ abstract class Collection implements Iterator
 		return $data;
 	}
 	
+	public function each(callable $callback)
+	{
+		foreach ($this->data as $key => $value)
+		{
+			if ($callback($value, $key) === true)
+			{
+				break;
+			}
+		}
+	}
+	
 	// ============== Iterator methods - START ==============
 	
 	public function rewind()

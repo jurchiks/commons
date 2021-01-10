@@ -12,9 +12,20 @@
   "require": {
     "php": ">=7.4.0"
   },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5"
+  },
   "autoload": {
     "psr-4": {
       "js\\tools\\commons\\": "src/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "js\\tools\\commons\\tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit tests"
   }
 }

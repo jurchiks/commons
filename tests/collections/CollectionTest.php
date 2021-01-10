@@ -180,6 +180,14 @@ class CollectionTest extends TestCase
 		$this->assertTrue($nullValue->isFound());
 	}
 	
+	public function testFindValueNotFound(): void
+	{
+		$data = range(1, 10);
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		
+		$this->assertFalse($collection->findValue(fn ($v) => false)->isFound());
+	}
+	
 	public function testFindKeyInt(): void
 	{
 		$data = [
@@ -213,5 +221,56 @@ class CollectionTest extends TestCase
 		
 		$this->assertTrue($keyWithNullValue->isFound());
 		$this->assertSame('bar', $keyWithNullValue->get());
+	}
+	
+	public function testFindKeyNotFound(): void
+	{
+		$data = range(1, 10);
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		
+		$this->assertFalse($collection->findKey(fn ($v) => false)->isFound());
+	}
+	
+	public function testFindValues(): void
+	{
+		$data = range(1, 10);
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		$isEven = fn (int $value): bool => ($value % 2 === 0);
+		
+		$this->assertSame([2, 4], $collection->findValues($isEven, 2));
+		$this->assertSame([8, 10], $collection->findValues($isEven, -2));
+		$this->assertSame([2, 4, 6, 8, 10], $collection->findValues($isEven));
+		$this->assertSame([], $collection->findValues(fn () => false));
+	}
+	
+	public function testFindKeys(): void
+	{
+		$data = range(1, 10);
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		$isEven = fn (int $value): bool => ($value % 2 === 0);
+		
+		$this->assertSame([1, 3], $collection->findKeys($isEven, 2));
+		$this->assertSame([7, 9], $collection->findKeys($isEven, -2));
+		$this->assertSame([1, 3, 5, 7, 9], $collection->findKeys($isEven));
+		$this->assertSame([], $collection->findKeys(fn () => false));
+	}
+	
+	public function testFind(): void
+	{
+		$data = range(1, 50);
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		$fizzBuzz = fn (int $value): bool => (($value % 3 === 0) || ($value % 5 === 0));
+		
+		$firstFive = [2 => 3, 4 => 5, 5 => 6, 8 => 9, 9 => 10];
+		$this->assertSame(array_values($firstFive), $collection->find($fizzBuzz, false, 5));
+		$this->assertSame(array_keys($firstFive), $collection->find($fizzBuzz, true, 5));
+		$this->assertSame($firstFive, $collection->find($fizzBuzz, null, 5));
+		
+		$lastFive = [39 => 40, 41 => 42, 44 => 45, 47 => 48, 49 => 50];
+		$this->assertSame(array_values($lastFive), $collection->find($fizzBuzz, false, -5));
+		$this->assertSame(array_keys($lastFive), $collection->find($fizzBuzz, true, -5));
+		$this->assertSame($lastFive, $collection->find($fizzBuzz, null, -5));
+		
+		$this->assertSame([], $collection->find(fn () => false));
 	}
 }

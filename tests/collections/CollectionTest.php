@@ -157,7 +157,7 @@ class CollectionTest extends TestCase
 		];
 		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
 		$isEven = fn (int $value): bool => ($value % 2 === 0);
-	
+		
 		$firstValue = $collection->findValue($isEven);
 		$lastValue = $collection->findValue($isEven, false);
 		
@@ -272,5 +272,44 @@ class CollectionTest extends TestCase
 		$this->assertSame($lastFive, $collection->find($fizzBuzz, null, -5));
 		
 		$this->assertSame([], $collection->find(fn () => false));
+	}
+	
+	public function testForeach(): void
+	{
+		$data = range(1, 10);
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		
+		$i = 0;
+		
+		foreach ($collection as $index => $value)
+		{
+			$this->assertSame($i, $index);
+			$this->assertSame($i + 1, $value);
+			$i++;
+		}
+	}
+	
+	public function testEach(): void
+	{
+		$data = range(1, 10);
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		
+		$iterated = [];
+		
+		$collection->each(
+			function (int $value, int $index) use (&$iterated)
+			{
+				if ($index < 5)
+				{
+					$iterated[] = $value;
+					
+					return false;
+				}
+				
+				return true;
+			}
+		);
+		
+		$this->assertSame([1, 2, 3, 4, 5], $iterated);
 	}
 }

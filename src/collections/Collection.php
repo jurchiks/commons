@@ -129,7 +129,14 @@ abstract class Collection implements Iterator
 	{
 		$data = $this->find($predicate, false, $findFirst ? 1 : -1);
 		
-		return new Option($data[0] ?? null, isset($data[0]));
+		if (empty($data))
+		{
+			return new Option(null, false);
+		}
+		else
+		{
+			return new Option($data[0], true);
+		}
 	}
 	
 	/**

@@ -145,4 +145,73 @@ class CollectionTest extends TestCase
 		$this->assertSame([0, 'bar'], $firstTwoKeys);
 		$this->assertSame(['bar', 'qux'], $lastTwoKeys);
 	}
+	
+	public function testFindValueInt(): void
+	{
+		$data = [
+			1,
+			'foo' => 2,
+			'bar' => 3,
+			'baz' => 4,
+			'qux' => 5,
+		];
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		$isEven = fn (int $value): bool => ($value % 2 === 0);
+	
+		$firstValue = $collection->findValue($isEven);
+		$lastValue = $collection->findValue($isEven, false);
+		
+		$this->assertSame(2, $firstValue->get());
+		$this->assertSame(4, $lastValue->get());
+	}
+	
+	public function testFindValueNull(): void
+	{
+		$data = [
+			1,
+			'foo' => 2,
+			'bar' => null,
+			'baz' => 3,
+			'qux' => 4,
+		];
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		$nullValue = $collection->findValue(fn ($value) => ($value === null));
+		
+		$this->assertTrue($nullValue->isFound());
+	}
+	
+	public function testFindKeyInt(): void
+	{
+		$data = [
+			1,
+			'foo' => 2,
+			'bar' => 3,
+			'baz' => 4,
+			'qux' => 5,
+		];
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		$isOdd = fn (int $value): bool => ($value % 2 === 1);
+		
+		$firstKey = $collection->findKey($isOdd);
+		$lastKey = $collection->findKey($isOdd, false);
+		
+		$this->assertSame(0, $firstKey->get());
+		$this->assertSame('qux', $lastKey->get());
+	}
+	
+	public function testFindKeyNull(): void
+	{
+		$data = [
+			1,
+			'foo' => 2,
+			'bar' => null,
+			'baz' => 3,
+			'qux' => 4,
+		];
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		$keyWithNullValue = $collection->findKey(fn ($value) => ($value === null));
+		
+		$this->assertTrue($keyWithNullValue->isFound());
+		$this->assertSame('bar', $keyWithNullValue->get());
+	}
 }

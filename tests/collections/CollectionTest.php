@@ -105,4 +105,44 @@ class CollectionTest extends TestCase
 		$this->assertSame($data[0], $firstValue->get());
 		$this->assertSame($data['foo'], $secondValue->get());
 	}
+	
+	public function testGetKey(): void
+	{
+		$data = [1, 'foo' => 2];
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		
+		$intKey = $collection->getKey(1);
+		$stringKey = $collection->getKey(2);
+		$invalidKey = $collection->getKey('bar');
+		
+		$this->assertContainsOnlyInstancesOf(Option::class, [$intKey, $stringKey, $invalidKey]);
+		
+		$this->assertTrue($intKey->isFound());
+		$this->assertTrue($stringKey->isFound());
+		$this->assertFalse($invalidKey->isFound());
+		
+		$this->assertSame(0, $intKey->get());
+		$this->assertSame('foo', $stringKey->get());
+	}
+	
+	public function testGetKeys(): void
+	{
+		$data = [
+			1,
+			'foo' => 2,
+			'bar' => 1,
+			'baz' => 3,
+			'qux' => 1,
+		];
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		
+		$valueToSearch = 1;
+		$allKeys = $collection->getKeys($valueToSearch);
+		$firstTwoKeys = $collection->getKeys($valueToSearch, 2);
+		$lastTwoKeys = $collection->getKeys($valueToSearch, -2);
+		
+		$this->assertSame([0, 'bar', 'qux'], $allKeys);
+		$this->assertSame([0, 'bar'], $firstTwoKeys);
+		$this->assertSame(['bar', 'qux'], $lastTwoKeys);
+	}
 }

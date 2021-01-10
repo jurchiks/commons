@@ -109,7 +109,7 @@ abstract class Collection implements Iterator
 	 */
 	public function getKeys($value, int $limit = 0): array
 	{
-		$predicate = function ($v, $k) use ($value)
+		$predicate = function ($v) use ($value)
 		{
 			return ($v === $value);
 		};

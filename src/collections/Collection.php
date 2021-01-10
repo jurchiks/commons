@@ -3,30 +3,20 @@ namespace js\tools\commons\collections;
 
 use InvalidArgumentException;
 use Iterator;
-use Traversable;
 
 abstract class Collection implements Iterator
 {
 	protected $data;
 	
-	/**
-	 * @param array|Traversable $data
-	 */
-	public function __construct($data)
+	public function __construct(iterable $data)
 	{
 		if (is_array($data))
 		{
 			$this->data = $data;
 		}
-		else if ($data instanceof Traversable)
-		{
-			$this->data = $this->generateData($data);
-		}
 		else
 		{
-			throw new InvalidArgumentException(
-				'Unsupported data type: ' . is_object($data) ? get_class($data) : gettype($data)
-			);
+			$this->data = $this->extractData($data);
 		}
 	}
 	
@@ -318,7 +308,7 @@ abstract class Collection implements Iterator
 	
 	public abstract function immutable();
 	
-	protected final function generateData(Traversable $source): array
+	protected final function extractData(iterable $source): array
 	{
 		$data = [];
 		

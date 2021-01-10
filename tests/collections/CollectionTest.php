@@ -42,4 +42,46 @@ class CollectionTest extends TestCase
 		$this->expectException(TypeError::class);
 		$this->getMockForAbstractClass(Collection::class, [$value]);
 	}
+	
+	public function testClone(): void
+	{
+		$data = ['foo' => 1];
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		$clone = clone $collection;
+		
+		$this->assertSame($collection->get(), $data);
+		$this->assertSame($collection->get(), $clone->get());
+		$this->assertNotSame($collection, $clone);
+	}
+	
+	public function testSize(): void
+	{
+		$data = [1, 2, 3];
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		
+		$this->assertSame(3, $collection->size());
+	}
+	
+	public function testContainsValue(): void
+	{
+		$data = [1, 2, 3];
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		
+		$this->assertTrue($collection->containsValue(3));
+		$this->assertFalse($collection->containsValue(4));
+		$this->assertFalse($collection->containsValue('1')); // Strict type check.
+	}
+	
+	public function testContainsKey(): void
+	{
+		$data = [1, 'foo' => 2];
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		
+		$this->assertTrue($collection->containsKey(0));
+		$this->assertTrue($collection->containsKey('foo'));
+		// https://www.php.net/manual/en/language.types.array.php
+		// Numeric string keys are cast to integers.
+		$this->assertTrue($collection->containsKey('0'));
+		$this->assertFalse($collection->containsKey(1));
+	}
 }

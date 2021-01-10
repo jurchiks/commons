@@ -10,14 +10,7 @@ abstract class Collection implements Iterator
 	
 	public function __construct(iterable $data)
 	{
-		if (is_array($data))
-		{
-			$this->data = $data;
-		}
-		else
-		{
-			$this->data = $this->extractData($data);
-		}
+		$this->data = is_array($data) ? $data : $this->extractData($data);
 	}
 	
 	public function __clone()

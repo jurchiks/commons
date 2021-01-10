@@ -3,11 +3,14 @@ namespace js\tools\commons\collections;
 
 abstract class ArrayList extends Collection
 {
-	public function __construct($data)
+	public function __construct(iterable $data)
 	{
-		parent::__construct($data);
+		if (!is_array($data))
+		{
+			$data = $this->extractData($data);
+		}
 		
-		$this->data = array_values($this->data);
+		parent::__construct(array_values($data));
 	}
 	
 	public abstract function append(...$values): ArrayList;

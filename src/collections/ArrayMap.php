@@ -9,10 +9,7 @@ abstract class ArrayMap extends Collection
 	
 	public function remove($value): ArrayMap
 	{
-		return $this->filter(function ($v, $k) use ($value)
-		{
-			return ($v !== $value);
-		}, true);
+		return $this->filter(fn ($v) => ($v !== $value), true);
 	}
 	
 	/**

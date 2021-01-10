@@ -16,10 +16,7 @@ abstract class ArrayList extends Collection
 	
 	public function remove($value): ArrayList
 	{
-		return $this->filter(function ($v, $k) use ($value)
-		{
-			return ($v !== $value);
-		});
+		return $this->filter(fn ($v) => ($v !== $value));
 	}
 	
 	/**

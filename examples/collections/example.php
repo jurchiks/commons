@@ -43,27 +43,12 @@ $testResults = function () use (&$counter, &$failed)
 
 $collection = new MutableList(range(1, 100));
 
-$collection->map(
-		function ($value)
-		{
-			return $value / 2;
-		}
-	)
-	->filter(
-		function ($value, $key)
-		{
-			return $value > 25;
-		}
-	);
+$collection->map(fn ($value) => $value / 2)
+	->filter(fn ($value) => $value > 25);
 
 $test('collection size #1', $collection->size(), 50);
 
-$groups = $collection->group(
-	function ($value, $key)
-	{
-		return (is_int($value) ? 'ints' : 'floats');
-	}
-);
+$groups = $collection->group(fn ($value) => (is_int($value) ? 'ints' : 'floats'));
 $data = $groups->get();
 
 $test('collection size #2', $groups->size(), 2);
@@ -75,12 +60,7 @@ $groups->flatten();
 $test('collection size #3', $groups->size(), 50);
 $test('collection contains 25.5', $groups->containsValue(25.5), true);
 
-$groups->filter(
-	function ($value, $key)
-	{
-		return is_int($value);
-	}
-);
+$groups->filter(fn ($value) => is_int($value));
 
 $test('collection size #4', $groups->size(), 25);
 
@@ -99,36 +79,27 @@ $test('key is 0', $entry->get(), 0);
 $test('group does not contain 25', $groups->getValue(25)->getOrElse('nope'), 'nope');
 $test('get all keys for value 26', $groups->getKeys(26), [0]);
 $test(
-	'get first value with index > 5', $groups->findValue(
-	function ($value, $key)
-	{
-		return ($key > 5);
-	}
-)->get(), 32
+	'get first value with index > 5',
+	$groups->findValue(fn ($value, $key) => ($key > 5))->get(),
+	32
 );
 $test(
-	'get last key of any value that is divisible by 3', $groups->findKey(
-	function ($value, $key)
-	{
-		return ($value % 3 === 0);
-	}, false
-)->get(), 22
+	'get last key of any value that is divisible by 3',
+	$groups->findKey(fn ($value) => ($value % 3 === 0), false)->get(),
+	22
 );
 $test(
-	'get all values that are divisible by 3', $groups->findValues(
-	function ($value, $key)
-	{
-		return ($value % 3 === 0);
-	}
-), [27, 30, 33, 36, 39, 42, 45, 48]
+	'get all values that are divisible by 3',
+	$groups->findValues(fn ($value) => ($value % 3 === 0)),
+	[27, 30, 33, 36, 39, 42, 45, 48]
 );
 $test(
-	'get last two keys of values divisible by 3', $groups->findKeys(
-	function ($value, $key)
-	{
-		return ($value % 3 === 0);
-	}, -2
-), [19, 22]
+	'get last two keys of values divisible by 3',
+	$groups->findKeys(
+		fn ($value) => ($value % 3 === 0),
+		-2
+	),
+	[19, 22]
 );
 
 $test(
@@ -142,7 +113,7 @@ $test(
 );
 $test(
 	'ArrayList::reduce()',
-	(new MutableList(range(0, 100, 5)))->reduce(function ($value, $previous) { return $previous + $value; }, 0),
+	(new MutableList(range(0, 100, 5)))->reduce(fn ($value, $previous) => $previous + $value, 0),
 	1050
 );
 $test(
@@ -157,7 +128,7 @@ $test(
 $test(
 	'ArrayMap::reduce()',
 	(new MutableMap([['age' => 25], ['age' => 14], ['age' => 72], ['age' => 37]]))
-		->reduce(function ($value, $key, $previous) { return $previous + $value['age']; }, 0),
+		->reduce(fn ($value, $key, $previous) => $previous + $value['age'], 0),
 	148
 );
 

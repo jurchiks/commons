@@ -3,6 +3,7 @@ namespace js\tools\commons\tests\collections;
 
 use ArrayIterator;
 use js\tools\commons\collections\Collection;
+use js\tools\commons\collections\Option;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use TypeError;
@@ -83,5 +84,25 @@ class CollectionTest extends TestCase
 		// Numeric string keys are cast to integers.
 		$this->assertTrue($collection->containsKey('0'));
 		$this->assertFalse($collection->containsKey(1));
+	}
+	
+	public function testGetValue(): void
+	{
+		$data = [1, 'foo' => 2];
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		$firstValue = $collection->getValue(0);
+		$secondValue = $collection->getValue('foo');
+		$invalidValue = $collection->getValue('nope');
+		
+		$this->assertInstanceOf(Option::class, $firstValue);
+		$this->assertInstanceOf(Option::class, $secondValue);
+		$this->assertInstanceOf(Option::class, $invalidValue);
+		
+		$this->assertTrue($firstValue->isFound());
+		$this->assertTrue($secondValue->isFound());
+		$this->assertFalse($invalidValue->isFound());
+		
+		$this->assertSame($data[0], $firstValue->get());
+		$this->assertSame($data['foo'], $secondValue->get());
 	}
 }

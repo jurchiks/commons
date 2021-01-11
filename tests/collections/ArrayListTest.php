@@ -73,7 +73,7 @@ class ArrayListTest extends TestCase
 		$data = range(1, 5);
 		$list = $this->getMockForAbstractClass(ArrayList::class, [$data]);
 		$reducer = fn (int $value, string $previous) => $previous . $value;
-	
+		
 		$this->assertSame('12345', $list->reduce($reducer, ''));
 	}
 }

@@ -22,7 +22,6 @@ class ImmutableMap extends ArrayMap
 	public function set($key, $value): ArrayMap
 	{
 		$data = $this->data;
-		
 		$data[$key] = $value;
 		
 		return new static($data);

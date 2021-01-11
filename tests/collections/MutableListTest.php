@@ -39,4 +39,28 @@ class MutableListTest extends TestCase
 		
 		$this->assertSame($data, $list->get());
 	}
+	
+	public function testAppend(): void
+	{
+		$list = new MutableList(range(1, 5));
+		$list->append(...range(6, 10));
+		
+		$this->assertSame(range(1, 10), $list->get());
+	}
+	
+	public function testPrepend(): void
+	{
+		$list = new MutableList(range(1, 5));
+		$list->prepend(...range(6, 10));
+		
+		$this->assertSame([...range(6, 10), ...range(1, 5)], $list->get());
+	}
+	
+	public function testRemove(): void
+	{
+		$list = new MutableList(range(1, 5));
+		$list->remove(4);
+		
+		$this->assertSame([1, 2, 3, 5], $list->get());
+	}
 }

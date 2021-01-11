@@ -38,4 +38,31 @@ class ImmutableMapTest extends TestCase
 		$map = new ImmutableMap(['foo' => 1, 'bar' => 2, 'baz' => 3]);
 		unset($map['bar']);
 	}
+	
+	public function testSet(): void
+	{
+		$map = new ImmutableMap(['foo' => 1, 'bar' => 2, 'baz' => 3]);
+		$newMap = $map->set('qux', 4);
+		
+		$this->assertSame(['foo' => 1, 'bar' => 2, 'baz' => 3, 'qux' => 4], $newMap->get());
+		$this->assertSame(['foo' => 1, 'bar' => 2, 'baz' => 3], $map->get());
+	}
+	
+	public function testUnset(): void
+	{
+		$map = new ImmutableMap(['foo' => 1, 'bar' => 2, 'baz' => 3]);
+		$newMap = $map->unset('bar');
+		
+		$this->assertSame(['foo' => 1, 'baz' => 3], $newMap->get());
+		$this->assertSame(['foo' => 1, 'bar' => 2, 'baz' => 3], $map->get());
+	}
+	
+	public function testRemove(): void
+	{
+		$map = new ImmutableMap(['foo' => 1, 'bar' => 2, 'baz' => 3]);
+		$newMap = $map->remove(2);
+		
+		$this->assertSame(['foo' => 1, 'baz' => 3], $newMap->get());
+		$this->assertSame(['foo' => 1, 'bar' => 2, 'baz' => 3], $map->get());
+	}
 }

@@ -38,4 +38,31 @@ class ImmutableListTest extends TestCase
 		$list = new ImmutableList(range(1, 5));
 		unset($list[5]);
 	}
+	
+	public function testAppend(): void
+	{
+		$list = new ImmutableList(range(1, 5));
+		$newList = $list->append(...range(6, 10));
+		
+		$this->assertSame(range(1, 10), $newList->get());
+		$this->assertSame(range(1, 5), $list->get());
+	}
+	
+	public function testPrepend(): void
+	{
+		$list = new ImmutableList(range(1, 5));
+		$newList = $list->prepend(...range(6, 10));
+		
+		$this->assertSame([...range(6, 10), ...range(1, 5)], $newList->get());
+		$this->assertSame(range(1, 5), $list->get());
+	}
+	
+	public function testRemove(): void
+	{
+		$list = new ImmutableList(range(1, 5));
+		$newList = $list->remove(4);
+		
+		$this->assertSame([1, 2, 3, 5], $newList->get());
+		$this->assertSame(range(1, 5), $list->get());
+	}
 }

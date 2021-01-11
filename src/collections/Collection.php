@@ -6,7 +6,7 @@ use Iterator;
 
 abstract class Collection implements Iterator
 {
-	protected $data;
+	protected array $data;
 	
 	public function __construct(iterable $data)
 	{

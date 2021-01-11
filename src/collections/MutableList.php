@@ -20,6 +20,7 @@ class MutableList extends ArrayList
 	public function offsetUnset($offset)
 	{
 		unset($this->data[$offset]);
+		$this->data = array_values($this->data); // Reset indexes.
 	}
 	
 	// ============== ArrayAccess methods - END ==============

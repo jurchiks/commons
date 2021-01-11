@@ -26,6 +26,9 @@ abstract class ArrayList extends Collection
 	 * Clone this list into another, mutable list.
 	 *
 	 * @return MutableList a mutable list containing the same data as this list
+	 * @see toImmutable()
+	 * @see toMutableMap()
+	 * @see toImmutableMap()
 	 */
 	public function toMutable(): MutableList
 	{
@@ -36,6 +39,9 @@ abstract class ArrayList extends Collection
 	 * Clone this list into another, immutable list.
 	 *
 	 * @return ImmutableList an immutable list containing the same data as this list
+	 * @see toMutable()
+	 * @see toMutableMap()
+	 * @see toImmutableMap()
 	 */
 	public function toImmutable(): ImmutableList
 	{
@@ -43,21 +49,29 @@ abstract class ArrayList extends Collection
 	}
 	
 	/**
-	 * Copy the data of this list into a map. Keys are preserved.
+	 * Copy the data of this list into a map. Indexes are preserved.
 	 *
-	 * @param bool $mutable : if true, will return a MutableMap, otherwise an ImmutableMap
-	 * @return ArrayMap
+	 * @return MutableMap
+	 * @see toImmutableMap()
+	 * @see toMutable()
+	 * @see toImmutable()
 	 */
-	public function toMap(bool $mutable): ArrayMap
+	public function toMutableMap(): MutableMap
 	{
-		if ($mutable)
-		{
-			return new MutableMap($this->data);
-		}
-		else
-		{
-			return new ImmutableMap($this->data);
-		}
+		return new MutableMap($this->data);
+	}
+	
+	/**
+	 * Copy the data of this list into a map. Indexes are preserved.
+	 *
+	 * @return ImmutableMap
+	 * @see toMutableMap()
+	 * @see toMutable()
+	 * @see toImmutable()
+	 */
+	public function toImmutableMap(): ImmutableMap
+	{
+		return new ImmutableMap($this->data);
 	}
 	
 	/**

@@ -1,30 +1,18 @@
 <?php
 namespace js\tools\commons\collections;
 
-use ArrayAccess;
-
-class MutableMap extends ArrayMap implements ArrayAccess
+class MutableMap extends ArrayMap
 {
 	// ============== ArrayAccess methods - START ==============
 	
-	public function offsetExists($offset): bool
-	{
-		return array_key_exists($this->data, $offset);
-	}
-	
-	public function offsetGet($offset)
-	{
-		return ($this->data[$offset] ?? null);
-	}
-	
 	public function offsetSet($offset, $value)
 	{
-		$this->data[$offset] = $value;
+		$this->set($offset, $value);
 	}
 	
 	public function offsetUnset($offset)
 	{
-		unset($this->data[$offset]);
+		$this->unset($offset);
 	}
 	
 	// ============== ArrayAccess methods - END ==============

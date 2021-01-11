@@ -1,8 +1,24 @@
 <?php
 namespace js\tools\commons\collections;
 
+use RuntimeException;
+
 class ImmutableList extends ArrayList
 {
+	// ============== ArrayAccess methods - START ==============
+	
+	public function offsetSet($offset, $value)
+	{
+		throw new RuntimeException('Direct modification of immutable collections is not allowed.');
+	}
+	
+	public function offsetUnset($offset)
+	{
+		throw new RuntimeException('Direct modification of immutable collections is not allowed.');
+	}
+	
+	// ============== ArrayAccess methods - END ==============
+	
 	public function append(...$values): ArrayList
 	{
 		$data = array_merge($this->data, $values);

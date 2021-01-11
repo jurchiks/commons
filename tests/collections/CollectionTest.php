@@ -312,4 +312,18 @@ class CollectionTest extends TestCase
 		
 		$this->assertSame([1, 2, 3, 4, 5], $iterated);
 	}
+	
+	public function testArrayAccess(): void
+	{
+		$data = range(1, 10);
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		
+		$this->assertTrue(isset($collection[0]));
+		$this->assertFalse(isset($collection[10]));
+		$this->assertFalse(isset($collection['foo']));
+		
+		$this->assertSame(1, $collection[0]);
+		$this->assertNull($collection[10]);
+		$this->assertNull($collection['foo']);
+	}
 }

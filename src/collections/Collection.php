@@ -1,10 +1,11 @@
 <?php
 namespace js\tools\commons\collections;
 
+use ArrayAccess;
 use InvalidArgumentException;
 use Iterator;
 
-abstract class Collection implements Iterator
+abstract class Collection implements Iterator, ArrayAccess
 {
 	protected array $data;
 	
@@ -298,6 +299,20 @@ abstract class Collection implements Iterator
 	{
 		prev($this->data);
 	}
+	
+	// ============== ArrayAccess methods - START ==============
+	
+	public function offsetExists($offset): bool
+	{
+		return isset($this->data[$offset]);
+	}
+	
+	public function offsetGet($offset)
+	{
+		return ($this->data[$offset] ?? null);
+	}
+	
+	// ============== ArrayAccess methods - END ==============
 	
 	public abstract function toMutable();
 	

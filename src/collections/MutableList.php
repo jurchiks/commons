@@ -1,28 +1,17 @@
 <?php
 namespace js\tools\commons\collections;
 
-use ArrayAccess;
 use InvalidArgumentException;
 
-class MutableList extends ArrayList implements ArrayAccess
+class MutableList extends ArrayList
 {
 	// ============== ArrayAccess methods - START ==============
-	
-	public function offsetExists($offset): bool
-	{
-		return array_key_exists($this->data, $offset);
-	}
-	
-	public function offsetGet($offset)
-	{
-		return ($this->data[$offset] ?? null);
-	}
 	
 	public function offsetSet($offset, $value)
 	{
 		if (!$this->offsetExists($offset))
 		{
-			throw new InvalidArgumentException('offset does not exist; only modifications are allowed. Consider using add() instead.');
+			throw new InvalidArgumentException('Offset does not exist; only modifications of existing offsets are allowed. Consider using add() instead.');
 		}
 		
 		$this->data[$offset] = $value;

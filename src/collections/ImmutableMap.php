@@ -1,8 +1,24 @@
 <?php
 namespace js\tools\commons\collections;
 
+use RuntimeException;
+
 class ImmutableMap extends ArrayMap
 {
+	// ============== ArrayAccess methods - START ==============
+	
+	public function offsetSet($offset, $value)
+	{
+		throw new RuntimeException('Direct modification of immutable collections is not allowed.');
+	}
+	
+	public function offsetUnset($offset)
+	{
+		throw new RuntimeException('Direct modification of immutable collections is not allowed.');
+	}
+	
+	// ============== ArrayAccess methods - END ==============
+	
 	public function set($key, $value): ArrayMap
 	{
 		$data = $this->data;

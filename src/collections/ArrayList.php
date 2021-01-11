@@ -78,7 +78,7 @@ abstract class ArrayList extends Collection
 	 * Modify items in the list. Callback returns the modified value.
 	 *
 	 * @param callable $callback : the callback function to apply to each item in the list.
-	 * Callback signature - ($value) => mixed
+	 * Callback signature - ($value, $index) => mixed
 	 * @return ArrayList
 	 */
 	public abstract function map(callable $callback): ArrayList;
@@ -87,7 +87,7 @@ abstract class ArrayList extends Collection
 	 * Filter items in the list. Callback returns whether to keep the item in the list or remove it.
 	 *
 	 * @param callable $predicate : the callback function to apply to each item in the list.
-	 * Callback signature - ($value) => bool
+	 * Callback signature - ($value, $index) => bool
 	 * @return ArrayList
 	 */
 	public abstract function filter(callable $predicate): ArrayList;
@@ -96,13 +96,13 @@ abstract class ArrayList extends Collection
 	 * Split items into groups. Callback returns the name/key of the group. Note that this returns a map, not a list!
 	 *
 	 * @param callable $callback : the callback function to apply to each item in the list.
-	 * Callback signature - ($value) => scalar
+	 * Callback signature - ($value, $index) => scalar
 	 * @return ArrayMap
 	 */
 	public abstract function group(callable $callback): ArrayMap;
 	
 	/**
-	 * Flatten nested list into a single-level list.
+	 * Flatten a nested list into a single-level list.
 	 *
 	 * @return ArrayList
 	 */
@@ -130,7 +130,7 @@ abstract class ArrayList extends Collection
 	 * Callback returns the standard string comparison values (-1, 0, 1).
 	 *
 	 * @param callable $callback : the callback function to determine the sort order.
-	 * Callback signature - ($value) => int
+	 * Callback signature - ($a, $b) => int
 	 * @return ArrayList
 	 */
 	public abstract function sortManual(callable $callback): ArrayList;

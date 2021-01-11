@@ -126,7 +126,7 @@ abstract class ArrayMap extends Collection
 	 * @param bool $sortByKeys : if true, the sorting will occur based on keys, not values
 	 * @param bool $preserveKeys : if true, keys will be preserved as the values are reordered
 	 * @param callable $callback : the callback function to determine the sort order.
-	 * Callback signature - ($value) => int
+	 * Callback signature - ($a, $b) => int
 	 * @return ArrayMap
 	 */
 	public abstract function sortManual(bool $sortByKeys, bool $preserveKeys, callable $callback): ArrayMap;

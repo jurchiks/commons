@@ -5,7 +5,7 @@ use InvalidArgumentException;
 
 class MutableList extends ArrayList
 {
-	// ============== ArrayAccess methods - START ==============
+	// region ArrayAccess methods
 	
 	public function offsetSet($offset, $value)
 	{
@@ -23,7 +23,7 @@ class MutableList extends ArrayList
 		$this->data = array_values($this->data); // Reset indexes.
 	}
 	
-	// ============== ArrayAccess methods - END ==============
+	// endregion
 	
 	public function append(...$values): ArrayList
 	{

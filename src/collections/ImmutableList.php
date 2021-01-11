@@ -5,7 +5,7 @@ use RuntimeException;
 
 class ImmutableList extends ArrayList
 {
-	// ============== ArrayAccess methods - START ==============
+	// region ArrayAccess methods
 	
 	public function offsetSet($offset, $value)
 	{
@@ -17,7 +17,7 @@ class ImmutableList extends ArrayList
 		throw new RuntimeException('Direct modification of immutable collections is not allowed.');
 	}
 	
-	// ============== ArrayAccess methods - END ==============
+	// endregion
 	
 	public function append(...$values): ArrayList
 	{

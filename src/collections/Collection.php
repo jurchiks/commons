@@ -263,7 +263,7 @@ abstract class Collection implements Iterator, ArrayAccess
 		}
 	}
 	
-	// ============== Iterator methods - START ==============
+	// region Iterator methods
 	
 	public function rewind()
 	{
@@ -292,7 +292,7 @@ abstract class Collection implements Iterator, ArrayAccess
 		next($this->data);
 	}
 	
-	// ============== Iterator methods - END ==============
+	// endregion
 	
 	// not officially part of the Iterator interface, but good to have just in case
 	public function prev()
@@ -300,7 +300,7 @@ abstract class Collection implements Iterator, ArrayAccess
 		prev($this->data);
 	}
 	
-	// ============== ArrayAccess methods - START ==============
+	// region ArrayAccess methods
 	
 	public function offsetExists($offset): bool
 	{
@@ -312,7 +312,7 @@ abstract class Collection implements Iterator, ArrayAccess
 		return ($this->data[$offset] ?? null);
 	}
 	
-	// ============== ArrayAccess methods - END ==============
+	// endregion
 	
 	public abstract function toMutable();
 	

@@ -3,7 +3,7 @@ namespace js\tools\commons\collections;
 
 class MutableMap extends ArrayMap
 {
-	// ============== ArrayAccess methods - START ==============
+	// region ArrayAccess methods
 	
 	public function offsetSet($offset, $value)
 	{
@@ -15,7 +15,7 @@ class MutableMap extends ArrayMap
 		$this->unset($offset);
 	}
 	
-	// ============== ArrayAccess methods - END ==============
+	// endregion
 	
 	public function set($key, $value): ArrayMap
 	{

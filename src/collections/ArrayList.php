@@ -23,21 +23,21 @@ abstract class ArrayList extends Collection
 	}
 	
 	/**
-	 * Clone this collection into another, mutable collection.
+	 * Clone this list into another, mutable list.
 	 *
-	 * @return MutableList a mutable collection containing the same data as this collection
+	 * @return MutableList a mutable list containing the same data as this list
 	 */
-	public function mutable(): MutableList
+	public function toMutable(): MutableList
 	{
 		return new MutableList($this->data);
 	}
 	
 	/**
-	 * Clone this collection into another, immutable collection.
+	 * Clone this list into another, immutable list.
 	 *
-	 * @return ImmutableList an immutable collection containing the same data as this collection
+	 * @return ImmutableList an immutable list containing the same data as this list
 	 */
-	public function immutable(): ImmutableList
+	public function toImmutable(): ImmutableList
 	{
 		return new ImmutableList($this->data);
 	}

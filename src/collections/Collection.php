@@ -299,9 +299,9 @@ abstract class Collection implements Iterator
 		prev($this->data);
 	}
 	
-	public abstract function mutable();
+	public abstract function toMutable();
 	
-	public abstract function immutable();
+	public abstract function toImmutable();
 	
 	protected final function extractData(iterable $source): array
 	{

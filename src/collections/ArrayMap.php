@@ -13,21 +13,21 @@ abstract class ArrayMap extends Collection
 	}
 	
 	/**
-	 * Clone this collection into another, mutable collection.
+	 * Clone this map into another, mutable map.
 	 *
-	 * @return MutableMap a mutable collection containing the same data as this collection
+	 * @return MutableMap a mutable map containing the same data as this map
 	 */
-	public function mutable(): MutableMap
+	public function toMutable(): MutableMap
 	{
 		return new MutableMap($this->data);
 	}
 	
 	/**
-	 * Clone this collection into another, immutable collection.
+	 * Clone this map into another, immutable map.
 	 *
-	 * @return ImmutableMap an immutable collection containing the same data as this collection
+	 * @return ImmutableMap an immutable map containing the same data as this map
 	 */
-	public function immutable(): ImmutableMap
+	public function toImmutable(): ImmutableMap
 	{
 		return new ImmutableMap($this->data);
 	}

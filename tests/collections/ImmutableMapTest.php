@@ -208,4 +208,75 @@ class ImmutableMapTest extends TestCase
 		$this->assertSame([1, 2, 3, 4, 5], $newMap->get());
 		$this->assertSame($data, $map->get());
 	}
+	
+	public function testSort(): void
+	{
+		$data = ['bar' => 2, 'foo' => 1, 'baz' => 3];
+		$map1 = new ImmutableMap($data);
+		
+		$map2 = $map1->sort(true);
+		$this->assertSame(['foo' => 1, 'bar' => 2, 'baz' => 3], $map2->get());
+		$this->assertSame($data, $map1->get());
+		
+		$map3 = $map1->sort(false);
+		$this->assertSame(['baz' => 3, 'bar' => 2, 'foo' => 1], $map3->get());
+		$this->assertSame($data, $map1->get());
+		
+		$map4 = $map1->sort(true, SORT_REGULAR, true);
+		$this->assertSame(['bar' => 2, 'baz' => 3, 'foo' => 1], $map4->get());
+		$this->assertSame($data, $map1->get());
+		
+		$map5 = $map1->sort(false, SORT_REGULAR, true, false);
+		$this->assertSame([1, 3, 2], $map5->get());
+		$this->assertSame($data, $map1->get());
+		
+		$map6 = $map1->sort(true, SORT_REGULAR, false, false);
+		$this->assertSame([1, 2, 3], $map6->get());
+		$this->assertSame($data, $map1->get());
+		
+		$data = ['bar' => 'img12.png', 'foo' => 'IMG10.png', 'baz' => 'img5.png'];
+		$map1 = new ImmutableMap($data);
+		
+		$map2 = $map1->sort(true);
+		$this->assertSame(['foo' => 'IMG10.png', 'bar' => 'img12.png', 'baz' => 'img5.png'], $map2->get());
+		$this->assertSame($data, $map1->get());
+		
+		$map3 = $map1->sort(true, SORT_NATURAL);
+		$this->assertSame(['foo' => 'IMG10.png', 'baz' => 'img5.png', 'bar' => 'img12.png'], $map3->get());
+		$this->assertSame($data, $map1->get());
+		
+		$map4 = $map1->sort(false, SORT_NATURAL | SORT_FLAG_CASE);
+		$this->assertSame(['bar' => 'img12.png', 'foo' => 'IMG10.png', 'baz' => 'img5.png'], $map4->get());
+		$this->assertSame($data, $map1->get());
+	}
+	
+	public function testSortManual(): void
+	{
+		$data = ['bar' => 'img12.png', 'foo' => 'IMG10.png', 'baz' => 'img5.png'];
+		$map1 = new ImmutableMap($data);
+		
+		$map2 = $map1->sortManual(fn (string $a, string $b) => $a <=> $b);
+		$this->assertSame(['foo' => 'IMG10.png', 'bar' => 'img12.png', 'baz' => 'img5.png'], $map2->get());
+		$this->assertSame($data, $map1->get());
+		
+		$map3 = $map1->sortManual(fn (string $a, string $b) => strnatcmp($a, $b));
+		$this->assertSame(['foo' => 'IMG10.png', 'baz' => 'img5.png', 'bar' => 'img12.png'], $map3->get());
+		$this->assertSame($data, $map1->get());
+		
+		$map4 = $map1->sortManual(fn (string $a, string $b) => strnatcasecmp($a, $b));
+		$this->assertSame(['baz' => 'img5.png', 'foo' => 'IMG10.png', 'bar' => 'img12.png'], $map4->get());
+		$this->assertSame($data, $map1->get());
+		
+		$map5 = $map1->sortManual(fn (string $a, string $b) => $a <=> $b, true, true);
+		$this->assertSame(['bar' => 'img12.png', 'baz' => 'img5.png', 'foo' => 'IMG10.png'], $map5->get());
+		$this->assertSame($data, $map1->get());
+		
+		$map6 = $map1->sortManual(fn (string $a, string $b) => $a <=> $b, true, false);
+		$this->assertSame(['img12.png', 'img5.png', 'IMG10.png'], $map6->get());
+		$this->assertSame($data, $map1->get());
+		
+		$map7 = $map1->sortManual(fn (string $a, string $b) => $a <=> $b, false, false);
+		$this->assertSame(['IMG10.png', 'img12.png', 'img5.png'], $map7->get());
+		$this->assertSame($data, $map1->get());
+	}
 }

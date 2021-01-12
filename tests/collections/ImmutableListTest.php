@@ -138,4 +138,50 @@ class ImmutableListTest extends TestCase
 		$this->assertSame(range(1, 10), $newList->get());
 		$this->assertSame($data, $list->get());
 	}
+	
+	public function testSort(): void
+	{
+		$list1 = new ImmutableList(range(5, 1));
+		
+		$list2 = $list1->sort(true);
+		$this->assertSame(range(1, 5), $list2->get());
+		$this->assertSame(range(5, 1), $list1->get());
+		
+		$list3 = $list2->sort(false);
+		$this->assertSame(range(5, 1), $list3->get());
+		$this->assertSame(range(1, 5), $list2->get());
+		
+		$data = ['img12.png', 'img10.png', 'img2.png', 'img1.png', 'IMG5.png'];
+		
+		$list1 = new ImmutableList($data);
+		$list2 = $list1->sort(true);
+		$this->assertSame(['IMG5.png', 'img1.png', 'img10.png', 'img12.png', 'img2.png'], $list2->get());
+		$this->assertSame($data, $list1->get());
+		
+		$list3 = $list1->sort(true, SORT_NATURAL);
+		$this->assertSame(['IMG5.png', 'img1.png', 'img2.png', 'img10.png', 'img12.png'], $list3->get());
+		$this->assertSame($data, $list1->get());
+		
+		$list4 = $list1->sort(true, SORT_NATURAL | SORT_FLAG_CASE);
+		$this->assertSame(['img1.png', 'img2.png', 'IMG5.png', 'img10.png', 'img12.png'], $list4->get());
+		$this->assertSame($data, $list1->get());
+	}
+	
+	public function testSortManual(): void
+	{
+		$data = ['img12.png', 'img10.png', 'img2.png', 'img1.png', 'IMG5.png'];
+		$list1 = new ImmutableList($data);
+		
+		$list2 = $list1->sortManual(fn (string $a, string $b) => $a <=> $b);
+		$this->assertSame(['IMG5.png', 'img1.png', 'img10.png', 'img12.png', 'img2.png'], $list2->get());
+		$this->assertSame($data, $list1->get());
+		
+		$list3 = $list1->sortManual(fn (string $a, string $b) => strnatcmp($a, $b));
+		$this->assertSame(['IMG5.png', 'img1.png', 'img2.png', 'img10.png', 'img12.png'], $list3->get());
+		$this->assertSame($data, $list1->get());
+		
+		$list4 = $list1->sortManual(fn (string $a, string $b) => strnatcasecmp($a, $b));
+		$this->assertSame(['img1.png', 'img2.png', 'IMG5.png', 'img10.png', 'img12.png'], $list4->get());
+		$this->assertSame($data, $list1->get());
+	}
 }

@@ -435,7 +435,7 @@ abstract class Collection implements Iterator, ArrayAccess
 			],
 		];
 		
-		if ($sortByKeys) // sorting by keys preserves them as well
+		if ($sortByKeys)
 		{
 			$type = 1;
 		}
@@ -457,6 +457,10 @@ abstract class Collection implements Iterator, ArrayAccess
 		else
 		{
 			$map['regular'][$ascending][$type]($data, $flags);
+		}
+		
+		if ($sortByKeys && !$preserveKeys) {
+			$data = array_values($data);
 		}
 		
 		return $data;

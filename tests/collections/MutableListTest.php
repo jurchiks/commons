@@ -133,4 +133,40 @@ class MutableListTest extends TestCase
 		
 		$this->assertSame(range(1, 10), $list->get());
 	}
+	
+	public function testSort(): void
+	{
+		$list = new MutableList(range(5, 1));
+		
+		$list->sort(true);
+		$this->assertSame(range(1, 5), $list->get());
+		
+		$list->sort(false);
+		$this->assertSame(range(5, 1), $list->get());
+		
+		$list = new MutableList(['img12.png', 'img10.png', 'img2.png', 'img1.png', 'IMG5.png']);
+		
+		$list->sort(true);
+		$this->assertSame(['IMG5.png', 'img1.png', 'img10.png', 'img12.png', 'img2.png'], $list->get());
+		
+		$list->sort(true, SORT_NATURAL);
+		$this->assertSame(['IMG5.png', 'img1.png', 'img2.png', 'img10.png', 'img12.png'], $list->get());
+		
+		$list->sort(true, SORT_NATURAL | SORT_FLAG_CASE);
+		$this->assertSame(['img1.png', 'img2.png', 'IMG5.png', 'img10.png', 'img12.png'], $list->get());
+	}
+	
+	public function testSortManual(): void
+	{
+		$list = new MutableList(['img12.png', 'img10.png', 'img2.png', 'img1.png', 'IMG5.png']);
+		
+		$list->sortManual(fn (string $a, string $b) => $a <=> $b);
+		$this->assertSame(['IMG5.png', 'img1.png', 'img10.png', 'img12.png', 'img2.png'], $list->get());
+		
+		$list->sortManual(fn (string $a, string $b) => strnatcmp($a, $b));
+		$this->assertSame(['IMG5.png', 'img1.png', 'img2.png', 'img10.png', 'img12.png'], $list->get());
+		
+		$list->sortManual(fn (string $a, string $b) => strnatcasecmp($a, $b));
+		$this->assertSame(['img1.png', 'img2.png', 'IMG5.png', 'img10.png', 'img12.png'], $list->get());
+	}
 }

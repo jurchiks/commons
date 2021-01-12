@@ -62,14 +62,19 @@ class MutableMap extends ArrayMap
 		return $this;
 	}
 	
-	public function sort(bool $ascending, int $flags, bool $sortByKeys, bool $preserveKeys): ArrayMap
+	public function sort(
+		bool $ascending = true,
+		int $flags = SORT_REGULAR,
+		bool $sortByKeys = false,
+		bool $preserveKeys = true
+	): ArrayMap
 	{
 		$this->data = $this->sortData($ascending, $flags, $sortByKeys, $preserveKeys, null);
 		
 		return $this;
 	}
 	
-	public function sortManual(bool $sortByKeys, bool $preserveKeys, callable $callback): ArrayMap
+	public function sortManual(callable $callback, bool $sortByKeys = false, bool $preserveKeys = true): ArrayMap
 	{
 		$this->data = $this->sortData(false, 0, $sortByKeys, $preserveKeys, $callback);
 		

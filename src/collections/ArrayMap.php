@@ -113,26 +113,36 @@ abstract class ArrayMap extends Collection
 	 * <li>SORT_NATURAL - compare items as strings using "natural ordering"</li>
 	 * <li>SORT_FLAG_CASE - can be combined with SORT_STRING or SORT_NATURAL to sort strings case-insensitively</li>
 	 * </ul>
-	 * @param bool $sortByKeys : if true, the sorting will occur based on keys, not values
+	 * @param bool $sortByKeys : if true, the sorting will occur based on keys instead of values
 	 * @param bool $preserveKeys : if true, keys will be preserved as the values are reordered
 	 * @return ArrayMap
 	 */
-	public abstract function sort(bool $ascending, int $flags, bool $sortByKeys, bool $preserveKeys): ArrayMap;
+	public abstract function sort(
+		bool $ascending = true,
+		int $flags = SORT_REGULAR,
+		bool $sortByKeys = false,
+		bool $preserveKeys = true
+	): ArrayMap;
 	
 	/**
 	 * Sort the collection using a custom comparison function.
 	 * Callback returns the standard string comparison values (-1, 0, 1).
 	 *
-	 * @param bool $sortByKeys : if true, the sorting will occur based on keys, not values
-	 * @param bool $preserveKeys : if true, keys will be preserved as the values are reordered
 	 * @param callable $callback : the callback function to determine the sort order.
 	 * Callback signature - ($a, $b) => int
+	 * @param bool $sortByKeys : if true, the sorting will occur based on keys instead of values
+	 * @param bool $preserveKeys : if true, keys will be preserved as the values are reordered
 	 * @return ArrayMap
 	 */
-	public abstract function sortManual(bool $sortByKeys, bool $preserveKeys, callable $callback): ArrayMap;
+	public abstract function sortManual(
+		callable $callback,
+		bool $sortByKeys = false,
+		bool $preserveKeys = true
+	): ArrayMap;
 	
 	/**
 	 * Reduce the map to a single value using a user-provided callback.
+	 *
 	 * @param callable $callback : the callback function to apply.
 	 * Callback signature - ($value, $key, $previous) => mixed
 	 * @param mixed $initialValue : the initial value to provide for parameter $previous

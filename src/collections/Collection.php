@@ -4,6 +4,7 @@ namespace js\tools\commons\collections;
 use ArrayAccess;
 use InvalidArgumentException;
 use Iterator;
+use Traversable;
 
 abstract class Collection implements Iterator, ArrayAccess
 {
@@ -11,7 +12,7 @@ abstract class Collection implements Iterator, ArrayAccess
 	
 	public function __construct(iterable $data)
 	{
-		$this->data = is_array($data) ? $data : $this->extractData($data);
+		$this->data = ($data instanceof Traversable) ? iterator_to_array($data) : $data;
 	}
 	
 	public function __clone()
@@ -317,18 +318,6 @@ abstract class Collection implements Iterator, ArrayAccess
 	public abstract function toMutable();
 	
 	public abstract function toImmutable();
-	
-	protected final function extractData(iterable $source): array
-	{
-		$data = [];
-		
-		foreach ($source as $key => $value)
-		{
-			$data[$key] = $value;
-		}
-		
-		return $data;
-	}
 	
 	protected final function mapData(callable $callback): array
 	{

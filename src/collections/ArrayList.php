@@ -1,13 +1,15 @@
 <?php
 namespace js\tools\commons\collections;
 
+use Traversable;
+
 abstract class ArrayList extends Collection
 {
 	public function __construct(iterable $data)
 	{
-		if (!is_array($data))
+		if ($data instanceof Traversable)
 		{
-			$data = $this->extractData($data);
+			$data = iterator_to_array($data);
 		}
 		
 		parent::__construct(array_values($data));

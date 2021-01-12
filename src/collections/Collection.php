@@ -412,29 +412,33 @@ abstract class Collection implements Iterator, ArrayAccess
 	}
 	
 	protected final function sortData(
-		bool $ascending, int $flags, bool $sortByKeys, bool $preserveKeys, callable $callback = null
+		bool $ascending,
+		int $flags,
+		bool $sortByKeys,
+		bool $preserveKeys,
+		callable $callback = null
 	): array
 	{
-		static $map = [
-			'callback' => [
-				1 => 'uksort',
-				2 => 'uasort',
-				3 => 'usort',
-			],
-			'regular'  => [
-				true  => [
-					1 => 'ksort',
-					2 => 'asort',
-					3 => 'sort',
-				],
-				false => [
-					1 => 'krsort',
-					2 => 'arsort',
-					3 => 'rsort',
-				],
-			],
-		];
+		$sortingFunction = self::pickSortingFunction($callback !== null, $ascending, $sortByKeys, $preserveKeys);
 		
+		$data = $this->data;
+		$sortingFunction($data, $callback ?: $flags);
+		
+		if ($sortByKeys && !$preserveKeys)
+		{
+			$data = array_values($data);
+		}
+		
+		return $data;
+	}
+	
+	private static function pickSortingFunction(
+		bool $useCallback,
+		bool $ascending,
+		bool $sortByKeys,
+		bool $preserveKeys
+	): callable
+	{
 		if ($sortByKeys)
 		{
 			$type = 1;
@@ -448,21 +452,29 @@ abstract class Collection implements Iterator, ArrayAccess
 			$type = 3;
 		}
 		
-		$data = $this->data;
-		
-		if ($callback)
+		if ($useCallback)
 		{
-			$map['callback'][$type]($data, $callback);
+			return [
+				1 => 'uksort',
+				2 => 'uasort',
+				3 => 'usort',
+			][$type];
+		}
+		else if ($ascending)
+		{
+			return [
+				1 => 'ksort',
+				2 => 'asort',
+				3 => 'sort',
+			][$type];
 		}
 		else
 		{
-			$map['regular'][$ascending][$type]($data, $flags);
+			return [
+				1 => 'krsort',
+				2 => 'arsort',
+				3 => 'rsort',
+			][$type];
 		}
-		
-		if ($sortByKeys && !$preserveKeys) {
-			$data = array_values($data);
-		}
-		
-		return $data;
 	}
 }

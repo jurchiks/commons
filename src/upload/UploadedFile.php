@@ -76,6 +76,15 @@ class UploadedFile
 	}
 	
 	/**
+	 * Get the absolute path to the temporary uploaded file.
+	 * This can then be passed to {@link move_uploaded_file()} to move it wherever necessary.
+	 */
+	public function getTempFilePath(): string
+	{
+		return $this->path;
+	}
+	
+	/**
 	 * Get the error code of the upload status.
 	 *
 	 * @see getErrorConstant

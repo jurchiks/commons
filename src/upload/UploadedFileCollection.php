@@ -1,8 +1,8 @@
 <?php
 namespace js\tools\commons\upload;
 
-use js\tools\commons\traits\DataAccessor;
 use js\tools\commons\exceptions\upload\UploadException;
+use js\tools\commons\traits\DataAccessor;
 
 class UploadedFileCollection
 {
@@ -47,8 +47,8 @@ class UploadedFileCollection
 	 * </ul>
 	 * Obviously, such structure is confusing and can cause headache for anyone.
 	 * Thankfully, it is consistently inconsistent and thus can be reliably converted to a consistent, intuitive
-	 * structure. This method converts all of these formats to nested arrays of {@link UploadedFile} objects, such that the
-	 * input of the following:
+	 * structure. This method converts all of these formats to nested arrays of {@link UploadedFile} objects,
+	 * such that the input of the following:
 	 * <ul>
 	 * <li>&lt;input type="file" name="file1" /&gt;<br/>
 	 * results in ['file1' => {@link UploadedFile}]</li>
@@ -69,11 +69,6 @@ class UploadedFileCollection
 	 */
 	public function __construct(array $files, bool $throwException = true)
 	{
-		if (empty($files))
-		{
-			return;
-		}
-		
 		foreach ($files as $key => $file)
 		{
 			$files[$key] = self::normalizeFile($file, $throwException);

@@ -2,7 +2,6 @@
 namespace js\tools\commons\upload;
 
 use finfo;
-use js\tools\commons\exceptions\upload\FileMoveException;
 
 /**
  * This class is a wrapper for data contained in the $_FILES array.
@@ -22,8 +21,6 @@ class UploadedFile
 	private $type = null;
 	/** @var string */
 	private $originalType;
-	
-	private $hasBeenMoved = false;
 	
 	public function __construct(array $data)
 	{
@@ -149,57 +146,5 @@ class UploadedFile
 		];
 		
 		return $messages[$this->statusCode];
-	}
-	
-	/**
-	 * Move the newly uploaded file to another directory and optionally rename it.
-	 * This method can only be called once, subsequent calls will throw an exception.
-	 *
-	 * @param string $destination : the absolute path to where to move the file; if this does not include the file name,
-	 * the original file name is used
-	 * @return string the absolute path to the moved file
-	 * @throws FileMoveException if anything is wrong or if attempting to move the file more than once
-	 */
-	public function moveTo(string $destination)
-	{
-		if (!$this->isValid())
-		{
-			throw new FileMoveException('File was not uploaded successfully and thus cannot be moved');
-		}
-		
-		if ($this->hasBeenMoved)
-		{
-			throw new FileMoveException('Uploaded file has already been moved');
-		}
-		
-		if (is_dir($destination))
-		{
-			$directory = $destination;
-			$filename = $this->name;
-		}
-		else
-		{
-			$directory = dirname($destination);
-			$filename = basename($destination);
-		}
-		
-		if (!is_dir($directory))
-		{
-			throw new FileMoveException($destination . ' - folder does not exist');
-		}
-		
-		if (!is_writable($directory))
-		{
-			throw new FileMoveException($destination . ' - folder is not writable, check permissions');
-		}
-		
-		if (!move_uploaded_file($this->path, $directory . DIRECTORY_SEPARATOR . $filename))
-		{
-			throw new FileMoveException('Failed to move uploaded file to ' . $destination);
-		}
-		
-		$this->hasBeenMoved = true;
-		
-		return $directory . DIRECTORY_SEPARATOR . $filename;
 	}
 }

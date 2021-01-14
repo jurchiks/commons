@@ -34,8 +34,7 @@ if (!empty($_FILES))
 			echo 'size=', $files[0]->getSize(), ' bytes<br/>';
 			echo 'MIME=', $files[0]->getMimeType(), '<br/>';
 			echo 'error=', $files[0]->getErrorMessage(), '<br/>';
-			
-			echo 'new file path=', $files[0]->moveTo(__DIR__), '<br/>';
+			echo 'temp file path=', $files[0]->getTempFilePath(__DIR__), '<br/>';
 		}
 		else
 		{

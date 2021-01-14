@@ -1,7 +1,7 @@
 <?php
 namespace js\tools\commons\upload;
 
-use js\tools\commons\exceptions\upload\UnsupportedActionException;
+use finfo;
 use js\tools\commons\exceptions\upload\FileMoveException;
 
 /**
@@ -20,12 +20,15 @@ class UploadedFile
 	private $path;
 	/** @var string */
 	private $type = null;
+	/** @var string */
+	private $originalType;
 	
 	private $hasBeenMoved = false;
 	
 	public function __construct(array $data)
 	{
 		$this->name = $data['name'];
+		$this->originalType = $data['type'];
 		$this->statusCode = $data['error'];
 		$this->size = $data['size'];
 		$this->path = $data['tmp_name'];
@@ -49,27 +52,18 @@ class UploadedFile
 	
 	/**
 	 * Get the MIME type of the uploaded file.
-	 * This does not use the MIME type contained in the $_FILES array as that value cannot be trusted.
-	 * 
-	 * @throws UnsupportedActionException
+	 * If the file was uploaded successfully and the `fileinfo` extension is enabled,
+	 * this will read the MIME type from the file contents instead of from the upload info.
 	 */
 	public function getMimeType(): string
 	{
-		if (!$this->isValid())
+		if (($this->type === null) && $this->isValid() && extension_loaded('fileinfo'))
 		{
-			throw new UnsupportedActionException('File was not uploaded successfully, MIME type cannot be retrieved');
+			$this->type = (new finfo(FILEINFO_MIME_TYPE))->file($this->path);
 		}
-		
-		if ($this->type === null)
+		else
 		{
-			if (!extension_loaded('fileinfo'))
-			{
-				throw new UnsupportedActionException('Missing required extension: fileinfo');
-			}
-			
-			$file = finfo_open(FILEINFO_MIME_TYPE);
-			$this->type = finfo_file($file, $this->path);
-			finfo_close($file);
+			$this->type = $this->originalType;
 		}
 		
 		return $this->type;

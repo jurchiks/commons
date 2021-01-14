@@ -2,7 +2,7 @@
 namespace js\tools\commons\upload;
 
 use js\tools\commons\traits\DataAccessor;
-use js\tools\commons\upload\exceptions\UploadException;
+use js\tools\commons\exceptions\upload\UploadException;
 
 class UploadedFileCollection
 {

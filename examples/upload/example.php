@@ -9,7 +9,7 @@
 <?php
 require __DIR__ . '/../autoloader.php';
 
-use js\tools\commons\upload\exceptions\UploadException;
+use js\tools\commons\exceptions\upload\UploadException;
 use js\tools\commons\upload\UploadedFile;
 use js\tools\commons\upload\UploadedFileCollection;
 

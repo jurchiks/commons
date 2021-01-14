@@ -1,5 +1,5 @@
 <?php
-namespace js\tools\commons\upload\exceptions;
+namespace js\tools\commons\exceptions\upload;
 
 use Exception;
 use js\tools\commons\upload\UploadedFile;

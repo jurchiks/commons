@@ -11,7 +11,9 @@ class MutableList extends ArrayList
 	{
 		if (!$this->offsetExists($offset))
 		{
-			throw new InvalidArgumentException('Offset does not exist; only modifications of existing offsets are allowed. Consider using add() instead.');
+			throw new InvalidArgumentException(
+				'Offset does not exist; only modifications of existing offsets are allowed. Consider using add() instead.'
+			);
 		}
 		
 		$this->data[$offset] = $value;

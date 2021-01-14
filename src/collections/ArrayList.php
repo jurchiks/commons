@@ -139,6 +139,7 @@ abstract class ArrayList extends Collection
 	
 	/**
 	 * Reduce the list to a single value using a user-provided callback.
+	 *
 	 * @param callable $callback : the callback function to apply.
 	 * Callback signature - ($value, $previous) => mixed
 	 * @param mixed $initialValue : the initial value to provide for parameter $previous

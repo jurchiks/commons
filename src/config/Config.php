@@ -20,7 +20,7 @@ class Config
 		
 		if ($isJson)
 		{
-			$data = json_decode(file_get_contents($pathToFile));
+			$data = json_decode(file_get_contents($pathToFile), true);
 		}
 		else
 		{
@@ -37,7 +37,7 @@ class Config
 	
 	public static function loadFromJson(string $json)
 	{
-		$data = json_decode($json);
+		$data = json_decode($json, true);
 		
 		if (!is_array($data))
 		{

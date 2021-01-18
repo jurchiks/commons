@@ -55,7 +55,7 @@ class Template
 	{
 		if (!$this->exists($name))
 		{
-			throw new TemplateException('Trying to access undefined variable ' . $name);
+			throw new TemplateException('Trying to access undefined variable "' . $name . '"');
 		}
 		
 		return $this->get($name);
@@ -80,6 +80,7 @@ class Template
 	{
 		if ($this->lastBlock !== false)
 		{
+			ob_end_clean(); // Clean after previous block.
 			throw new TemplateException('Nested blocks are not allowed');
 		}
 		
@@ -123,7 +124,8 @@ class Template
 			
 			if ($this->lastBlock !== false)
 			{
-				throw new TemplateException('Unclosed block ' . $this->lastBlock);
+				ob_end_clean(); // Clean up after previous block.
+				throw new TemplateException('Unclosed block "' . $this->lastBlock . '"');
 			}
 			
 			$content = ob_get_clean();
@@ -136,16 +138,13 @@ class Template
 			);
 		}
 		
-		$parent = $this->parent;
-		
-		while ($parent instanceof Template)
+		if ($this->parent instanceof Template)
 		{
+			$parent = $this->parent;
 			$parent->blocks = $this->blocks;
 			$parent->content = $content;
 			
 			$content = $parent->render();
-			
-			$parent = $parent->parent;
 		}
 		
 		return $content;

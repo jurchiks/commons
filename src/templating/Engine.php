@@ -81,7 +81,7 @@ class Engine
 		
 		if ($found === '')
 		{
-			throw new TemplateException('Invalid template path ' . $path);
+			throw new TemplateException('Invalid template path "' . $path . '"');
 		}
 		
 		return new Template($found, $data, $this);

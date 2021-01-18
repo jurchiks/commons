@@ -179,16 +179,9 @@ class Uri
 	{
 		$path = '/' . trim($path, '/');
 		
-		if ($path === '/')
-		{
-			$this->path = '/';
-		}
-		else
-		{
-			self::validatePath($path);
-			
-			$this->path = $path;
-		}
+		self::validatePath($path);
+		
+		$this->path = $path;
 		
 		return $this;
 	}

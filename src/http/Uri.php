@@ -350,7 +350,7 @@ class Uri
 	{
 		if (!in_array($scheme, self::SUPPORTED_SCHEMES))
 		{
-			throw new UriException('Unsupported URI scheme');
+			throw new UriException('Unsupported URI scheme "' . $scheme . '"');
 		}
 	}
 	
@@ -419,7 +419,6 @@ class Uri
 		}
 		else if (!is_scalar($value))
 		{
-			// non-scalar values and booleans can't be put in URLs
 			throw new UriException('Invalid query parameter "' . gettype($value) . '" for key "' . $key . '"');
 		}
 	}

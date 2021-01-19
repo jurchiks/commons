@@ -1,33 +1,18 @@
 <?php
 namespace js\tools\commons\collections;
 
+use ArrayAccess;
 use InvalidArgumentException;
 use Iterator;
 use Traversable;
 
-abstract class Collection implements Iterator
+abstract class Collection implements Iterator, ArrayAccess
 {
-	protected $data;
+	protected array $data;
 	
-	/**
-	 * @param array|Traversable $data
-	 */
-	public function __construct($data)
+	public function __construct(iterable $data)
 	{
-		if (is_array($data))
-		{
-			$this->data = $data;
-		}
-		else if ($data instanceof Traversable)
-		{
-			$this->data = $this->generateData($data);
-		}
-		else
-		{
-			throw new InvalidArgumentException(
-				'Unsupported data type: ' . is_object($data) ? get_class($data) : gettype($data)
-			);
-		}
+		$this->data = ($data instanceof Traversable) ? iterator_to_array($data) : $data;
 	}
 	
 	public function __clone()
@@ -119,12 +104,7 @@ abstract class Collection implements Iterator
 	 */
 	public function getKeys($value, int $limit = 0): array
 	{
-		$predicate = function ($v, $k) use ($value)
-		{
-			return ($v === $value);
-		};
-		
-		return $this->find($predicate, true, $limit);
+		return $this->find(fn ($v) => ($v === $value), true, $limit);
 	}
 	
 	/**
@@ -139,7 +119,14 @@ abstract class Collection implements Iterator
 	{
 		$data = $this->find($predicate, false, $findFirst ? 1 : -1);
 		
-		return new Option($data[0] ?? null, isset($data[0]));
+		if (empty($data))
+		{
+			return new Option(null, false);
+		}
+		else
+		{
+			return new Option($data[0], true);
+		}
 	}
 	
 	/**
@@ -277,7 +264,7 @@ abstract class Collection implements Iterator
 		}
 	}
 	
-	// ============== Iterator methods - START ==============
+	// region Iterator methods
 	
 	public function rewind()
 	{
@@ -306,7 +293,7 @@ abstract class Collection implements Iterator
 		next($this->data);
 	}
 	
-	// ============== Iterator methods - END ==============
+	// endregion
 	
 	// not officially part of the Iterator interface, but good to have just in case
 	public function prev()
@@ -314,21 +301,23 @@ abstract class Collection implements Iterator
 		prev($this->data);
 	}
 	
-	public abstract function mutable();
+	// region ArrayAccess methods
 	
-	public abstract function immutable();
-	
-	protected final function generateData(Traversable $source): array
+	public function offsetExists($offset): bool
 	{
-		$data = [];
-		
-		foreach ($source as $key => $value)
-		{
-			$data[$key] = $value;
-		}
-		
-		return $data;
+		return isset($this->data[$offset]);
 	}
+	
+	public function offsetGet($offset)
+	{
+		return ($this->data[$offset] ?? null);
+	}
+	
+	// endregion
+	
+	public abstract function toMutable();
+	
+	public abstract function toImmutable();
 	
 	protected final function mapData(callable $callback): array
 	{
@@ -412,30 +401,34 @@ abstract class Collection implements Iterator
 	}
 	
 	protected final function sortData(
-		bool $ascending, int $flags, bool $sortByKeys, bool $preserveKeys, callable $callback = null
+		bool $ascending,
+		int $flags,
+		bool $sortByKeys,
+		bool $preserveKeys,
+		callable $callback = null
 	): array
 	{
-		static $map = [
-			'callback' => [
-				1 => 'uksort',
-				2 => 'uasort',
-				3 => 'usort',
-			],
-			'regular'  => [
-				true  => [
-					1 => 'ksort',
-					2 => 'asort',
-					3 => 'sort',
-				],
-				false => [
-					1 => 'krsort',
-					2 => 'arsort',
-					3 => 'rsort',
-				],
-			],
-		];
+		$sortingFunction = self::pickSortingFunction($callback !== null, $ascending, $sortByKeys, $preserveKeys);
 		
-		if ($sortByKeys) // sorting by keys preserves them as well
+		$data = $this->data;
+		$sortingFunction($data, $callback ?: $flags);
+		
+		if ($sortByKeys && !$preserveKeys)
+		{
+			$data = array_values($data);
+		}
+		
+		return $data;
+	}
+	
+	private static function pickSortingFunction(
+		bool $useCallback,
+		bool $ascending,
+		bool $sortByKeys,
+		bool $preserveKeys
+	): callable
+	{
+		if ($sortByKeys)
 		{
 			$type = 1;
 		}
@@ -448,17 +441,29 @@ abstract class Collection implements Iterator
 			$type = 3;
 		}
 		
-		$data = $this->data;
-		
-		if ($callback)
+		if ($useCallback)
 		{
-			$map['callback'][$type]($data, $callback);
+			return [
+				1 => 'uksort',
+				2 => 'uasort',
+				3 => 'usort',
+			][$type];
+		}
+		else if ($ascending)
+		{
+			return [
+				1 => 'ksort',
+				2 => 'asort',
+				3 => 'sort',
+			][$type];
 		}
 		else
 		{
-			$map['regular'][$ascending][$type]($data, $flags);
+			return [
+				1 => 'krsort',
+				2 => 'arsort',
+				3 => 'rsort',
+			][$type];
 		}
-		
-		return $data;
 	}
 }

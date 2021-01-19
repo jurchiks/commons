@@ -1,33 +1,21 @@
 <?php
 namespace js\tools\commons\collections;
 
-use ArrayAccess;
-
-class MutableMap extends ArrayMap implements ArrayAccess
+class MutableMap extends ArrayMap
 {
-	// ============== ArrayAccess methods - START ==============
-	
-	public function offsetExists($offset): bool
-	{
-		return array_key_exists($this->data, $offset);
-	}
-	
-	public function offsetGet($offset)
-	{
-		return ($this->data[$offset] ?? null);
-	}
+	// region ArrayAccess methods
 	
 	public function offsetSet($offset, $value)
 	{
-		$this->data[$offset] = $value;
+		$this->set($offset, $value);
 	}
 	
 	public function offsetUnset($offset)
 	{
-		unset($this->data[$offset]);
+		$this->unset($offset);
 	}
 	
-	// ============== ArrayAccess methods - END ==============
+	// endregion
 	
 	public function set($key, $value): ArrayMap
 	{
@@ -74,14 +62,19 @@ class MutableMap extends ArrayMap implements ArrayAccess
 		return $this;
 	}
 	
-	public function sort(bool $ascending, int $flags, bool $sortByKeys, bool $preserveKeys): ArrayMap
+	public function sort(
+		bool $ascending = true,
+		int $flags = SORT_REGULAR,
+		bool $sortByKeys = false,
+		bool $preserveKeys = true
+	): ArrayMap
 	{
 		$this->data = $this->sortData($ascending, $flags, $sortByKeys, $preserveKeys, null);
 		
 		return $this;
 	}
 	
-	public function sortManual(bool $sortByKeys, bool $preserveKeys, callable $callback): ArrayMap
+	public function sortManual(callable $callback, bool $sortByKeys = false, bool $preserveKeys = true): ArrayMap
 	{
 		$this->data = $this->sortData(false, 0, $sortByKeys, $preserveKeys, $callback);
 		

@@ -9,48 +9,59 @@ abstract class ArrayMap extends Collection
 	
 	public function remove($value): ArrayMap
 	{
-		return $this->filter(function ($v, $k) use ($value)
-		{
-			return ($v !== $value);
-		}, true);
+		return $this->filter(fn ($v) => ($v !== $value), true);
 	}
 	
 	/**
-	 * Clone this collection into another, mutable collection.
+	 * Clone this map into another, mutable map.
 	 *
-	 * @return MutableMap a mutable collection containing the same data as this collection
+	 * @return MutableMap a mutable map containing the same data as this map
+	 * @see toImmutable()
+	 * @see toMutableList()
+	 * @see toImmutableList()
 	 */
-	public function mutable(): MutableMap
+	public function toMutable(): MutableMap
 	{
 		return new MutableMap($this->data);
 	}
 	
 	/**
-	 * Clone this collection into another, immutable collection.
+	 * Clone this map into another, immutable map.
 	 *
-	 * @return ImmutableMap an immutable collection containing the same data as this collection
+	 * @return ImmutableMap an immutable map containing the same data as this map
+	 * @see toMutable()
+	 * @see toMutableList()
+	 * @see toImmutableList()
 	 */
-	public function immutable(): ImmutableMap
+	public function toImmutable(): ImmutableMap
 	{
 		return new ImmutableMap($this->data);
 	}
 	
 	/**
-	 * Copy the values of this collection into a list. Keys are not preserved.
+	 * Copy the values of this map into a list. Keys are not preserved.
 	 *
-	 * @param bool $mutable : if true, will return a MutableList, otherwise an ImmutableList
-	 * @return ArrayList
+	 * @return MutableList
+	 * @see toImmutableList()
+	 * @see toMutable()
+	 * @see toImmutable()
 	 */
-	public function toList(bool $mutable): ArrayList
+	public function toMutableList(): MutableList
 	{
-		if ($mutable)
-		{
-			return new MutableList(array_values($this->data));
-		}
-		else
-		{
-			return new ImmutableList(array_values($this->data));
-		}
+		return new MutableList($this->data);
+	}
+	
+	/**
+	 * Copy the values of this map into a list. Keys are not preserved.
+	 *
+	 * @return ImmutableList
+	 * @see toMutableList()
+	 * @see toMutable()
+	 * @see toImmutable()
+	 */
+	public function toImmutableList(): ImmutableList
+	{
+		return new ImmutableList($this->data);
 	}
 	
 	/**
@@ -102,26 +113,36 @@ abstract class ArrayMap extends Collection
 	 * <li>SORT_NATURAL - compare items as strings using "natural ordering"</li>
 	 * <li>SORT_FLAG_CASE - can be combined with SORT_STRING or SORT_NATURAL to sort strings case-insensitively</li>
 	 * </ul>
-	 * @param bool $sortByKeys : if true, the sorting will occur based on keys, not values
+	 * @param bool $sortByKeys : if true, the sorting will occur based on keys instead of values
 	 * @param bool $preserveKeys : if true, keys will be preserved as the values are reordered
 	 * @return ArrayMap
 	 */
-	public abstract function sort(bool $ascending, int $flags, bool $sortByKeys, bool $preserveKeys): ArrayMap;
+	public abstract function sort(
+		bool $ascending = true,
+		int $flags = SORT_REGULAR,
+		bool $sortByKeys = false,
+		bool $preserveKeys = true
+	): ArrayMap;
 	
 	/**
 	 * Sort the collection using a custom comparison function.
 	 * Callback returns the standard string comparison values (-1, 0, 1).
 	 *
-	 * @param bool $sortByKeys : if true, the sorting will occur based on keys, not values
-	 * @param bool $preserveKeys : if true, keys will be preserved as the values are reordered
 	 * @param callable $callback : the callback function to determine the sort order.
-	 * Callback signature - ($value) => int
+	 * Callback signature - ($a, $b) => int
+	 * @param bool $sortByKeys : if true, the sorting will occur based on keys instead of values
+	 * @param bool $preserveKeys : if true, keys will be preserved as the values are reordered
 	 * @return ArrayMap
 	 */
-	public abstract function sortManual(bool $sortByKeys, bool $preserveKeys, callable $callback): ArrayMap;
+	public abstract function sortManual(
+		callable $callback,
+		bool $sortByKeys = false,
+		bool $preserveKeys = true
+	): ArrayMap;
 	
 	/**
 	 * Reduce the map to a single value using a user-provided callback.
+	 *
 	 * @param callable $callback : the callback function to apply.
 	 * Callback signature - ($value, $key, $previous) => mixed
 	 * @param mixed $initialValue : the initial value to provide for parameter $previous

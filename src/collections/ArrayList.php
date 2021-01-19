@@ -1,13 +1,18 @@
 <?php
 namespace js\tools\commons\collections;
 
+use Traversable;
+
 abstract class ArrayList extends Collection
 {
-	public function __construct($data)
+	public function __construct(iterable $data)
 	{
-		parent::__construct($data);
+		if ($data instanceof Traversable)
+		{
+			$data = iterator_to_array($data);
+		}
 		
-		$this->data = array_values($this->data);
+		parent::__construct(array_values($data));
 	}
 	
 	public abstract function append(...$values): ArrayList;
@@ -16,55 +21,66 @@ abstract class ArrayList extends Collection
 	
 	public function remove($value): ArrayList
 	{
-		return $this->filter(function ($v, $k) use ($value)
-		{
-			return ($v !== $value);
-		});
+		return $this->filter(fn ($v) => ($v !== $value));
 	}
 	
 	/**
-	 * Clone this collection into another, mutable collection.
+	 * Clone this list into another, mutable list.
 	 *
-	 * @return MutableList a mutable collection containing the same data as this collection
+	 * @return MutableList a mutable list containing the same data as this list
+	 * @see toImmutable()
+	 * @see toMutableMap()
+	 * @see toImmutableMap()
 	 */
-	public function mutable(): MutableList
+	public function toMutable(): MutableList
 	{
 		return new MutableList($this->data);
 	}
 	
 	/**
-	 * Clone this collection into another, immutable collection.
+	 * Clone this list into another, immutable list.
 	 *
-	 * @return ImmutableList an immutable collection containing the same data as this collection
+	 * @return ImmutableList an immutable list containing the same data as this list
+	 * @see toMutable()
+	 * @see toMutableMap()
+	 * @see toImmutableMap()
 	 */
-	public function immutable(): ImmutableList
+	public function toImmutable(): ImmutableList
 	{
 		return new ImmutableList($this->data);
 	}
 	
 	/**
-	 * Copy the data of this list into a map. Keys are preserved.
+	 * Copy the data of this list into a map. Indexes are preserved.
 	 *
-	 * @param bool $mutable : if true, will return a MutableMap, otherwise an ImmutableMap
-	 * @return ArrayMap
+	 * @return MutableMap
+	 * @see toImmutableMap()
+	 * @see toMutable()
+	 * @see toImmutable()
 	 */
-	public function toMap(bool $mutable): ArrayMap
+	public function toMutableMap(): MutableMap
 	{
-		if ($mutable)
-		{
-			return new MutableMap($this->data);
-		}
-		else
-		{
-			return new ImmutableMap($this->data);
-		}
+		return new MutableMap($this->data);
+	}
+	
+	/**
+	 * Copy the data of this list into a map. Indexes are preserved.
+	 *
+	 * @return ImmutableMap
+	 * @see toMutableMap()
+	 * @see toMutable()
+	 * @see toImmutable()
+	 */
+	public function toImmutableMap(): ImmutableMap
+	{
+		return new ImmutableMap($this->data);
 	}
 	
 	/**
 	 * Modify items in the list. Callback returns the modified value.
 	 *
 	 * @param callable $callback : the callback function to apply to each item in the list.
-	 * Callback signature - ($value) => mixed
+	 * Callback signature - ($value, $index) => mixed
 	 * @return ArrayList
 	 */
 	public abstract function map(callable $callback): ArrayList;
@@ -73,7 +89,7 @@ abstract class ArrayList extends Collection
 	 * Filter items in the list. Callback returns whether to keep the item in the list or remove it.
 	 *
 	 * @param callable $predicate : the callback function to apply to each item in the list.
-	 * Callback signature - ($value) => bool
+	 * Callback signature - ($value, $index) => bool
 	 * @return ArrayList
 	 */
 	public abstract function filter(callable $predicate): ArrayList;
@@ -82,13 +98,13 @@ abstract class ArrayList extends Collection
 	 * Split items into groups. Callback returns the name/key of the group. Note that this returns a map, not a list!
 	 *
 	 * @param callable $callback : the callback function to apply to each item in the list.
-	 * Callback signature - ($value) => scalar
+	 * Callback signature - ($value, $index) => scalar
 	 * @return ArrayMap
 	 */
 	public abstract function group(callable $callback): ArrayMap;
 	
 	/**
-	 * Flatten nested list into a single-level list.
+	 * Flatten a nested list into a single-level list.
 	 *
 	 * @return ArrayList
 	 */
@@ -116,13 +132,14 @@ abstract class ArrayList extends Collection
 	 * Callback returns the standard string comparison values (-1, 0, 1).
 	 *
 	 * @param callable $callback : the callback function to determine the sort order.
-	 * Callback signature - ($value) => int
+	 * Callback signature - ($a, $b) => int
 	 * @return ArrayList
 	 */
 	public abstract function sortManual(callable $callback): ArrayList;
 	
 	/**
 	 * Reduce the list to a single value using a user-provided callback.
+	 *
 	 * @param callable $callback : the callback function to apply.
 	 * Callback signature - ($value, $previous) => mixed
 	 * @param mixed $initialValue : the initial value to provide for parameter $previous

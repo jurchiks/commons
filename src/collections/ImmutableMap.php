@@ -1,12 +1,27 @@
 <?php
 namespace js\tools\commons\collections;
 
+use RuntimeException;
+
 class ImmutableMap extends ArrayMap
 {
+	// region ArrayAccess methods
+	
+	public function offsetSet($offset, $value)
+	{
+		throw new RuntimeException('Direct modification of immutable collections is not allowed.');
+	}
+	
+	public function offsetUnset($offset)
+	{
+		throw new RuntimeException('Direct modification of immutable collections is not allowed.');
+	}
+	
+	// endregion
+	
 	public function set($key, $value): ArrayMap
 	{
 		$data = $this->data;
-		
 		$data[$key] = $value;
 		
 		return new static($data);
@@ -44,12 +59,17 @@ class ImmutableMap extends ArrayMap
 		return new static($this->flattenData($preserveKeys));
 	}
 	
-	public function sort(bool $ascending, int $flags, bool $sortByKeys, bool $preserveKeys): ArrayMap
+	public function sort(
+		bool $ascending = true,
+		int $flags = SORT_REGULAR,
+		bool $sortByKeys = false,
+		bool $preserveKeys = true
+	): ArrayMap
 	{
 		return new static($this->sortData($ascending, $flags, $sortByKeys, $preserveKeys, null));
 	}
 	
-	public function sortManual(bool $sortByKeys, bool $preserveKeys, callable $callback): ArrayMap
+	public function sortManual(callable $callback, bool $sortByKeys = false, bool $preserveKeys = true): ArrayMap
 	{
 		return new static($this->sortData(false, 0, $sortByKeys, $preserveKeys, $callback));
 	}

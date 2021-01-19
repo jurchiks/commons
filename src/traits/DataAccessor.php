@@ -153,7 +153,7 @@ trait DataAccessor
 	{
 		$value = $this->get($name);
 		
-		return (!empty($value) ? $value : $default);
+		return (!empty($value) ? boolval($value) : $default);
 	}
 	
 	public function getArray(string $name, array $default = []): array

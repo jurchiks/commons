@@ -30,7 +30,7 @@ class FileLogger extends Logger
 	
 	protected function formatMessage(string $message, int $level)
 	{
-		return '[' . date('Y-m-d H:i:s') . '] ' . $message . PHP_EOL;
+		return '[' . date('Y-m-d H:i:s') . '] ' . strtoupper(self::getLevelName($level)) . ' ' . $message . PHP_EOL;
 	}
 	
 	protected function write(string $message, int $level)

@@ -1,54 +1,19 @@
 <?php
 namespace js\tools\commons\upload;
 
+use js\tools\commons\exceptions\upload\UploadException;
 use js\tools\commons\traits\DataAccessor;
-use js\tools\commons\upload\exceptions\UploadException;
 
 class UploadedFileCollection
 {
 	use DataAccessor;
 	
 	/**
-	 * Convert all the different $_FILES structures into one intuitive  structure.
-	 * The default PHP implementation of $_FILES returns a different structure for each case of input nesting:
-	 * <ul>
-	 * <li>&lt;input type="file" name="file1" /&gt;<br/>
-	 * returns ['file1' => [
-	 * 'name' => string,
-	 * 'type' => string,
-	 * 'tmp_name' => string,
-	 * 'error' => int,
-	 * 'size' => int
-	 * ]]</li>
-	 * <li>&lt;input type="file" name="file2[]" /&gt;<br/>
-	 * returns ['file2' => [
-	 * 'name' => [0 => string],
-	 * 'type' => [0 => string],
-	 * 'tmp_name' => [0 => string],
-	 * 'error' => [0 => int],
-	 * 'size' => [0 => int],
-	 * ]]</li>
-	 * <li>&lt;input type="file" name="file3[nested]" /&gt;<br/>
-	 * returns ['file3' => [
-	 * 'name' => ['nested' => string],
-	 * 'type' => ['nested' => string],
-	 * 'tmp_name' => ['nested' => string],
-	 * 'error' => ['nested' => int],
-	 * 'size' => ['nested' => int],
-	 * ]]</li>
-	 * <li>&lt;input type="file" name="file4[nested][]" /&gt;<br/>
-	 * returns ['file4' => [
-	 * 'name' => ['nested' => [0 => string]],
-	 * 'type' => ['nested' => [0 => string]],
-	 * 'tmp_name' => ['nested' => [0 => string]],
-	 * 'error' => ['nested' => [0 => int]],
-	 * 'size' => ['nested' => [0 => int]],
-	 * ]]</li>
-	 * </ul>
+	 * Convert all the different `$_FILES` structures into one intuitive structure.
+	 * The default PHP implementation of `$_FILES` returns a different structure for each case of input nesting.
 	 * Obviously, such structure is confusing and can cause headache for anyone.
-	 * Thankfully, it is consistently inconsistent and thus can be reliably converted to a consistent, intuitive
-	 * structure. This method converts all of these formats to nested arrays of {@link UploadedFile} objects, such that the
-	 * input of the following:
+	 * Thankfully, it is consistently inconsistent and thus can be reliably converted to an intuitive structure.
+	 * This class converts all of these formats to nested arrays of {@link UploadedFile} objects as follows:
 	 * <ul>
 	 * <li>&lt;input type="file" name="file1" /&gt;<br/>
 	 * results in ['file1' => {@link UploadedFile}]</li>
@@ -69,11 +34,6 @@ class UploadedFileCollection
 	 */
 	public function __construct(array $files, bool $throwException = true)
 	{
-		if (empty($files))
-		{
-			return;
-		}
-		
 		foreach ($files as $key => $file)
 		{
 			$files[$key] = self::normalizeFile($file, $throwException);

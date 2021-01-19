@@ -1,0 +1,12 @@
+<?php
+/** @var \js\tools\commons\templating\Template $this */
+
+$this->parent(__DIR__ . '/layout.phtml');
+?>
+<header>
+	<div class="logo"></div>
+	<div class="page-title"></div>
+</header>
+<main>
+<?= $this->content() ?>
+</main>

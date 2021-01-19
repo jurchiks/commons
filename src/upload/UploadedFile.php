@@ -1,8 +1,7 @@
 <?php
 namespace js\tools\commons\upload;
 
-use js\tools\commons\exceptions\upload\UnsupportedActionException;
-use js\tools\commons\exceptions\upload\FileMoveException;
+use finfo;
 
 /**
  * This class is a wrapper for data contained in the $_FILES array.
@@ -20,12 +19,13 @@ class UploadedFile
 	private $path;
 	/** @var string */
 	private $type = null;
-	
-	private $hasBeenMoved = false;
+	/** @var string */
+	private $originalType;
 	
 	public function __construct(array $data)
 	{
 		$this->name = $data['name'];
+		$this->originalType = $data['type'];
 		$this->statusCode = $data['error'];
 		$this->size = $data['size'];
 		$this->path = $data['tmp_name'];
@@ -49,30 +49,30 @@ class UploadedFile
 	
 	/**
 	 * Get the MIME type of the uploaded file.
-	 * This does not use the MIME type contained in the $_FILES array as that value cannot be trusted.
-	 * 
-	 * @throws UnsupportedActionException
+	 * If the file was uploaded successfully and the `fileinfo` extension is enabled,
+	 * this will read the MIME type from the file contents instead of from the upload info.
 	 */
 	public function getMimeType(): string
 	{
-		if (!$this->isValid())
+		if (($this->type === null) && $this->isValid() && extension_loaded('fileinfo'))
 		{
-			throw new UnsupportedActionException('File was not uploaded successfully, MIME type cannot be retrieved');
+			$this->type = (new finfo(FILEINFO_MIME_TYPE))->file($this->path);
 		}
-		
-		if ($this->type === null)
+		else
 		{
-			if (!extension_loaded('fileinfo'))
-			{
-				throw new UnsupportedActionException('Missing required extension: fileinfo');
-			}
-			
-			$file = finfo_open(FILEINFO_MIME_TYPE);
-			$this->type = finfo_file($file, $this->path);
-			finfo_close($file);
+			$this->type = $this->originalType;
 		}
 		
 		return $this->type;
+	}
+	
+	/**
+	 * Get the absolute path to the temporary uploaded file.
+	 * This can then be passed to {@link move_uploaded_file()} to move it wherever necessary.
+	 */
+	public function getTempFilePath(): string
+	{
+		return $this->path;
 	}
 	
 	/**
@@ -146,57 +146,5 @@ class UploadedFile
 		];
 		
 		return $messages[$this->statusCode];
-	}
-	
-	/**
-	 * Move the newly uploaded file to another directory and optionally rename it.
-	 * This method can only be called once, subsequent calls will throw an exception.
-	 *
-	 * @param string $destination : the absolute path to where to move the file; if this does not include the file name,
-	 * the original file name is used
-	 * @return string the absolute path to the moved file
-	 * @throws FileMoveException if anything is wrong or if attempting to move the file more than once
-	 */
-	public function moveTo(string $destination)
-	{
-		if (!$this->isValid())
-		{
-			throw new FileMoveException('File was not uploaded successfully and thus cannot be moved');
-		}
-		
-		if ($this->hasBeenMoved)
-		{
-			throw new FileMoveException('Uploaded file has already been moved');
-		}
-		
-		if (is_dir($destination))
-		{
-			$directory = $destination;
-			$filename = $this->name;
-		}
-		else
-		{
-			$directory = dirname($destination);
-			$filename = basename($destination);
-		}
-		
-		if (!is_dir($directory))
-		{
-			throw new FileMoveException($destination . ' - folder does not exist');
-		}
-		
-		if (!is_writable($directory))
-		{
-			throw new FileMoveException($destination . ' - folder is not writable, check permissions');
-		}
-		
-		if (!move_uploaded_file($this->path, $directory . DIRECTORY_SEPARATOR . $filename))
-		{
-			throw new FileMoveException('Failed to move uploaded file to ' . $destination);
-		}
-		
-		$this->hasBeenMoved = true;
-		
-		return $directory . DIRECTORY_SEPARATOR . $filename;
 	}
 }

@@ -27,7 +27,7 @@ class Request
 	{
 		if (!in_array($method, self::METHODS))
 		{
-			throw new HttpException('Unsupported request method');
+			throw new HttpException('Unsupported request method "' . $method . '"');
 		}
 		
 		$this->method = $method;
@@ -48,7 +48,7 @@ class Request
 		
 		if (!in_array($method, self::METHODS))
 		{
-			throw new HttpException('Unsupported request method ' . $method);
+			throw new HttpException('Unsupported request method "' . $method . '"');
 		}
 		
 		if ($method === 'get')
@@ -62,7 +62,7 @@ class Request
 		else
 		{
 			// PHP does not automatically populate $_PUT and $_DELETE variables
-			$body = file_get_contents('php://input');
+			$body = static::getRequestBody();
 			
 			// HTTP_CONTENT_TYPE - PHP built-in server; CONTENT_TYPE - everything else
 			$contentType = $_SERVER['HTTP_CONTENT_TYPE'] ?? $_SERVER['CONTENT_TYPE'] ?? '';
@@ -141,5 +141,10 @@ class Request
 	public function getReferer(): string
 	{
 		return $this->referer;
+	}
+	
+	protected static function getRequestBody(): string
+	{
+		return file_get_contents('php://input');
 	}
 }

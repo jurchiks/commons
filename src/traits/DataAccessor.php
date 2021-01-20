@@ -62,35 +62,31 @@ trait DataAccessor
 	
 	public function getInt(string $name, int $default = 0): int
 	{
-		$value = $this->get($name);
+		$value = $this->get($name, $default);
 		
 		return (is_numeric($value) ? intval($value) : $default);
 	}
 	
 	public function getFloat(string $name, float $default = 0): float
 	{
-		$value = $this->get($name);
+		$value = $this->get($name, $default);
 		
 		return (is_numeric($value) ? floatval($value) : $default);
 	}
 	
 	public function getString(string $name, string $default = ''): string
 	{
-		$value = $this->get($name);
-		
-		return (!is_null($value) ? strval($value) : $default);
+		return strval($this->get($name, $default));
 	}
 	
 	public function getBool(string $name, bool $default = false): bool
 	{
-		$value = $this->get($name);
-		
-		return (!empty($value) ? boolval($value) : $default);
+		return boolval($this->get($name, $default));
 	}
 	
 	public function getArray(string $name, array $default = []): array
 	{
-		$value = $this->get($name);
+		$value = $this->get($name, $default);
 		
 		return (is_array($value) ? $value : $default);
 	}

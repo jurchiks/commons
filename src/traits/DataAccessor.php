@@ -1,6 +1,10 @@
 <?php
 namespace js\tools\commons\traits;
 
+use js\tools\commons\collections\None;
+use js\tools\commons\collections\Option;
+use js\tools\commons\collections\Some;
+
 /**
  * This trait adds the ability to access array data in a convenient manner, i.e. by using dot notation for nested
  * arrays. There are also convenience methods for casting to a specific data type.
@@ -42,44 +46,7 @@ trait DataAccessor
 	
 	public function exists(string $name): bool
 	{
-		$data = $this->getAll();
-		
-		if (isset($data[$name]))
-		{
-			return true;
-		}
-		
-		if (strpos($name, '.') === false)
-		{
-			return false;
-		}
-		
-		$parts = explode('.', $name);
-		$found = [];
-		$value = null;
-		
-		foreach ($parts as $key)
-		{
-			if (is_null($value))
-			{
-				// first level
-				if (isset($data[$key]))
-				{
-					$value = $data[$key];
-					$found[$key] = true;
-				}
-			}
-			else if (isset($value[$key]))
-			{
-				// nested levels, e.g. $name = "database.host"
-				$value = $value[$key];
-				$found[$key] = true;
-			}
-		}
-		
-		unset($value);
-		
-		return ($parts === array_keys($found));
+		return $this->search($name)->isFound();
 	}
 	
 	/**
@@ -90,42 +57,7 @@ trait DataAccessor
 	 */
 	public function get(string $name, $default = null)
 	{
-		$data = $this->getAll();
-		
-		if (isset($data[$name]))
-		{
-			return $data[$name];
-		}
-		
-		if (strpos($name, '.') === false)
-		{
-			return $default;
-		}
-		
-		$parts = explode('.', $name);
-		$found = [];
-		$value = null;
-		
-		foreach ($parts as $key)
-		{
-			if (is_null($value))
-			{
-				// first level
-				if (isset($data[$key]))
-				{
-					$value = $data[$key];
-					$found[$key] = true;
-				}
-			}
-			else if (isset($value[$key]))
-			{
-				// nested levels, e.g. $name = "database.host"
-				$value = $value[$key];
-				$found[$key] = true;
-			}
-		}
-		
-		return (($parts === array_keys($found)) ? $value : $default);
+		return $this->search($name)->getOrElse($default);
 	}
 	
 	public function getInt(string $name, int $default = 0): int
@@ -161,5 +93,52 @@ trait DataAccessor
 		$value = $this->get($name);
 		
 		return (is_array($value) ? $value : $default);
+	}
+	
+	private function search(string $name): Option
+	{
+		$data = $this->getAll();
+		
+		if (isset($data[$name]))
+		{
+			return new Some($data[$name]);
+		}
+		
+		if (strpos($name, '.') === false)
+		{
+			return new None();
+		}
+		
+		$parts = explode('.', $name);
+		$found = [];
+		$value = null;
+		
+		foreach ($parts as $key)
+		{
+			if (is_null($value))
+			{
+				// first level
+				if (isset($data[$key]))
+				{
+					$value = $data[$key];
+					$found[$key] = true;
+				}
+			}
+			else if (isset($value[$key]))
+			{
+				// nested levels, e.g. $name = "database.host"
+				$value = $value[$key];
+				$found[$key] = true;
+			}
+		}
+		
+		if ($parts === array_keys($found))
+		{
+			return new Some($value);
+		}
+		else
+		{
+			return new None();
+		}
 	}
 }

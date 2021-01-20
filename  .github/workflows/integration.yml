@@ -3,7 +3,7 @@ name: Run unit tests
 on: [push, pull_request]
 
 jobs:
-  composer:
+  test:
     runs-on: ubuntu-latest
 
     steps:

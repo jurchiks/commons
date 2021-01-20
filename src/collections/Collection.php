@@ -65,11 +65,11 @@ abstract class Collection implements Iterator, ArrayAccess
 	{
 		if ($this->containsKey($key))
 		{
-			return new Option($this->data[$key], true);
+			return new Some($this->data[$key]);
 		}
 		else
 		{
-			return new Option(null, false);
+			return new None();
 		}
 	}
 	
@@ -87,11 +87,11 @@ abstract class Collection implements Iterator, ArrayAccess
 	{
 		if ($this->containsValue($value))
 		{
-			return new Option(array_search($value, $this->data, true), true);
+			return new Some(array_search($value, $this->data, true));
 		}
 		else
 		{
-			return new Option(null, false);
+			return new None();
 		}
 	}
 	
@@ -119,14 +119,7 @@ abstract class Collection implements Iterator, ArrayAccess
 	{
 		$data = $this->find($predicate, false, $findFirst ? 1 : -1);
 		
-		if (empty($data))
-		{
-			return new Option(null, false);
-		}
-		else
-		{
-			return new Option($data[0], true);
-		}
+		return empty($data) ? new None() : new Some($data[0]);
 	}
 	
 	/**
@@ -141,7 +134,7 @@ abstract class Collection implements Iterator, ArrayAccess
 	{
 		$data = $this->find($predicate, true, $findFirst ? 1 : -1);
 		
-		return new Option($data[0] ?? null, isset($data[0]));
+		return empty($data) ? new None() : new Some($data[0]);
 	}
 	
 	/**

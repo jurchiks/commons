@@ -79,3 +79,9 @@ jobs:
 
       - name: Run tests
         run: composer run-script test
+
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: .phpunit.cache/code-coverage/clover.xml
+          flags: unittests

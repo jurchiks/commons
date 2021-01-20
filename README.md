@@ -1,4 +1,7 @@
 # commons
+
+[![codecov](https://codecov.io/gh/jurchiks/commons/branch/master/graph/badge.svg?token=o0UHqqXQAv)](https://codecov.io/gh/jurchiks/commons)
+
 Common general purpose utility code:
 
 * Collections

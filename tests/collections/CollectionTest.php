@@ -104,6 +104,7 @@ class CollectionTest extends TestCase
 		
 		$this->assertSame($data[0], $firstValue->get());
 		$this->assertSame($data['foo'], $secondValue->get());
+		$this->assertNull($invalidValue->getOrElse(null));
 	}
 	
 	public function testGetKey(): void
@@ -123,6 +124,7 @@ class CollectionTest extends TestCase
 		
 		$this->assertSame(0, $intKey->get());
 		$this->assertSame('foo', $stringKey->get());
+		$this->assertNull($invalidKey->getOrElse(null));
 	}
 	
 	public function testGetKeys(): void

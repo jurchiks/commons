@@ -1,36 +1,22 @@
 <?php
 namespace js\tools\commons\collections;
 
-use InvalidArgumentException;
-
-class Option
+abstract class Option
 {
-	private $value;
-	private $isFound;
-	
-	public function __construct($value, bool $isFound)
+	public function isEmpty(): bool
 	{
-		$this->value = $value;
-		$this->isFound = $isFound;
+		return ($this instanceof None);
 	}
 	
-	public function get()
+	public function isFound(): bool
 	{
-		if (!$this->isFound)
-		{
-			throw new InvalidArgumentException('Option does not have a value; consider using getOrElse()');
-		}
-		
-		return $this->value;
+		return ($this instanceof Some);
 	}
 	
 	public function getOrElse($default)
 	{
-		return ($this->isFound ? $this->value : $default);
+		return ($this->isFound() ? $this->get() : $default);
 	}
 	
-	public function isFound()
-	{
-		return $this->isFound;
-	}
+	public abstract function get();
 }

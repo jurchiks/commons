@@ -85,6 +85,7 @@ class DataAccessorTest extends TestCase
 		yield [[], 'foo', false];
 		yield [['foo' => 1], 'foo', true];
 		yield [['foo' => ['bar' => ['baz' => 1]]], 'foo.bar.baz', true];
+		yield [['foo' => 'bar'], 'foo.bar.baz', false];
 	}
 	
 	/** @dataProvider existsDataset */
@@ -101,6 +102,7 @@ class DataAccessorTest extends TestCase
 		yield [['foo' => 1], 'no such key', null];
 		yield [['foo' => 1], 'foo', 1];
 		yield [['foo' => ['bar' => ['baz' => 1]]], 'foo.bar.baz', 1];
+		yield [['foo' => 'bar'], 'foo.bar.baz', null];
 	}
 	
 	/** @dataProvider getDataset */

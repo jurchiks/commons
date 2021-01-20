@@ -5,6 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="js\tools\commons\" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" packagePrefix="js\tools\commons\tests\" />
       <excludeFolder url="file://$MODULE_DIR$/vendor" />
+      <excludeFolder url="file://$MODULE_DIR$/.phpunit.cache" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

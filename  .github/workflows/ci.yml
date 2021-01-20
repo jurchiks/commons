@@ -1,0 +1,14 @@
+name: Run unit tests
+
+on: [push, pull_request]
+
+jobs:
+  composer:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: php-actions/composer@v5
+
+      - name: Run test suite
+        run: composer run-script test

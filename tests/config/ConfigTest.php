@@ -62,7 +62,7 @@ class ConfigTest extends TestCase
 		$this->expectException(ConfigException::class);
 		$this->expectExceptionMessage('Config file must return an array');
 		
-		Config::loadFromFile(__DIR__ . '/invalid_json.json');
+		Config::loadFromFile(__DIR__ . '/invalid_json.json', true);
 	}
 	
 	public function testLoadFromJsonValid(): void

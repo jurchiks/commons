@@ -75,7 +75,7 @@ jobs:
             ${{ runner.os }}-composer-
 
       - name: Install dependencies
-        run: composer install --prefer-dist --dev --no-progress
+        run: composer install --prefer-dist --no-progress
 
       - name: Run tests
         run: composer run-script test

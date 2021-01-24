@@ -1,6 +1,8 @@
 <?php
 namespace js\tools\commons\traits;
 
+use InvalidArgumentException;
+
 /**
  * This trait is an extension of the DataAccessor trait and adds data writing functionality.
  */
@@ -8,30 +10,31 @@ trait DataWriter
 {
 	use DataAccessor;
 	
-	public function set(string $key, $value)
+	public function set($key, $value)
 	{
 		$this->getAll(); // ensure the load() method is called first
 		
 		$container = &$this->data; // this needs to be a pointer in order for the value to be stored correctly
-		$index = $key;
+		$parts = self::getKeyParts($key);
 		
-		if (!isset($container[$index])
-			&& (strpos($key, '.') !== false))
+		if (empty($parts))
 		{
-			$key = explode('.', $key);
-			$last = count($key) - 1;
-			
-			foreach ($key as $i => $index)
+			throw new InvalidArgumentException('Key must not be empty');
+		}
+		
+		$index = $parts[0];
+		$last = count($parts) - 1;
+		
+		foreach ($parts as $i => $index)
+		{
+			if (!isset($container[$index]))
 			{
-				if (!isset($container[$index]))
-				{
-					$container[$index] = [];
-				}
-				
-				if ($i < $last)
-				{
-					$container = &$container[$index];
-				}
+				$container[$index] = [];
+			}
+			
+			if ($i < $last)
+			{
+				$container = &$container[$index];
 			}
 		}
 		

@@ -1,6 +1,7 @@
 <?php
 namespace js\tools\commons\traits;
 
+use InvalidArgumentException;
 use js\tools\commons\collections\None;
 use js\tools\commons\collections\Option;
 use js\tools\commons\collections\Some;
@@ -44,68 +45,85 @@ trait DataAccessor
 		return $this->data;
 	}
 	
-	public function exists(string $name): bool
+	/**
+	 * @param array<int|string>|string|int $key The key/index of the property to search for.
+	 * Can be a dot-separated string for convenient access to nested properties,
+	 * e.g. "database.host" will find $data["database"]["host"] if it exists.
+	 * @return bool whether or not the key was found
+	 * @throws InvalidArgumentException If $key is invalid.
+	 */
+	public function exists($key): bool
 	{
-		return $this->search($name)->isFound();
+		return $this->search($key)->isFound();
 	}
 	
 	/**
-	 * @param string $name : the name of the config property to retrieve. Can be dot-separated for access to nested
-	 *     properties, e.g. "database.host" will retrieve $config["database"]["host"] if it exists
-	 * @param mixed $default : the default value to return if property was not found
-	 * @return mixed whatever the config value or default value is
+	 * @param array<int|string>|string|int $key The key/index of the property to retrieve.
+	 * Can be a dot-separated string for convenient access to nested properties,
+	 * e.g. "database.host" will retrieve $data["database"]["host"] if it exists.
+	 * @param mixed $default The default value to return if property was not found.
+	 * @return mixed Whatever the found value or default value is.
+	 * @throws InvalidArgumentException If $key is invalid.
 	 */
-	public function get(string $name, $default = null)
+	public function get($key, $default = null)
 	{
-		return $this->search($name)->getOrElse($default);
+		return $this->search($key)->getOrElse($default);
 	}
 	
-	public function getInt(string $name, int $default = 0): int
+	public function getInt($key, int $default = 0): int
 	{
-		$value = $this->get($name, $default);
+		$value = $this->get($key, $default);
 		
 		return (is_numeric($value) ? intval($value) : $default);
 	}
 	
-	public function getFloat(string $name, float $default = 0): float
+	public function getFloat($key, float $default = 0): float
 	{
-		$value = $this->get($name, $default);
+		$value = $this->get($key, $default);
 		
 		return (is_numeric($value) ? floatval($value) : $default);
 	}
 	
-	public function getString(string $name, string $default = ''): string
+	public function getString($key, string $default = ''): string
 	{
-		return strval($this->get($name, $default));
+		return strval($this->get($key, $default));
 	}
 	
-	public function getBool(string $name, bool $default = false): bool
+	public function getBool($key, bool $default = false): bool
 	{
-		return boolval($this->get($name, $default));
+		return boolval($this->get($key, $default));
 	}
 	
-	public function getArray(string $name, array $default = []): array
+	public function getArray($key, array $default = []): array
 	{
-		$value = $this->get($name, $default);
+		$value = $this->get($key, $default);
 		
 		return (is_array($value) ? $value : $default);
 	}
 	
-	private function search(string $name): Option
+	/**
+	 * @param array<int|string>|int|string $key
+	 * @return Option
+	 * @throws InvalidArgumentException If $key is invalid.
+	 */
+	private function search($key): Option
 	{
 		$data = $this->getAll();
 		
-		if (isset($data[$name]))
+		// Special case for plain string key access.
+		// Necessary because down the line the string is split into parts.
+		if (is_string($key) && isset($data[$key]))
 		{
-			return new Some($data[$name]);
+			return new Some($data[$key]);
 		}
 		
-		if (strpos($name, '.') === false)
+		$parts = self::getKeyParts($key);
+		
+		if (empty($parts))
 		{
 			return new None();
 		}
 		
-		$parts = explode('.', $name);
 		$found = [];
 		$value = null;
 		
@@ -135,6 +153,39 @@ trait DataAccessor
 		else
 		{
 			return new None();
+		}
+	}
+	
+	/**
+	 * @param $key
+	 * @return array
+	 * @throws InvalidArgumentException
+	 */
+	protected static function getKeyParts($key): array
+	{
+		$validateKey = function ($key)
+		{
+			if (!is_int($key) && !is_string($key))
+			{
+				throw new InvalidArgumentException('Key must be int or string, got ' . gettype($key));
+			}
+		};
+		
+		if (is_array($key))
+		{
+			array_walk($key, $validateKey);
+			
+			return $key;
+		}
+		else if (is_string($key))
+		{
+			return explode('.', $key);
+		}
+		else
+		{
+			$validateKey($key);
+			
+			return [$key];
 		}
 	}
 }

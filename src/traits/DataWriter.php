@@ -27,6 +27,11 @@ trait DataWriter
 		
 		foreach ($parts as $i => $index)
 		{
+			if (!is_array($container))
+			{
+				$container = [$container];
+			}
+			
 			if (!isset($container[$index]))
 			{
 				$container[$index] = [];

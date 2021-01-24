@@ -32,6 +32,42 @@ class DataWriterTest extends TestCase
 		);
 	}
 	
+	public function testSetAppend(): void
+	{
+		$writer = new class
+		{
+			use DataWriter;
+		};
+		$writer->set('foo.bar', 1);
+		$writer->set('foo.baz', 2);
+		
+		$this->assertSame(['foo' => ['bar' => 1, 'baz' => 2]], $writer->getAll());
+	}
+	
+	public function testSetRewrite(): void
+	{
+		$writer = new class
+		{
+			use DataWriter;
+		};
+		$writer->set('foo.bar', ['baz' => 1]);
+		$writer->set('foo.bar', 2);
+		
+		$this->assertSame(['foo' => ['bar' => 2]], $writer->getAll());
+	}
+	
+	public function testSetNonArrayConversion(): void
+	{
+		$writer = new class
+		{
+			use DataWriter;
+		};
+		$writer->set('foo.bar', 1);
+		$writer->set('foo.bar.baz', 2);
+		
+		$this->assertSame(['foo' => ['bar' => [1, 'baz' => 2]]], $writer->getAll());
+	}
+	
 	public function testEmptyArrayKey(): void
 	{
 		$this->expectException(InvalidArgumentException::class);

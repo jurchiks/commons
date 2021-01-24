@@ -124,36 +124,21 @@ trait DataAccessor
 			return new None();
 		}
 		
-		$found = [];
-		$value = null;
+		$value = $data;
 		
-		foreach ($parts as $key)
+		foreach ($parts as $part)
 		{
-			if (is_null($value))
+			if (is_array($value) && array_key_exists($part, $value))
 			{
-				// first level
-				if (isset($data[$key]))
-				{
-					$value = $data[$key];
-					$found[$key] = true;
-				}
+				$value = $value[$part];
 			}
-			else if (isset($value[$key]))
+			else
 			{
-				// nested levels, e.g. $name = "database.host"
-				$value = $value[$key];
-				$found[$key] = true;
+				return new None();
 			}
 		}
 		
-		if ($parts === array_keys($found))
-		{
-			return new Some($value);
-		}
-		else
-		{
-			return new None();
-		}
+		return new Some($value);
 	}
 	
 	/**
@@ -175,7 +160,7 @@ trait DataAccessor
 		{
 			array_walk($key, $validateKey);
 			
-			return $key;
+			return array_values($key);
 		}
 		else if (is_string($key))
 		{

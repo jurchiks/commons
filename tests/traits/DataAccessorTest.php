@@ -101,13 +101,14 @@ class DataAccessorTest extends TestCase
 	
 	public function getDataset(): iterable
 	{
-		yield [[], 'foo', null];
-		yield [['foo' => 1], 'no such key', null];
+		yield [[], 'foo', 'default'];
+		yield [['foo' => 1], 'no such key', 'default'];
 		yield [['foo' => 1], 'foo', 1];
+		yield [['foo' => null], 'foo', null];
 		yield [[1 => 'foo'], 1, 'foo'];
 		yield [['foo' => ['bar' => ['baz' => 1]]], 'foo.bar.baz', 1];
 		yield [['foo' => [0 => ['baz' => 1]]], ['foo', 0, 'baz'], 1];
-		yield [['foo' => 'bar'], 'foo.bar.baz', null];
+		yield [['foo' => 'bar'], 'foo.bar.baz', 'default'];
 	}
 	
 	/** @dataProvider getDataset */
@@ -115,7 +116,7 @@ class DataAccessorTest extends TestCase
 	{
 		$accessor = new Accessor($data);
 		
-		$this->assertSame($expectedValue, $accessor->get($key));
+		$this->assertSame($expectedValue, $accessor->get($key, 'default'));
 	}
 	
 	public function getIntDataset(): iterable

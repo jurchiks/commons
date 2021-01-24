@@ -13,7 +13,7 @@ use js\tools\commons\collections\Some;
  */
 trait DataAccessor
 {
-	private $data = null;
+	private ?array $data = null;
 	
 	protected function init(array $data)
 	{

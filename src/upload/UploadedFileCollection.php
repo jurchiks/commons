@@ -78,7 +78,7 @@ class UploadedFileCollection
 		return $files;
 	}
 	
-	private static function makeFile(array $data, bool $throwException)
+	private static function makeFile(array $data, bool $throwException): UploadedFile
 	{
 		$file = new UploadedFile($data);
 		

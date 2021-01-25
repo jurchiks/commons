@@ -15,7 +15,7 @@ class CustomLogger extends Logger
 		$this->callback = $callback;
 	}
 	
-	protected function write(string $message, int $level)
+	protected function write(string $message, int $level): void
 	{
 		call_user_func($this->callback, $message, $level);
 	}

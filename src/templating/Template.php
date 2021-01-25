@@ -9,13 +9,12 @@ class Template
 {
 	use DataAccessor;
 	
-	private $path;
-	private $engine;
-	/** @var Template */
-	private $parent = null;
-	private $blocks = [];
-	private $lastBlock = null;
-	private $content = '';
+	private string $path;
+	private ?Engine $engine;
+	private ?Template $parent = null;
+	private array $blocks = [];
+	private ?string $lastBlock = null;
+	private string $content = '';
 	
 	public function __construct(string $path, array $data = [], Engine $engine = null)
 	{
@@ -34,19 +33,19 @@ class Template
 		$this->init($data);
 	}
 	
-	protected function block(string $name)
+	protected function block(string $name): ?string
 	{
 		return ((isset($this->blocks[$name]) && is_string($this->blocks[$name]))
 			? $this->blocks[$name]
 			: null);
 	}
 	
-	protected function content()
+	protected function content(): string
 	{
 		return $this->content;
 	}
 	
-	public function __isset(string $name)
+	public function __isset(string $name): bool
 	{
 		return $this->exists($name);
 	}
@@ -61,7 +60,7 @@ class Template
 		return $this->get($name);
 	}
 	
-	public function __set(string $name, $value)
+	public function __set(string $name, $value): void
 	{
 		throw new TemplateException('Template values are read-only');
 	}
@@ -76,7 +75,7 @@ class Template
 		return $this->engine->callFunction($name, $arguments);
 	}
 	
-	protected function start(string $name)
+	protected function start(string $name): void
 	{
 		if ($this->lastBlock !== null)
 		{
@@ -94,7 +93,7 @@ class Template
 		}
 	}
 	
-	protected function end()
+	protected function end(): void
 	{
 		if ($this->lastBlock !== null)
 		{
@@ -103,18 +102,18 @@ class Template
 		}
 	}
 	
-	protected function parent(string $path, array $data = [])
+	protected function parent(string $path, array $data = []): void
 	{
 		// construct the parent immediately to fail-fast in case the $path is invalid
 		$this->parent = $this->getTemplate($path, $data);
 	}
 	
-	protected function include(string $path, array $data = [])
+	protected function include(string $path, array $data = []): void
 	{
 		echo $this->getTemplate($path, $data)->render();
 	}
 	
-	public function render()
+	public function render(): string
 	{
 		ob_start();
 		
@@ -155,7 +154,7 @@ class Template
 		return $this->render();
 	}
 	
-	private function getTemplate(string $path, array $data = [])
+	private function getTemplate(string $path, array $data = []): self
 	{
 		if ($this->engine === null)
 		{

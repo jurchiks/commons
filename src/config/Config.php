@@ -11,7 +11,7 @@ class Config
 {
 	use DataAccessor;
 	
-	public static function loadFromFile(string $pathToFile, $isJson = false)
+	public static function loadFromFile(string $pathToFile, $isJson = false): self
 	{
 		if (!is_readable($pathToFile))
 		{
@@ -35,7 +35,7 @@ class Config
 		return new static($data);
 	}
 	
-	public static function loadFromJson(string $json)
+	public static function loadFromJson(string $json): self
 	{
 		$data = json_decode($json, true);
 		
@@ -47,7 +47,7 @@ class Config
 		return new static($data);
 	}
 	
-	public static function loadFromArray(array $data)
+	public static function loadFromArray(array $data): self
 	{
 		return new static($data);
 	}

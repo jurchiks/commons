@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class TestLogger extends Logger
 {
-	protected function write(string $message, int $level)
+	protected function write(string $message, int $level): void
 	{
 		echo $message;
 	}

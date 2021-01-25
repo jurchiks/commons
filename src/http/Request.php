@@ -8,11 +8,11 @@ class Request
 {
 	const METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'];
 	
-	private $method;
-	private $url;
-	private $data;
-	private $files;
-	private $referer;
+	private string $method;
+	private Url $url;
+	private Parameters $data;
+	private UploadedFileCollection $files;
+	private string $referer;
 	
 	/**
 	 * @param string $method : the request method used for this request (e.g. GET, POST)
@@ -37,7 +37,7 @@ class Request
 		$this->referer = $referer;
 	}
 	
-	public static function createFromGlobals()
+	public static function createFromGlobals(): self
 	{
 		if (!isset($_SERVER['REQUEST_METHOD'], $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']))
 		{
@@ -92,7 +92,7 @@ class Request
 	 *
 	 * @return string one of [get, post, put, delete, head, options]
 	 */
-	public function getMethod()
+	public function getMethod(): string
 	{
 		return $this->method;
 	}

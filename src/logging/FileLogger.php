@@ -5,7 +5,7 @@ use js\tools\commons\exceptions\LogException;
 
 class FileLogger extends Logger
 {
-	private $logDirectory;
+	private string $logDirectory;
 	
 	/**
 	 * @param string $logDirectory : the directory in which to put the log files
@@ -28,12 +28,12 @@ class FileLogger extends Logger
 		$this->logDirectory = rtrim($logDirectory, '\\/');
 	}
 	
-	protected function formatMessage(string $message, int $level)
+	protected function formatMessage(string $message, int $level): string
 	{
 		return '[' . date('Y-m-d H:i:s') . '] ' . strtoupper(self::getLevelName($level)) . ' ' . $message . PHP_EOL;
 	}
 	
-	protected function write(string $message, int $level)
+	protected function write(string $message, int $level): void
 	{
 		$path = $this->logDirectory . '/' . self::getLevelName($level) . '.log';
 		$success = file_put_contents($path, $message, FILE_APPEND | LOCK_EX);

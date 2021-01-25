@@ -231,7 +231,7 @@ class Url
 		return $this;
 	}
 	
-	public function setQueryParameter(string $key, $value): self
+	public function setQueryParameter($key, $value): self
 	{
 		self::validateQueryParameter($key, $value);
 		
@@ -391,7 +391,7 @@ class Url
 		}
 	}
 	
-	private static function validateQueryParameter(string $key, $value)
+	private static function validateQueryParameter($key, $value)
 	{
 		if (is_array($value))
 		{
@@ -402,7 +402,9 @@ class Url
 		}
 		else if (!is_scalar($value))
 		{
-			throw new UriException('Invalid query parameter "' . gettype($value) . '" for key "' . $key . '"');
+			throw new UriException(
+				'Invalid query parameter "' . gettype($value) . '" for key "' . implode('.', (array)$key) . '"'
+			);
 		}
 	}
 }

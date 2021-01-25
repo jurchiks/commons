@@ -366,12 +366,18 @@ class UriTest extends TestCase
 	
 	public function testSetQueryParameterValid(): void
 	{
-		$urlString = 'http://hostname:9090/';
-		$uri = new Url($urlString . '?foo=bar');
+		$uri = new Url('http://hostname:9090?foo=bar');
 		$uri->setQueryParameter('foo', ['bar' => 'baz']);
+		$uri->setQueryParameter(['qux', 'quux', 0], 'quuux');
 		
-		$this->assertSame(['foo' => ['bar' => 'baz']], $uri->getQueryParameters()->getAll());
-		$this->assertSame($urlString . '?foo%5Bbar%5D=baz', strval($uri));
+		$this->assertSame(
+			[
+				'foo' => ['bar' => 'baz'],
+				'qux' => ['quux' => [0 => 'quuux']],
+			],
+			$uri->getQueryParameters()->getAll()
+		);
+		$this->assertSame('?foo%5Bbar%5D=baz&qux%5Bquux%5D%5B0%5D=quuux', $uri->getRelative());
 	}
 	
 	/** @dataProvider invalidQueryParameterDataset */

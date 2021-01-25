@@ -14,7 +14,7 @@ class Template
 	/** @var Template */
 	private $parent = null;
 	private $blocks = [];
-	private $lastBlock = false;
+	private $lastBlock = null;
 	private $content = '';
 	
 	public function __construct(string $path, array $data = [], Engine $engine = null)
@@ -78,7 +78,7 @@ class Template
 	
 	protected function start(string $name)
 	{
-		if ($this->lastBlock !== false)
+		if ($this->lastBlock !== null)
 		{
 			ob_end_clean(); // Clean after previous block.
 			throw new TemplateException('Nested blocks are not allowed');
@@ -96,10 +96,10 @@ class Template
 	
 	protected function end()
 	{
-		if ($this->lastBlock !== false)
+		if ($this->lastBlock !== null)
 		{
 			$this->blocks[$this->lastBlock] = ob_get_clean();
-			$this->lastBlock = false;
+			$this->lastBlock = null;
 		}
 	}
 	
@@ -122,7 +122,7 @@ class Template
 		{
 			include $this->path;
 			
-			if ($this->lastBlock !== false)
+			if ($this->lastBlock !== null)
 			{
 				ob_end_clean(); // Clean up after previous block.
 				throw new TemplateException('Unclosed block "' . $this->lastBlock . '"');

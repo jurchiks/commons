@@ -91,4 +91,11 @@ class EngineTest extends TestCase
 		
 		$this->assertSame("<h1>Basic template</h1>\n", $engine->render('basic'));
 	}
+	
+	public function testRenderRelativePaths()
+	{
+		$engine = new Engine(__DIR__ . '/templates/engine_root');
+		
+		$this->assertSame("<p>Child template</p>\n", $engine->render('child'));
+	}
 }

@@ -40,7 +40,7 @@ class Url
 		$this->username = $parts['user'] ?? '';
 		$this->password = $parts['pass'] ?? '';
 		$this->host = $parts['host'] ?? '';
-		$this->port = $parts['port'] ?? 0;
+		$this->port = $parts['port'] ?? null;
 		$this->path = $parts['path'] ?? '/';
 		$this->fragment = $parts['fragment'] ?? '';
 		
@@ -147,16 +147,16 @@ class Url
 	}
 	
 	/**
-	 * @return int the port number, 0 if there is no explicit port specified
+	 * @return int|null the port number, null if there is no explicit port specified
 	 */
-	public function getPort(): int
+	public function getPort(): ?int
 	{
 		return $this->port;
 	}
 	
-	public function setPort(int $port): self
+	public function setPort(?int $port): self
 	{
-		if ($port < 0)
+		if (!is_null($port) && (($port < 0) || ($port > 65535)))
 		{
 			throw new UriException('Invalid port number "' . $port . '"');
 		}
@@ -314,7 +314,7 @@ class Url
 		
 		$source .= $this->getHost();
 		
-		if ($this->getPort() !== 0)
+		if ($this->getPort() !== null)
 		{
 			$source .= ':' . $this->getPort();
 		}

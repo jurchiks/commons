@@ -11,10 +11,11 @@ class UriTest extends TestCase
 {
 	public function invalidUrlDataset(): iterable
 	{
-		yield ['http:///example.com'];
+		yield ['http:///domain.tld'];
 		yield ['http://:80'];
 		yield ['http://user@:80'];
 		yield ['foo:bar@domain.tld'];
+		yield ['http://domain.tld:90000'];
 	}
 	
 	/** @dataProvider invalidUrlDataset */
@@ -62,7 +63,7 @@ class UriTest extends TestCase
 		$this->assertSame('', $uri->getUsername());
 		$this->assertSame('', $uri->getPassword());
 		$this->assertSame('', $uri->getHost());
-		$this->assertSame(0, $uri->getPort());
+		$this->assertNull($uri->getPort());
 		$this->assertSame('/path', $uri->getPath());
 		$this->assertSame('?arg=value', $uri->getQuery());
 		$this->assertSame(['arg' => 'value'], $uri->getQueryParameters()->getAll());
@@ -274,7 +275,7 @@ class UriTest extends TestCase
 	public function testClearPort(): void
 	{
 		$uri = new Url('http://hostname:9090/');
-		$uri->setPort(0);
+		$uri->setPort(null);
 		
 		$this->assertSame('http://hostname/', strval($uri));
 	}

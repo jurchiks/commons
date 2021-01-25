@@ -2,7 +2,7 @@
 namespace js\tools\commons\http;
 
 use js\tools\commons\exceptions\HttpException;
-use js\tools\commons\exceptions\UriException;
+use js\tools\commons\exceptions\UrlException;
 
 class Url
 {
@@ -19,7 +19,7 @@ class Url
 	
 	/**
 	 * @param string $url : a complete or partial URL
-	 * @throws UriException
+	 * @throws UrlException
 	 */
 	public function __construct(string $url)
 	{
@@ -27,7 +27,7 @@ class Url
 		
 		if ($parts === false)
 		{
-			throw new UriException('Invalid URL "' . $url . '"');
+			throw new UrlException('Invalid URL "' . $url . '"');
 		}
 		
 		if (isset($parts['scheme']))
@@ -145,7 +145,7 @@ class Url
 	{
 		if (!is_null($port) && (($port < 0) || ($port > 65535)))
 		{
-			throw new UriException('Invalid port number "' . $port . '"');
+			throw new UrlException('Invalid port number "' . $port . '"');
 		}
 		
 		$this->port = $port;
@@ -274,13 +274,13 @@ class Url
 	/**
 	 * @param bool $isRawUrl : if true, spaces in query parameters are encoded as %20, otherwise as +
 	 * @return string the full URL with all the specified data included
-	 * @throws UriException if host is missing
+	 * @throws UrlException if host is missing
 	 */
 	public function getAbsolute(bool $isRawUrl = false): string
 	{
 		if (!$this->isAbsolute())
 		{
-			throw new UriException('Cannot make an absolute URL without host');
+			throw new UrlException('Cannot make an absolute URL without host');
 		}
 		
 		if (empty($this->getScheme()))
@@ -339,7 +339,7 @@ class Url
 	{
 		if (!in_array($scheme, self::SUPPORTED_SCHEMES))
 		{
-			throw new UriException('Unsupported URI scheme "' . $scheme . '"');
+			throw new UrlException('Unsupported URL scheme "' . $scheme . '"');
 		}
 	}
 	
@@ -355,12 +355,12 @@ class Url
 				|| ($data['user'] !== $username)
 				|| (isset($data['pass']) && ($data['pass'] !== $password)))
 			{
-				throw new UriException('Invalid auth credentials');
+				throw new UrlException('Invalid auth credentials');
 			}
 		}
 		else if (!empty($password))
 		{
-			throw new UriException('Cannot have a password without a username');
+			throw new UrlException('Cannot have a password without a username');
 		}
 	}
 	
@@ -372,7 +372,7 @@ class Url
 		)
 		{
 			// not a valid domain nor an IP address
-			throw new UriException('Invalid host "' . $hostOrIp . '"');
+			throw new UrlException('Invalid host "' . $hostOrIp . '"');
 		}
 	}
 	
@@ -382,7 +382,7 @@ class Url
 		
 		if (($data === false) || !isset($data['path']) || ($data['path'] !== $path))
 		{
-			throw new UriException('Invalid path "' . $path . '"');
+			throw new UrlException('Invalid path "' . $path . '"');
 		}
 	}
 	
@@ -392,7 +392,7 @@ class Url
 		
 		if (($data === false) || !isset($data['query']) || ($data['query'] !== $query))
 		{
-			throw new UriException('Invalid query "' . $query . '"');
+			throw new UrlException('Invalid query "' . $query . '"');
 		}
 	}
 	
@@ -407,7 +407,7 @@ class Url
 		}
 		else if (!is_scalar($value))
 		{
-			throw new UriException(
+			throw new UrlException(
 				'Invalid query parameter "' . gettype($value) . '" for key "' . implode('.', (array)$key) . '"'
 			);
 		}

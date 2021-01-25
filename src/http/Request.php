@@ -9,21 +9,21 @@ class Request
 	const METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'];
 	
 	private $method;
-	private $uri;
+	private $url;
 	private $data;
 	private $files;
 	private $referer;
 	
 	/**
 	 * @param string $method : the request method used for this request (e.g. GET, POST)
-	 * @param Url $uri : the URI that was requested
-	 * @param array $data : the request data, if any (GET, POST, PUT, PATCH, DELETE etc). In the case of a GET request,
-	 * the same data is available via the $uri object
+	 * @param Url $url : the URL that was requested
+	 * @param array $data : the request data, if any (GET, POST, PUT, PATCH, DELETE etc).
+	 * In the case of a GET request, the same data is available via the $url object.
 	 * @param array $files : the $_FILES array or its equivalent
 	 * @param string $referer : the URL that referred to this URL
 	 * @throws HttpException if the request method is invalid
 	 */
-	public function __construct(string $method, Url $uri, array $data, array $files = [], string $referer = '')
+	public function __construct(string $method, Url $url, array $data, array $files = [], string $referer = '')
 	{
 		if (!in_array($method, self::METHODS))
 		{
@@ -31,7 +31,7 @@ class Request
 		}
 		
 		$this->method = $method;
-		$this->uri = $uri;
+		$this->url = $url;
 		$this->data = new Parameters($data);
 		$this->files = new UploadedFileCollection($files);
 		$this->referer = $referer;
@@ -108,16 +108,16 @@ class Request
 		return (strcasecmp($this->method, $method) === 0);
 	}
 	
-	public function getUri(): Url
+	public function getUrl(): Url
 	{
-		return $this->uri;
+		return $this->url;
 	}
 	
 	public function isSecure(): bool
 	{
 		static $secureProtocols = ['https', 'ftps', 'sftp'];
 		
-		$scheme = strtolower($this->uri->getScheme());
+		$scheme = strtolower($this->url->getScheme());
 		
 		return in_array($scheme, $secureProtocols);
 	}

@@ -47,7 +47,7 @@ class RequestTest extends TestCase
 		
 		$this->assertSame('post', $request->getMethod());
 		$this->assertTrue($request->isMethod('POST'));
-		$this->assertSame('https://host.name/upload', $request->getUri()->getAbsolute());
+		$this->assertSame('https://host.name/upload', $request->getUrl()->getAbsolute());
 		$this->assertTrue($request->isSecure());
 		$this->assertSame([], $request->getData()->getAll());
 		$this->assertSame('https://host.name/', $request->getReferer());
@@ -77,7 +77,7 @@ class RequestTest extends TestCase
 		
 		$this->assertSame('get', $request->getMethod());
 		$this->assertTrue($request->isMethod('GET'));
-		$this->assertSame('http://host.name/foo', $request->getUri()->getAbsolute());
+		$this->assertSame('http://host.name/foo', $request->getUrl()->getAbsolute());
 		$this->assertFalse($request->isSecure());
 		$this->assertSame(['bar' => 'baz'], $request->getData()->getAll());
 		$this->assertSame('', $request->getReferer());
@@ -95,7 +95,7 @@ class RequestTest extends TestCase
 		
 		$this->assertSame('post', $request->getMethod());
 		$this->assertTrue($request->isMethod('POST'));
-		$this->assertSame('https://host.name/foo', $request->getUri()->getAbsolute());
+		$this->assertSame('https://host.name/foo', $request->getUrl()->getAbsolute());
 		$this->assertTrue($request->isSecure());
 		$this->assertSame(['bar' => 'baz'], $request->getData()->getAll());
 		$this->assertSame('', $request->getReferer());
@@ -111,7 +111,7 @@ class RequestTest extends TestCase
 		
 		$this->assertSame('put', $request->getMethod());
 		$this->assertTrue($request->isMethod('PUT'));
-		$this->assertSame('http://host.name/foo', $request->getUri()->getAbsolute());
+		$this->assertSame('http://host.name/foo', $request->getUrl()->getAbsolute());
 		$this->assertFalse($request->isSecure());
 		$this->assertSame(['foo' => 'bar'], $request->getData()->getAll());
 		$this->assertSame('', $request->getReferer());
@@ -128,7 +128,7 @@ class RequestTest extends TestCase
 		
 		$this->assertSame('patch', $request->getMethod());
 		$this->assertTrue($request->isMethod('PATCH'));
-		$this->assertSame('http://host.name/foo', $request->getUri()->getAbsolute());
+		$this->assertSame('http://host.name/foo', $request->getUrl()->getAbsolute());
 		$this->assertFalse($request->isSecure());
 		$this->assertSame(['foo' => 'bar'], $request->getData()->getAll());
 		$this->assertSame('', $request->getReferer());
@@ -144,7 +144,7 @@ class RequestTest extends TestCase
 		
 		$this->assertSame('delete', $request->getMethod());
 		$this->assertTrue($request->isMethod('DELETE'));
-		$this->assertSame('http://host.name/foo', $request->getUri()->getAbsolute());
+		$this->assertSame('http://host.name/foo', $request->getUrl()->getAbsolute());
 		$this->assertFalse($request->isSecure());
 		$this->assertSame([], $request->getData()->getAll());
 		$this->assertSame('', $request->getReferer());

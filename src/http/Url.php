@@ -259,12 +259,12 @@ class Url
 	
 	public function getFragment(): string
 	{
-		return $this->fragment;
+		return (($this->fragment !== '') ? '#' . $this->fragment : '');
 	}
 	
 	public function setFragment(string $fragment): self
 	{
-		$this->fragment = $fragment;
+		$this->fragment = ltrim($fragment, '#');
 		
 		return $this;
 	}
@@ -280,9 +280,7 @@ class Url
 	 */
 	public function getRelative(bool $isRawUrl = false): string
 	{
-		$fragment = ($this->getFragment() ? '#' . $this->getFragment() : '');
-		
-		return $this->getPath() . $this->getQuery($isRawUrl) . $fragment;
+		return $this->getPath() . $this->getQuery($isRawUrl) . $this->getFragment();
 	}
 	
 	/**

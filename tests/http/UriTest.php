@@ -48,7 +48,7 @@ class UriTest extends TestCase
 		$this->assertSame('/path', $uri->getPath());
 		$this->assertSame('?arg=value', $uri->getQuery());
 		$this->assertSame(['arg' => 'value'], $uri->getQueryParameters()->getAll());
-		$this->assertSame('fragment', $uri->getFragment());
+		$this->assertSame('#fragment', $uri->getFragment());
 		$this->assertSame($urlString, $uri->getAbsolute());
 		$this->assertSame($resource, $uri->getRelative());
 		$this->assertSame($resource, $uri->get());
@@ -68,7 +68,7 @@ class UriTest extends TestCase
 		$this->assertSame('/path', $uri->getPath());
 		$this->assertSame('?arg=value', $uri->getQuery());
 		$this->assertSame(['arg' => 'value'], $uri->getQueryParameters()->getAll());
-		$this->assertSame('fragment', $uri->getFragment());
+		$this->assertSame('#fragment', $uri->getFragment());
 		$this->assertSame($resource, $uri->getRelative());
 		$this->assertSame($resource, $uri->get());
 		$this->assertSame($resource, strval($uri));

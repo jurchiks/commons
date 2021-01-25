@@ -16,7 +16,6 @@ class Url
 	private $path;
 	private $parameters;
 	private $fragment;
-	private $sourceChanged = false;
 	
 	/**
 	 * @param string $url : a complete or partial URL
@@ -93,11 +92,7 @@ class Url
 			self::validateScheme($scheme);
 		}
 		
-		if ($this->scheme !== $scheme)
-		{
-			$this->scheme = $scheme;
-			$this->sourceChanged = true;
-		}
+		$this->scheme = $scheme;
 		
 		return $this;
 	}
@@ -116,12 +111,8 @@ class Url
 	{
 		self::validateAuth($username, $password);
 		
-		if (($this->username !== $username) || ($this->password !== $password))
-		{
-			$this->username = $username;
-			$this->password = $password;
-			$this->sourceChanged = true;
-		}
+		$this->username = $username;
+		$this->password = $password;
 		
 		return $this;
 	}
@@ -137,11 +128,7 @@ class Url
 		
 		self::validateHost($hostOrIp);
 		
-		if ($this->host !== $hostOrIp)
-		{
-			$this->host = $hostOrIp;
-			$this->sourceChanged = true;
-		}
+		$this->host = $hostOrIp;
 		
 		return $this;
 	}
@@ -161,11 +148,7 @@ class Url
 			throw new UriException('Invalid port number "' . $port . '"');
 		}
 		
-		if ($this->port !== $port)
-		{
-			$this->port = $port;
-			$this->sourceChanged = true;
-		}
+		$this->port = $port;
 		
 		return $this;
 	}
@@ -337,12 +320,9 @@ class Url
 	 */
 	public function get(bool $isRawUrl = false): string
 	{
-		if ($this->sourceChanged)
-		{
-			return $this->getAbsolute($isRawUrl);
-		}
-		
-		return $this->getRelative($isRawUrl);
+		return $this->isAbsolute()
+			? $this->getAbsolute($isRawUrl)
+			: $this->getRelative($isRawUrl);
 	}
 	
 	public function __toString()

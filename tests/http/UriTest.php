@@ -51,8 +51,8 @@ class UriTest extends TestCase
 		$this->assertSame('#fragment', $uri->getFragment());
 		$this->assertSame($urlString, $uri->getAbsolute());
 		$this->assertSame($resource, $uri->getRelative());
-		$this->assertSame($resource, $uri->get());
-		$this->assertSame($resource, strval($uri));
+		$this->assertSame($urlString, $uri->get());
+		$this->assertSame($urlString, strval($uri));
 		$this->assertTrue($uri->isAbsolute());
 	}
 	
@@ -90,8 +90,8 @@ class UriTest extends TestCase
 		$this->assertSame('', $uri->getFragment());
 		$this->assertSame($urlString, $uri->getAbsolute());
 		$this->assertSame('', $uri->getRelative());
-		$this->assertSame('', $uri->get());
-		$this->assertSame('', strval($uri));
+		$this->assertSame($urlString, $uri->get());
+		$this->assertSame($urlString, strval($uri));
 		$this->assertTrue($uri->isAbsolute());
 	}
 	
@@ -169,11 +169,11 @@ class UriTest extends TestCase
 	
 	public function testSetSchemeValidSame(): void
 	{
-		$resource = '/path?arg=value#fragment';
-		$uri = new Url('http://hostname:9090' . $resource);
+		$urlString = 'http://hostname:9090';
+		$uri = new Url($urlString);
 		$uri->setScheme('http');
 		
-		$this->assertSame($resource, strval($uri));
+		$this->assertSame($urlString, strval($uri));
 	}
 	
 	public function testSetSchemeInvalid(): void
@@ -187,11 +187,11 @@ class UriTest extends TestCase
 	
 	public function testSetAuthValidSame(): void
 	{
-		$resource = '/path?arg=value#fragment';
-		$uri = new Url('http://foo:bar@hostname:9090' . $resource);
+		$urlString = 'http://foo:bar@hostname:9090';
+		$uri = new Url($urlString);
 		$uri->setAuth('foo', 'bar');
 		
-		$this->assertSame($resource, strval($uri));
+		$this->assertSame($urlString, strval($uri));
 	}
 	
 	public function testSetAuthValidChanged(): void
@@ -223,11 +223,11 @@ class UriTest extends TestCase
 	
 	public function testSetHostValidSame(): void
 	{
-		$resource = '/path?arg=value#fragment';
-		$uri = new Url('http://hostname:9090' . $resource);
+		$urlString = 'http://hostname:9090';
+		$uri = new Url($urlString);
 		$uri->setHost('//HOSTNAME/');
 		
-		$this->assertSame($resource, strval($uri));
+		$this->assertSame($urlString, strval($uri));
 	}
 	
 	public function testSetHostValidChanged(): void
@@ -259,10 +259,11 @@ class UriTest extends TestCase
 	
 	public function testSetPortValidSame(): void
 	{
-		$uri = new Url('http://hostname:9090/');
+		$urlString = 'http://hostname:9090/';
+		$uri = new Url($urlString);
 		$uri->setPort(9090);
 		
-		$this->assertSame('/', strval($uri));
+		$this->assertSame($urlString, strval($uri));
 	}
 	
 	public function testSetPortValidChanged(): void
@@ -292,10 +293,11 @@ class UriTest extends TestCase
 	
 	public function testSetPathValid(): void
 	{
-		$uri = new Url('http://hostname:9090/');
+		$urlString = 'http://hostname:9090';
+		$uri = new Url($urlString);
 		$uri->setPath('/////foo/////');
 		
-		$this->assertSame('/foo/', strval($uri));
+		$this->assertSame($urlString . '/foo/', strval($uri));
 	}
 	
 	public function testSetPathInvalid(): void
@@ -310,16 +312,17 @@ class UriTest extends TestCase
 	
 	public function testSetQueryValid(): void
 	{
-		$uri = new Url('http://hostname:9090/');
+		$urlString = 'http://hostname:9090/';
+		$uri = new Url($urlString);
 		
 		$uri->setQuery('');
-		$this->assertSame('/', strval($uri));
+		$this->assertSame($urlString, strval($uri));
 		
 		$uri->setQuery('foo=bar');
-		$this->assertSame('/?foo=bar', strval($uri));
+		$this->assertSame($urlString . '?foo=bar', strval($uri));
 		
 		$uri->setQuery('?foo=bar');
-		$this->assertSame('/?foo=bar', strval($uri));
+		$this->assertSame($urlString . '?foo=bar', strval($uri));
 	}
 	
 	public function testSetQueryInvalid(): void
@@ -333,13 +336,14 @@ class UriTest extends TestCase
 	
 	public function testSetQueryParametersValid(): void
 	{
+		$urlString = 'http://hostname:9090/';
 		$queryParameters = ['foo' => ['bar' => 'baz']];
 		
-		$uri = new Url('http://hostname:9090/');
+		$uri = new Url($urlString);
 		$uri->setQueryParameters($queryParameters);
 		
 		$this->assertSame($queryParameters, $uri->getQueryParameters()->getAll());
-		$this->assertSame('/?foo%5Bbar%5D=baz', strval($uri));
+		$this->assertSame($urlString . '?foo%5Bbar%5D=baz', strval($uri));
 	}
 	
 	public function invalidQueryParameterDataset(): iterable
@@ -362,11 +366,12 @@ class UriTest extends TestCase
 	
 	public function testSetQueryParameterValid(): void
 	{
-		$uri = new Url('http://hostname:9090/?foo=bar');
+		$urlString = 'http://hostname:9090/';
+		$uri = new Url($urlString . '?foo=bar');
 		$uri->setQueryParameter('foo', ['bar' => 'baz']);
 		
 		$this->assertSame(['foo' => ['bar' => 'baz']], $uri->getQueryParameters()->getAll());
-		$this->assertSame('/?foo%5Bbar%5D=baz', strval($uri));
+		$this->assertSame($urlString . '?foo%5Bbar%5D=baz', strval($uri));
 	}
 	
 	/** @dataProvider invalidQueryParameterDataset */
@@ -383,9 +388,10 @@ class UriTest extends TestCase
 	
 	public function testSetFragment(): void
 	{
-		$uri = new Url('http://hostname:9090/?foo=bar');
+		$urlString = 'http://hostname:9090/?foo=bar';
+		$uri = new Url($urlString);
 		$uri->setFragment('baz');
 		
-		$this->assertSame('/?foo=bar#baz', strval($uri));
+		$this->assertSame($urlString . '#baz', strval($uri));
 	}
 }

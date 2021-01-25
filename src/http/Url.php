@@ -2,12 +2,10 @@
 namespace js\tools\commons\http;
 
 use js\tools\commons\exceptions\HttpException;
-use js\tools\commons\exceptions\UriException;
+use js\tools\commons\exceptions\UrlException;
 
-class Uri
+class Url
 {
-	const SUPPORTED_SCHEMES = ['http', 'https', 'ftp', 'ftps', 'sftp'];
-	
 	private $scheme;
 	private $username;
 	private $password;
@@ -16,11 +14,10 @@ class Uri
 	private $path;
 	private $parameters;
 	private $fragment;
-	private $sourceChanged = false;
 	
 	/**
-	 * @param string $url : a complete or partial URL
-	 * @throws UriException
+	 * @param string $url A complete or partial URL.
+	 * @throws UrlException If the URL is invalid.
 	 */
 	public function __construct(string $url)
 	{
@@ -28,20 +25,15 @@ class Uri
 		
 		if ($parts === false)
 		{
-			throw new UriException('Invalid URL "' . $url . '"');
-		}
-		
-		if (isset($parts['scheme']))
-		{
-			self::validateScheme($parts['scheme']);
+			throw new UrlException('Invalid URL "' . $url . '"');
 		}
 		
 		$this->scheme = $parts['scheme'] ?? '';
 		$this->username = $parts['user'] ?? '';
 		$this->password = $parts['pass'] ?? '';
 		$this->host = $parts['host'] ?? '';
-		$this->port = $parts['port'] ?? 0;
-		$this->path = $parts['path'] ?? '/';
+		$this->port = $parts['port'] ?? null;
+		$this->path = $parts['path'] ?? '';
 		$this->fragment = $parts['fragment'] ?? '';
 		
 		if (isset($parts['query']))
@@ -58,6 +50,11 @@ class Uri
 		$this->parameters = new Parameters($parameters);
 	}
 	
+	/**
+	 * @return self
+	 * @throws HttpException If the globals are missing some required fields.
+	 * @throws UrlException If the URL comprised from the globals is invalid.
+	 */
 	public static function createFromGlobals()
 	{
 		if (!isset($_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']))
@@ -70,7 +67,7 @@ class Uri
 		$url .= $_SERVER['HTTP_HOST'];
 		$url .= $_SERVER['REQUEST_URI'];
 		
-		return new Uri($url);
+		return new self($url);
 	}
 	
 	public function copy()
@@ -83,21 +80,9 @@ class Uri
 		return $this->scheme;
 	}
 	
-	public function setScheme(string $scheme): Uri
+	public function setScheme(string $scheme): self
 	{
-		$scheme = strtolower(trim($scheme));
-		
-		if ($scheme !== '')
-		{
-			// empty scheme is allowed for "//domain.tld" URLs where protocol is taken from referer
-			self::validateScheme($scheme);
-		}
-		
-		if ($this->scheme !== $scheme)
-		{
-			$this->scheme = $scheme;
-			$this->sourceChanged = true;
-		}
+		$this->scheme = strtolower(trim($scheme));
 		
 		return $this;
 	}
@@ -112,16 +97,18 @@ class Uri
 		return $this->password;
 	}
 	
-	public function setAuth(string $username, string $password = ''): Uri
+	/**
+	 * @param string $username
+	 * @param string $password
+	 * @return $this
+	 * @throws UrlException If the credentials or their format is invalid.
+	 */
+	public function setAuth(string $username, string $password = ''): self
 	{
 		self::validateAuth($username, $password);
 		
-		if (($this->username !== $username) || ($this->password !== $password))
-		{
-			$this->username = $username;
-			$this->password = $password;
-			$this->sourceChanged = true;
-		}
+		$this->username = $username;
+		$this->password = $password;
 		
 		return $this;
 	}
@@ -131,41 +118,43 @@ class Uri
 		return $this->host;
 	}
 	
-	public function setHost(string $hostOrIp): Uri
+	/**
+	 * @param string $hostOrIp
+	 * @return $this
+	 * @throws UrlException If the hostname or IP is invalid.
+	 */
+	public function setHost(string $hostOrIp): self
 	{
 		$hostOrIp = strtolower(trim($hostOrIp, '/'));
 		
 		self::validateHost($hostOrIp);
 		
-		if ($this->host !== $hostOrIp)
-		{
-			$this->host = $hostOrIp;
-			$this->sourceChanged = true;
-		}
+		$this->host = $hostOrIp;
 		
 		return $this;
 	}
 	
 	/**
-	 * @return int the port number, 0 if there is no explicit port specified
+	 * @return int|null The port number, null if there is no explicit port specified.
 	 */
-	public function getPort(): int
+	public function getPort(): ?int
 	{
 		return $this->port;
 	}
 	
-	public function setPort(int $port): Uri
+	/**
+	 * @param int|null $port
+	 * @return $this
+	 * @throws UrlException If the port is out of range.
+	 */
+	public function setPort(?int $port): self
 	{
-		if ($port < 0)
+		if (!is_null($port) && (($port < 0) || ($port > 65535)))
 		{
-			throw new UriException('Invalid port number "' . $port . '"');
+			throw new UrlException('Invalid port number "' . $port . '"');
 		}
 		
-		if ($this->port !== $port)
-		{
-			$this->port = $port;
-			$this->sourceChanged = true;
-		}
+		$this->port = $port;
 		
 		return $this;
 	}
@@ -175,9 +164,20 @@ class Uri
 		return $this->path;
 	}
 	
-	public function setPath(string $path): Uri
+	/**
+	 * @param string $path
+	 * @return $this
+	 * @throws UrlException If the path is invalid.
+	 */
+	public function setPath(string $path): self
 	{
-		$path = '/' . trim($path, '/');
+		$path = trim($path);
+		
+		if ($path !== '')
+		{
+			$path = '/' . $path;
+			$path = preg_replace('~//+~', '/', $path);
+		}
 		
 		self::validatePath($path);
 		
@@ -187,7 +187,7 @@ class Uri
 	}
 	
 	/**
-	 * @param bool $isRawUrl : if true, spaces in query parameters are encoded as %20, otherwise as +
+	 * @param bool $isRawUrl If true, spaces in query parameters are encoded as %20, otherwise as +.
 	 * @return string
 	 */
 	public function getQuery(bool $isRawUrl = false): string
@@ -198,14 +198,19 @@ class Uri
 		}
 		
 		return '?' . http_build_query(
-			$this->parameters->getAll(),
-			'',
-			'&',
-			$isRawUrl ? PHP_QUERY_RFC3986 : PHP_QUERY_RFC1738
-		);
+				$this->parameters->getAll(),
+				'',
+				'&',
+				$isRawUrl ? PHP_QUERY_RFC3986 : PHP_QUERY_RFC1738
+			);
 	}
 	
-	public function setQuery(string $query): Uri
+	/**
+	 * @param string $query
+	 * @return $this
+	 * @throws UrlException If the query is invalid.
+	 */
+	public function setQuery(string $query): self
 	{
 		$query = ltrim($query, '?');
 		
@@ -230,7 +235,30 @@ class Uri
 		return $this->parameters;
 	}
 	
-	public function setQueryParameters(array $parameters): Uri
+	/**
+	 * @param array<int|string>|int|string $key Exact key OR array of nested keys OR dot-separated string key.
+	 * Examples:
+	 * <ul>
+	 * <li>getQueryParameter('foo')</li>
+	 * <li>getQueryParameter(['foo', 0])</li>
+	 * <li>getQueryParameter('foo.bar', 'not found')</li>
+	 * </ul>
+	 * @param null|int|string|array $default
+	 * @return int|string|array The found value or $default.
+	 */
+	public function getQueryParameter($key, $default = null)
+	{
+		return $this->parameters->get($key, $default);
+	}
+	
+	/**
+	 * Replace query parameters with new ones.
+	 *
+	 * @param array $parameters The query parameters to replace the existing parameters with.
+	 * @return $this
+	 * @throws UrlException If any query parameter has an invalid value.
+	 */
+	public function setQueryParameters(array $parameters): self
 	{
 		foreach ($parameters as $key => $value)
 		{
@@ -242,7 +270,13 @@ class Uri
 		return $this;
 	}
 	
-	public function setQueryParameter(string $key, $value): Uri
+	/**
+	 * @param array<int|string>|int|string $key
+	 * @param array<int|string>|int|string $value
+	 * @return $this
+	 * @throws UrlException If the value is invalid.
+	 */
+	public function setQueryParameter($key, $value): self
 	{
 		self::validateQueryParameter($key, $value);
 		
@@ -253,12 +287,12 @@ class Uri
 	
 	public function getFragment(): string
 	{
-		return $this->fragment;
+		return (($this->fragment !== '') ? '#' . $this->fragment : '');
 	}
 	
-	public function setFragment(string $fragment): Uri
+	public function setFragment(string $fragment): self
 	{
-		$this->fragment = $fragment;
+		$this->fragment = ltrim($fragment, '#');
 		
 		return $this;
 	}
@@ -269,26 +303,24 @@ class Uri
 	}
 	
 	/**
-	 * @param bool $isRawUrl : if true, spaces in query parameters are encoded as %20, otherwise as +
-	 * @return string the relative part of the URL, e.g. "/foo/bar?baz=random#hash"
+	 * @param bool $isRawUrl if true, spaces in query parameters are encoded as %20, otherwise as +.
+	 * @return string The relative part of the URL, e.g. "/foo/bar?baz=random#hash".
 	 */
 	public function getRelative(bool $isRawUrl = false): string
 	{
-		$fragment = ($this->getFragment() ? '#' . $this->getFragment() : '');
-		
-		return $this->getPath() . $this->getQuery($isRawUrl) . $fragment;
+		return $this->getPath() . $this->getQuery($isRawUrl) . $this->getFragment();
 	}
 	
 	/**
-	 * @param bool $isRawUrl : if true, spaces in query parameters are encoded as %20, otherwise as +
-	 * @return string the full URL with all the specified data included
-	 * @throws UriException if host is missing
+	 * @param bool $isRawUrl If true, spaces in query parameters are encoded as %20, otherwise as +.
+	 * @return string The full URL with all the specified data included.
+	 * @throws UrlException If host is missing.
 	 */
 	public function getAbsolute(bool $isRawUrl = false): string
 	{
 		if (!$this->isAbsolute())
 		{
-			throw new UriException('Cannot make an absolute URL without host');
+			throw new UrlException('Cannot make an absolute URL without host');
 		}
 		
 		if (empty($this->getScheme()))
@@ -314,7 +346,7 @@ class Uri
 		
 		$source .= $this->getHost();
 		
-		if ($this->getPort() !== 0)
+		if ($this->getPort() !== null)
 		{
 			$source .= ':' . $this->getPort();
 		}
@@ -323,22 +355,19 @@ class Uri
 	}
 	
 	/**
-	 * Get the URL contained in this object. May return a relative or absolute URL depending on
-	 * whether the absolute part has changed.
+	 * Get the URL contained in this object.
+	 * May return a relative or absolute URL depending on whether the hostname is available.
 	 *
-	 * @param bool $isRawUrl : if true, spaces in query parameters are encoded as %20, otherwise as +
-	 * @return string the link to the required route
-	 * @see getRelative
+	 * @param bool $isRawUrl If true, spaces in query parameters are encoded as %20, otherwise as +.
+	 * @return string
 	 * @see getAbsolute
+	 * @see getRelative
 	 */
 	public function get(bool $isRawUrl = false): string
 	{
-		if ($this->sourceChanged)
-		{
-			return $this->getAbsolute($isRawUrl);
-		}
-		
-		return $this->getRelative($isRawUrl);
+		return $this->isAbsolute()
+			? $this->getAbsolute($isRawUrl)
+			: $this->getRelative($isRawUrl);
 	}
 	
 	public function __toString()
@@ -346,14 +375,11 @@ class Uri
 		return $this->get();
 	}
 	
-	private static function validateScheme(string $scheme)
-	{
-		if (!in_array($scheme, self::SUPPORTED_SCHEMES))
-		{
-			throw new UriException('Unsupported URI scheme "' . $scheme . '"');
-		}
-	}
-	
+	/**
+	 * @param string $username
+	 * @param string $password
+	 * @throws UrlException
+	 */
 	private static function validateAuth(string $username, string $password)
 	{
 		if (!empty($username))
@@ -364,18 +390,21 @@ class Uri
 			if (($data === false)
 				|| !isset($data['user'])
 				|| ($data['user'] !== $username)
-				|| (isset($data['pass']) && ($data['pass'] !== $password))
-			)
+				|| (isset($data['pass']) && ($data['pass'] !== $password)))
 			{
-				throw new UriException('Invalid auth credentials');
+				throw new UrlException('Invalid auth credentials');
 			}
 		}
 		else if (!empty($password))
 		{
-			throw new UriException('Cannot have a password without a username');
+			throw new UrlException('Cannot have a password without a username');
 		}
 	}
 	
+	/**
+	 * @param string $hostOrIp
+	 * @throws UrlException
+	 */
 	private static function validateHost(string $hostOrIp)
 	{
 		if ((filter_var($hostOrIp, FILTER_VALIDATE_IP) === false)
@@ -384,31 +413,44 @@ class Uri
 		)
 		{
 			// not a valid domain nor an IP address
-			throw new UriException('Invalid host "' . $hostOrIp . '"');
+			throw new UrlException('Invalid host "' . $hostOrIp . '"');
 		}
 	}
 	
+	/**
+	 * @param string $path
+	 * @throws UrlException
+	 */
 	private static function validatePath(string $path)
 	{
 		$data = parse_url('http://domain.tld' . $path);
 		
 		if (($data === false) || !isset($data['path']) || ($data['path'] !== $path))
 		{
-			throw new UriException('Invalid path "' . $path . '"');
+			throw new UrlException('Invalid path "' . $path . '"');
 		}
 	}
 	
+	/**
+	 * @param string $query
+	 * @throws UrlException
+	 */
 	private static function validateQuery(string $query)
 	{
 		$data = parse_url('http://domain.tld?' . $query);
 		
 		if (($data === false) || !isset($data['query']) || ($data['query'] !== $query))
 		{
-			throw new UriException('Invalid query "' . $query . '"');
+			throw new UrlException('Invalid query "' . $query . '"');
 		}
 	}
 	
-	private static function validateQueryParameter(string $key, $value)
+	/**
+	 * @param $key
+	 * @param $value
+	 * @throws UrlException
+	 */
+	private static function validateQueryParameter($key, $value)
 	{
 		if (is_array($value))
 		{
@@ -419,7 +461,9 @@ class Uri
 		}
 		else if (!is_scalar($value))
 		{
-			throw new UriException('Invalid query parameter "' . gettype($value) . '" for key "' . $key . '"');
+			throw new UrlException(
+				'Invalid query parameter "' . gettype($value) . '" for key "' . implode('.', (array)$key) . '"'
+			);
 		}
 	}
 }

@@ -219,6 +219,11 @@ class Url
 		return $this->parameters;
 	}
 	
+	public function getQueryParameter($key, $default = null)
+	{
+		return $this->parameters->get($key, $default);
+	}
+	
 	public function setQueryParameters(array $parameters): self
 	{
 		foreach ($parameters as $key => $value)

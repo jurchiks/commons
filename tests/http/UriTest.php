@@ -334,6 +334,14 @@ class UriTest extends TestCase
 		$uri->setQuery('foo=bar#baz');
 	}
 	
+	public function testGetQueryParameter(): void
+	{
+		$url = new Url('/foo');
+		$url->setQueryParameter('bar', 'baz');
+		
+		$this->assertSame('baz', $url->getQueryParameter('bar'));
+	}
+	
 	public function testSetQueryParametersValid(): void
 	{
 		$urlString = 'http://hostname:9090/';

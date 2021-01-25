@@ -375,6 +375,11 @@ class Url
 		return $this->get();
 	}
 	
+	/**
+	 * @param string $username
+	 * @param string $password
+	 * @throws UrlException
+	 */
 	private static function validateAuth(string $username, string $password)
 	{
 		if (!empty($username))
@@ -396,6 +401,10 @@ class Url
 		}
 	}
 	
+	/**
+	 * @param string $hostOrIp
+	 * @throws UrlException
+	 */
 	private static function validateHost(string $hostOrIp)
 	{
 		if ((filter_var($hostOrIp, FILTER_VALIDATE_IP) === false)
@@ -408,6 +417,10 @@ class Url
 		}
 	}
 	
+	/**
+	 * @param string $path
+	 * @throws UrlException
+	 */
 	private static function validatePath(string $path)
 	{
 		$data = parse_url('http://domain.tld' . $path);
@@ -418,6 +431,10 @@ class Url
 		}
 	}
 	
+	/**
+	 * @param string $query
+	 * @throws UrlException
+	 */
 	private static function validateQuery(string $query)
 	{
 		$data = parse_url('http://domain.tld?' . $query);
@@ -428,6 +445,11 @@ class Url
 		}
 	}
 	
+	/**
+	 * @param $key
+	 * @param $value
+	 * @throws UrlException
+	 */
 	private static function validateQueryParameter($key, $value)
 	{
 		if (is_array($value))

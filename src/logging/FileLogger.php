@@ -17,7 +17,9 @@ class FileLogger extends Logger
 	{
 		if (!is_dir($logDirectory) && !mkdir($logDirectory, $permissions, true))
 		{
-			throw new LogException('Log directory does not exist and cannot be made, check permissions: ' . $logDirectory);
+			throw new LogException(
+				'Log directory does not exist and cannot be made, check permissions: ' . $logDirectory
+			);
 		}
 		
 		if (!is_writable($logDirectory))

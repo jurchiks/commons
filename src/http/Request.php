@@ -41,7 +41,9 @@ class Request
 	{
 		if (!isset($_SERVER['REQUEST_METHOD'], $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']))
 		{
-			throw new HttpException('Missing required fields in global $_SERVER - [REQUEST_METHOD, HTTP_HOST, REQUEST_URI]');
+			throw new HttpException(
+				'Missing required fields in global $_SERVER - [REQUEST_METHOD, HTTP_HOST, REQUEST_URI]'
+			);
 		}
 		
 		$method = strtolower($_SERVER['REQUEST_METHOD']);

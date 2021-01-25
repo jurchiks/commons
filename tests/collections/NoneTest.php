@@ -3,6 +3,7 @@ namespace js\tools\commons\tests\collections;
 
 use js\tools\commons\collections\None;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 class NoneTest extends TestCase
 {
@@ -22,7 +23,7 @@ class NoneTest extends TestCase
 	
 	public function testGet(): void
 	{
-		$this->expectException(\RuntimeException::class);
+		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage('None does not have a value; consider using getOrElse()');
 		
 		(new None())->get();

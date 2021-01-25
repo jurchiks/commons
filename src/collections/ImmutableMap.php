@@ -66,7 +66,7 @@ class ImmutableMap extends ArrayMap
 		bool $preserveKeys = true
 	): ArrayMap
 	{
-		return new static($this->sortData($ascending, $flags, $sortByKeys, $preserveKeys, null));
+		return new static($this->sortData($ascending, $flags, $sortByKeys, $preserveKeys));
 	}
 	
 	public function sortManual(callable $callback, bool $sortByKeys = false, bool $preserveKeys = true): ArrayMap

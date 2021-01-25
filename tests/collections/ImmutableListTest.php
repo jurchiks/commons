@@ -72,7 +72,7 @@ class ImmutableListTest extends TestCase
 	public function testMap(): void
 	{
 		$list = new ImmutableList(range(1, 5));
-		$newList = $list->map(fn (int $value, int $index) => ($index < 3) ? $value * 2 : $value * 3);;
+		$newList = $list->map(fn (int $value, int $index) => ($index < 3) ? $value * 2 : $value * 3);
 		
 		$this->assertSame([2, 4, 6, 12, 15], $newList->get());
 		$this->assertSame(range(1, 5), $list->get());

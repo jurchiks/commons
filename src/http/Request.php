@@ -16,14 +16,14 @@ class Request
 	
 	/**
 	 * @param string $method : the request method used for this request (e.g. GET, POST)
-	 * @param Uri $uri : the URI that was requested
+	 * @param Url $uri : the URI that was requested
 	 * @param array $data : the request data, if any (GET, POST, PUT, PATCH, DELETE etc). In the case of a GET request,
 	 * the same data is available via the $uri object
 	 * @param array $files : the $_FILES array or its equivalent
 	 * @param string $referer : the URL that referred to this URL
 	 * @throws HttpException if the request method is invalid
 	 */
-	public function __construct(string $method, Uri $uri, array $data, array $files = [], string $referer = '')
+	public function __construct(string $method, Url $uri, array $data, array $files = [], string $referer = '')
 	{
 		if (!in_array($method, self::METHODS))
 		{
@@ -80,7 +80,7 @@ class Request
 		
 		return new static(
 			$method,
-			Uri::createFromGlobals(),
+			Url::createFromGlobals(),
 			$data,
 			$_FILES ?? [],
 			$_SERVER['HTTP_REFERER'] ?? ''
@@ -108,7 +108,7 @@ class Request
 		return (strcasecmp($this->method, $method) === 0);
 	}
 	
-	public function getUri(): Uri
+	public function getUri(): Url
 	{
 		return $this->uri;
 	}

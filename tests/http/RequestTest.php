@@ -3,7 +3,7 @@ namespace js\tools\commons\tests\http;
 
 use js\tools\commons\exceptions\HttpException;
 use js\tools\commons\http\Request;
-use js\tools\commons\http\Uri;
+use js\tools\commons\http\Url;
 use js\tools\commons\upload\UploadedFile;
 use PHPUnit\Framework\TestCase;
 
@@ -43,7 +43,7 @@ class RequestTest extends TestCase
 				'size'     => 666,
 			],
 		];
-		$request = new Request('post', new Uri('https://host.name/upload'), [], $files, 'https://host.name/');
+		$request = new Request('post', new Url('https://host.name/upload'), [], $files, 'https://host.name/');
 		
 		$this->assertSame('post', $request->getMethod());
 		$this->assertTrue($request->isMethod('POST'));
@@ -63,7 +63,7 @@ class RequestTest extends TestCase
 		$this->expectException(HttpException::class);
 		$this->expectExceptionMessage('Unsupported request method "foo"');
 		
-		new Request('foo', new Uri('https://host.name/upload'), []);
+		new Request('foo', new Url('https://host.name/upload'), []);
 	}
 	
 	public function testCreateFromGlobalsGet(): void

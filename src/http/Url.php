@@ -4,7 +4,7 @@ namespace js\tools\commons\http;
 use js\tools\commons\exceptions\HttpException;
 use js\tools\commons\exceptions\UriException;
 
-class Uri
+class Url
 {
 	const SUPPORTED_SCHEMES = ['http', 'https', 'ftp', 'ftps', 'sftp'];
 	
@@ -70,7 +70,7 @@ class Uri
 		$url .= $_SERVER['HTTP_HOST'];
 		$url .= $_SERVER['REQUEST_URI'];
 		
-		return new Uri($url);
+		return new self($url);
 	}
 	
 	public function copy()
@@ -83,7 +83,7 @@ class Uri
 		return $this->scheme;
 	}
 	
-	public function setScheme(string $scheme): Uri
+	public function setScheme(string $scheme): self
 	{
 		$scheme = strtolower(trim($scheme));
 		
@@ -112,7 +112,7 @@ class Uri
 		return $this->password;
 	}
 	
-	public function setAuth(string $username, string $password = ''): Uri
+	public function setAuth(string $username, string $password = ''): self
 	{
 		self::validateAuth($username, $password);
 		
@@ -131,7 +131,7 @@ class Uri
 		return $this->host;
 	}
 	
-	public function setHost(string $hostOrIp): Uri
+	public function setHost(string $hostOrIp): self
 	{
 		$hostOrIp = strtolower(trim($hostOrIp, '/'));
 		
@@ -154,7 +154,7 @@ class Uri
 		return $this->port;
 	}
 	
-	public function setPort(int $port): Uri
+	public function setPort(int $port): self
 	{
 		if ($port < 0)
 		{
@@ -175,7 +175,7 @@ class Uri
 		return $this->path;
 	}
 	
-	public function setPath(string $path): Uri
+	public function setPath(string $path): self
 	{
 		$path = '/' . trim($path, '/');
 		
@@ -205,7 +205,7 @@ class Uri
 		);
 	}
 	
-	public function setQuery(string $query): Uri
+	public function setQuery(string $query): self
 	{
 		$query = ltrim($query, '?');
 		
@@ -230,7 +230,7 @@ class Uri
 		return $this->parameters;
 	}
 	
-	public function setQueryParameters(array $parameters): Uri
+	public function setQueryParameters(array $parameters): self
 	{
 		foreach ($parameters as $key => $value)
 		{
@@ -242,7 +242,7 @@ class Uri
 		return $this;
 	}
 	
-	public function setQueryParameter(string $key, $value): Uri
+	public function setQueryParameter(string $key, $value): self
 	{
 		self::validateQueryParameter($key, $value);
 		
@@ -256,7 +256,7 @@ class Uri
 		return $this->fragment;
 	}
 	
-	public function setFragment(string $fragment): Uri
+	public function setFragment(string $fragment): self
 	{
 		$this->fragment = $fragment;
 		

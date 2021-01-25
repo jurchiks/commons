@@ -3,7 +3,7 @@ namespace js\tools\commons\tests\http;
 
 use js\tools\commons\exceptions\HttpException;
 use js\tools\commons\exceptions\UriException;
-use js\tools\commons\http\Uri;
+use js\tools\commons\http\Url;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -22,7 +22,7 @@ class UriTest extends TestCase
 	{
 		$this->expectException(UriException::class);
 		
-		new Uri($invalidUrl);
+		new Url($invalidUrl);
 	}
 	
 	public function testUnsupportedScheme(): void
@@ -30,14 +30,14 @@ class UriTest extends TestCase
 		$this->expectException(UriException::class);
 		$this->expectExceptionMessage('Unsupported URI scheme "foo"');
 		
-		new Uri('foo://bar');
+		new Url('foo://bar');
 	}
 	
 	public function testAbsoluteUrl(): void
 	{
 		$resource = '/path?arg=value#fragment';
 		$urlString = 'http://username:password@hostname:9090' . $resource;
-		$uri = new Uri($urlString);
+		$uri = new Url($urlString);
 		$this->assertSame('http', $uri->getScheme());
 		$this->assertSame('username', $uri->getUsername());
 		$this->assertSame('password', $uri->getPassword());
@@ -57,7 +57,7 @@ class UriTest extends TestCase
 	public function testRelativeUrl(): void
 	{
 		$resource = '/path?arg=value#fragment';
-		$uri = new Uri($resource);
+		$uri = new Url($resource);
 		$this->assertSame('', $uri->getScheme());
 		$this->assertSame('', $uri->getUsername());
 		$this->assertSame('', $uri->getPassword());
@@ -76,7 +76,7 @@ class UriTest extends TestCase
 	public function testSourceOnly(): void
 	{
 		$urlString = 'http://username:password@hostname:9090';
-		$uri = new Uri($urlString);
+		$uri = new Url($urlString);
 		$this->assertSame('http', $uri->getScheme());
 		$this->assertSame('username', $uri->getUsername());
 		$this->assertSame('password', $uri->getPassword());
@@ -106,7 +106,7 @@ class UriTest extends TestCase
 		$_SERVER['REQUEST_URI'] = $requestUri;
 		$_SERVER['HTTPS'] = $https;
 		
-		$uri = Uri::createFromGlobals();
+		$uri = Url::createFromGlobals();
 		
 		$this->assertSame($expectedUrl, $uri->getAbsolute());
 		
@@ -118,22 +118,22 @@ class UriTest extends TestCase
 		$this->expectException(HttpException::class);
 		$this->expectExceptionMessage('Missing required fields in global $_SERVER - [HTTP_HOST, REQUEST_URI]');
 		
-		Uri::createFromGlobals();
+		Url::createFromGlobals();
 	}
 	
 	public function testCopy(): void
 	{
-		$uri = new Uri('http://username:password@hostname:9090/path?arg=value#fragment');
+		$uri = new Url('http://username:password@hostname:9090/path?arg=value#fragment');
 		$copy = $uri->copy();
 		
-		$this->assertInstanceOf(Uri::class, $copy);
+		$this->assertInstanceOf(Url::class, $copy);
 		$this->assertNotSame($uri, $copy);
 		$this->assertSame($uri->getAbsolute(), $copy->getAbsolute());
 	}
 	
 	public function testQueryEncoding(): void
 	{
-		$uri = new Uri('?arg=value with spaces');
+		$uri = new Url('?arg=value with spaces');
 		
 		$this->assertSame('?arg=value+with+spaces', $uri->getQuery());
 		$this->assertSame('?arg=value%20with%20spaces', $uri->getQuery(true));
@@ -145,13 +145,13 @@ class UriTest extends TestCase
 		$this->expectException(UriException::class);
 		$this->expectExceptionMessage('Cannot make an absolute URL without host');
 		
-		(new Uri('/path?arg=value#fragment'))->getAbsolute();
+		(new Url('/path?arg=value#fragment'))->getAbsolute();
 	}
 	
 	public function testWithoutScheme(): void
 	{
 		$urlString = 'hostname:9090/path?arg=value#fragment';
-		$uri = new Uri($urlString);
+		$uri = new Url($urlString);
 		
 		$this->assertSame('//' . $urlString, $uri->getAbsolute());
 	}
@@ -159,7 +159,7 @@ class UriTest extends TestCase
 	public function testSetSchemeValidChanged(): void
 	{
 		$urlString = 'hostname:9090/path?arg=value#fragment';
-		$uri = new Uri('http://' . $urlString);
+		$uri = new Url('http://' . $urlString);
 		$uri->setScheme('    HTTPS    ');
 		
 		$this->assertSame('https://' . $urlString, strval($uri));
@@ -168,7 +168,7 @@ class UriTest extends TestCase
 	public function testSetSchemeValidSame(): void
 	{
 		$resource = '/path?arg=value#fragment';
-		$uri = new Uri('http://hostname:9090' . $resource);
+		$uri = new Url('http://hostname:9090' . $resource);
 		$uri->setScheme('http');
 		
 		$this->assertSame($resource, strval($uri));
@@ -179,14 +179,14 @@ class UriTest extends TestCase
 		$this->expectException(UriException::class);
 		$this->expectExceptionMessage('Unsupported URI scheme "foo"');
 		
-		$uri = new Uri('http://hostname:9090/path?arg=value#fragment');
+		$uri = new Url('http://hostname:9090/path?arg=value#fragment');
 		$uri->setScheme('foo');
 	}
 	
 	public function testSetAuthValidSame(): void
 	{
 		$resource = '/path?arg=value#fragment';
-		$uri = new Uri('http://foo:bar@hostname:9090' . $resource);
+		$uri = new Url('http://foo:bar@hostname:9090' . $resource);
 		$uri->setAuth('foo', 'bar');
 		
 		$this->assertSame($resource, strval($uri));
@@ -195,7 +195,7 @@ class UriTest extends TestCase
 	public function testSetAuthValidChanged(): void
 	{
 		$urlString = 'hostname:9090/path?arg=value#fragment';
-		$uri = new Uri('http://foo:bar@' . $urlString);
+		$uri = new Url('http://foo:bar@' . $urlString);
 		$uri->setAuth('baz', 'qux');
 		
 		$this->assertSame('http://baz:qux@' . $urlString, strval($uri));
@@ -206,7 +206,7 @@ class UriTest extends TestCase
 		$this->expectException(UriException::class);
 		$this->expectExceptionMessage('Invalid auth credentials');
 		
-		$uri = new Uri('http://hostname:9090/path?arg=value#fragment');
+		$uri = new Url('http://hostname:9090/path?arg=value#fragment');
 		$uri->setAuth('foo:bar');
 	}
 	
@@ -215,14 +215,14 @@ class UriTest extends TestCase
 		$this->expectException(UriException::class);
 		$this->expectExceptionMessage('Cannot have a password without a username');
 		
-		$uri = new Uri('http://hostname:9090/path?arg=value#fragment');
+		$uri = new Url('http://hostname:9090/path?arg=value#fragment');
 		$uri->setAuth('', 'foo');
 	}
 	
 	public function testSetHostValidSame(): void
 	{
 		$resource = '/path?arg=value#fragment';
-		$uri = new Uri('http://hostname:9090' . $resource);
+		$uri = new Url('http://hostname:9090' . $resource);
 		$uri->setHost('//HOSTNAME/');
 		
 		$this->assertSame($resource, strval($uri));
@@ -231,7 +231,7 @@ class UriTest extends TestCase
 	public function testSetHostValidChanged(): void
 	{
 		$resource = '/path?arg=value#fragment';
-		$uri = new Uri('http://hostname:9090' . $resource);
+		$uri = new Url('http://hostname:9090' . $resource);
 		$uri->setHost('host.name');
 		
 		$this->assertSame('http://host.name:9090' . $resource, strval($uri));
@@ -251,13 +251,13 @@ class UriTest extends TestCase
 		$this->expectException(UriException::class);
 		$this->expectExceptionMessage('Invalid host "' . $invalidHost . '"');
 		
-		$uri = new Uri('http://hostname:9090/path?arg=value#fragment');
+		$uri = new Url('http://hostname:9090/path?arg=value#fragment');
 		$uri->setHost($invalidHost);
 	}
 	
 	public function testSetPortValidSame(): void
 	{
-		$uri = new Uri('http://hostname:9090/');
+		$uri = new Url('http://hostname:9090/');
 		$uri->setPort(9090);
 		
 		$this->assertSame('/', strval($uri));
@@ -265,7 +265,7 @@ class UriTest extends TestCase
 	
 	public function testSetPortValidChanged(): void
 	{
-		$uri = new Uri('http://hostname:9090/');
+		$uri = new Url('http://hostname:9090/');
 		$uri->setPort(90);
 		
 		$this->assertSame('http://hostname:90/', strval($uri));
@@ -273,7 +273,7 @@ class UriTest extends TestCase
 	
 	public function testClearPort(): void
 	{
-		$uri = new Uri('http://hostname:9090/');
+		$uri = new Url('http://hostname:9090/');
 		$uri->setPort(0);
 		
 		$this->assertSame('http://hostname/', strval($uri));
@@ -284,13 +284,13 @@ class UriTest extends TestCase
 		$this->expectException(UriException::class);
 		$this->expectExceptionMessage('Invalid port number "-1"');
 		
-		$uri = new Uri('http://hostname:9090/');
+		$uri = new Url('http://hostname:9090/');
 		$uri->setPort(-1);
 	}
 	
 	public function testSetPathValid(): void
 	{
-		$uri = new Uri('http://hostname:9090/');
+		$uri = new Url('http://hostname:9090/');
 		$uri->setPath('///foo///');
 		
 		$this->assertSame('/foo', strval($uri));
@@ -303,12 +303,12 @@ class UriTest extends TestCase
 		$this->expectException(UriException::class);
 		$this->expectExceptionMessage('Invalid path "' . $path . '"');
 		
-		(new Uri('http://hostname:9090/'))->setPath($path);
+		(new Url('http://hostname:9090/'))->setPath($path);
 	}
 	
 	public function testSetQueryValid(): void
 	{
-		$uri = new Uri('http://hostname:9090/');
+		$uri = new Url('http://hostname:9090/');
 		
 		$uri->setQuery('');
 		$this->assertSame('/', strval($uri));
@@ -325,7 +325,7 @@ class UriTest extends TestCase
 		$this->expectException(UriException::class);
 		$this->expectExceptionMessage('Invalid query "foo=bar#baz"');
 		
-		$uri = new Uri('hostname:9090');
+		$uri = new Url('hostname:9090');
 		$uri->setQuery('foo=bar#baz');
 	}
 	
@@ -333,7 +333,7 @@ class UriTest extends TestCase
 	{
 		$queryParameters = ['foo' => ['bar' => 'baz']];
 		
-		$uri = new Uri('http://hostname:9090/');
+		$uri = new Url('http://hostname:9090/');
 		$uri->setQueryParameters($queryParameters);
 		
 		$this->assertSame($queryParameters, $uri->getQueryParameters()->getAll());
@@ -354,13 +354,13 @@ class UriTest extends TestCase
 			'Invalid query parameter "' . gettype($invalidQueryParameter) . '" for key "foo"'
 		);
 		
-		$uri = new Uri('http://hostname:9090/');
+		$uri = new Url('http://hostname:9090/');
 		$uri->setQueryParameters(['foo' => $invalidQueryParameter]);
 	}
 	
 	public function testSetQueryParameterValid(): void
 	{
-		$uri = new Uri('http://hostname:9090/?foo=bar');
+		$uri = new Url('http://hostname:9090/?foo=bar');
 		$uri->setQueryParameter('foo', ['bar' => 'baz']);
 		
 		$this->assertSame(['foo' => ['bar' => 'baz']], $uri->getQueryParameters()->getAll());
@@ -375,13 +375,13 @@ class UriTest extends TestCase
 			'Invalid query parameter "' . gettype($invalidQueryParameter) . '" for key "foo"'
 		);
 		
-		$uri = new Uri('http://hostname:9090/?foo=bar');
+		$uri = new Url('http://hostname:9090/?foo=bar');
 		$uri->setQueryParameter('foo', $invalidQueryParameter);
 	}
 	
 	public function testSetFragment(): void
 	{
-		$uri = new Uri('http://hostname:9090/?foo=bar');
+		$uri = new Url('http://hostname:9090/?foo=bar');
 		$uri->setFragment('baz');
 		
 		$this->assertSame('/?foo=bar#baz', strval($uri));

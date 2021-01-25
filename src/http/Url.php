@@ -16,8 +16,8 @@ class Url
 	private $fragment;
 	
 	/**
-	 * @param string $url : a complete or partial URL
-	 * @throws UrlException
+	 * @param string $url A complete or partial URL.
+	 * @throws UrlException If the URL is invalid.
 	 */
 	public function __construct(string $url)
 	{
@@ -50,6 +50,11 @@ class Url
 		$this->parameters = new Parameters($parameters);
 	}
 	
+	/**
+	 * @return self
+	 * @throws HttpException If the globals are missing some required fields.
+	 * @throws UrlException If the URL comprised from the globals is invalid.
+	 */
 	public static function createFromGlobals()
 	{
 		if (!isset($_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']))
@@ -92,6 +97,12 @@ class Url
 		return $this->password;
 	}
 	
+	/**
+	 * @param string $username
+	 * @param string $password
+	 * @return $this
+	 * @throws UrlException If the credentials or their format is invalid.
+	 */
 	public function setAuth(string $username, string $password = ''): self
 	{
 		self::validateAuth($username, $password);
@@ -107,6 +118,11 @@ class Url
 		return $this->host;
 	}
 	
+	/**
+	 * @param string $hostOrIp
+	 * @return $this
+	 * @throws UrlException If the hostname or IP is invalid.
+	 */
 	public function setHost(string $hostOrIp): self
 	{
 		$hostOrIp = strtolower(trim($hostOrIp, '/'));
@@ -119,13 +135,18 @@ class Url
 	}
 	
 	/**
-	 * @return int|null the port number, null if there is no explicit port specified
+	 * @return int|null The port number, null if there is no explicit port specified.
 	 */
 	public function getPort(): ?int
 	{
 		return $this->port;
 	}
 	
+	/**
+	 * @param int|null $port
+	 * @return $this
+	 * @throws UrlException If the port is out of range.
+	 */
 	public function setPort(?int $port): self
 	{
 		if (!is_null($port) && (($port < 0) || ($port > 65535)))
@@ -143,6 +164,11 @@ class Url
 		return $this->path;
 	}
 	
+	/**
+	 * @param string $path
+	 * @return $this
+	 * @throws UrlException If the path is invalid.
+	 */
 	public function setPath(string $path): self
 	{
 		$path = trim($path);
@@ -161,7 +187,7 @@ class Url
 	}
 	
 	/**
-	 * @param bool $isRawUrl : if true, spaces in query parameters are encoded as %20, otherwise as +
+	 * @param bool $isRawUrl If true, spaces in query parameters are encoded as %20, otherwise as +.
 	 * @return string
 	 */
 	public function getQuery(bool $isRawUrl = false): string
@@ -179,6 +205,11 @@ class Url
 			);
 	}
 	
+	/**
+	 * @param string $query
+	 * @return $this
+	 * @throws UrlException If the query is invalid.
+	 */
 	public function setQuery(string $query): self
 	{
 		$query = ltrim($query, '?');
@@ -204,11 +235,29 @@ class Url
 		return $this->parameters;
 	}
 	
+	/**
+	 * @param array<int|string>|int|string $key Exact key OR array of nested keys OR dot-separated string key.
+	 * Examples:
+	 * <ul>
+	 * <li>getQueryParameter('foo')</li>
+	 * <li>getQueryParameter(['foo', 0])</li>
+	 * <li>getQueryParameter('foo.bar', 'not found')</li>
+	 * </ul>
+	 * @param null|int|string|array $default
+	 * @return int|string|array The found value or $default.
+	 */
 	public function getQueryParameter($key, $default = null)
 	{
 		return $this->parameters->get($key, $default);
 	}
 	
+	/**
+	 * Replace query parameters with new ones.
+	 *
+	 * @param array $parameters The query parameters to replace the existing parameters with.
+	 * @return $this
+	 * @throws UrlException If any query parameter has an invalid value.
+	 */
 	public function setQueryParameters(array $parameters): self
 	{
 		foreach ($parameters as $key => $value)
@@ -221,6 +270,12 @@ class Url
 		return $this;
 	}
 	
+	/**
+	 * @param array<int|string>|int|string $key
+	 * @param array<int|string>|int|string $value
+	 * @return $this
+	 * @throws UrlException If the value is invalid.
+	 */
 	public function setQueryParameter($key, $value): self
 	{
 		self::validateQueryParameter($key, $value);
@@ -248,8 +303,8 @@ class Url
 	}
 	
 	/**
-	 * @param bool $isRawUrl : if true, spaces in query parameters are encoded as %20, otherwise as +
-	 * @return string the relative part of the URL, e.g. "/foo/bar?baz=random#hash"
+	 * @param bool $isRawUrl if true, spaces in query parameters are encoded as %20, otherwise as +.
+	 * @return string The relative part of the URL, e.g. "/foo/bar?baz=random#hash".
 	 */
 	public function getRelative(bool $isRawUrl = false): string
 	{
@@ -257,9 +312,9 @@ class Url
 	}
 	
 	/**
-	 * @param bool $isRawUrl : if true, spaces in query parameters are encoded as %20, otherwise as +
-	 * @return string the full URL with all the specified data included
-	 * @throws UrlException if host is missing
+	 * @param bool $isRawUrl If true, spaces in query parameters are encoded as %20, otherwise as +.
+	 * @return string The full URL with all the specified data included.
+	 * @throws UrlException If host is missing.
 	 */
 	public function getAbsolute(bool $isRawUrl = false): string
 	{
@@ -300,13 +355,13 @@ class Url
 	}
 	
 	/**
-	 * Get the URL contained in this object. May return a relative or absolute URL depending on
-	 * whether the absolute part has changed.
+	 * Get the URL contained in this object.
+	 * May return a relative or absolute URL depending on whether the hostname is available.
 	 *
-	 * @param bool $isRawUrl : if true, spaces in query parameters are encoded as %20, otherwise as +
-	 * @return string the link to the required route
-	 * @see getRelative
+	 * @param bool $isRawUrl If true, spaces in query parameters are encoded as %20, otherwise as +.
+	 * @return string
 	 * @see getAbsolute
+	 * @see getRelative
 	 */
 	public function get(bool $isRawUrl = false): string
 	{

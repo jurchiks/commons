@@ -6,8 +6,6 @@ use js\tools\commons\exceptions\UrlException;
 
 class Url
 {
-	const SUPPORTED_SCHEMES = ['http', 'https', 'ftp', 'ftps', 'sftp'];
-	
 	private $scheme;
 	private $username;
 	private $password;
@@ -28,11 +26,6 @@ class Url
 		if ($parts === false)
 		{
 			throw new UrlException('Invalid URL "' . $url . '"');
-		}
-		
-		if (isset($parts['scheme']))
-		{
-			self::validateScheme($parts['scheme']);
 		}
 		
 		$this->scheme = $parts['scheme'] ?? '';
@@ -84,15 +77,7 @@ class Url
 	
 	public function setScheme(string $scheme): self
 	{
-		$scheme = strtolower(trim($scheme));
-		
-		if ($scheme !== '')
-		{
-			// empty scheme is allowed for "//domain.tld" URLs where protocol is taken from referer
-			self::validateScheme($scheme);
-		}
-		
-		$this->scheme = $scheme;
+		$this->scheme = strtolower(trim($scheme));
 		
 		return $this;
 	}
@@ -333,14 +318,6 @@ class Url
 	public function __toString()
 	{
 		return $this->get();
-	}
-	
-	private static function validateScheme(string $scheme)
-	{
-		if (!in_array($scheme, self::SUPPORTED_SCHEMES))
-		{
-			throw new UrlException('Unsupported URL scheme "' . $scheme . '"');
-		}
 	}
 	
 	private static function validateAuth(string $username, string $password)

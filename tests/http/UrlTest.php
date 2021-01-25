@@ -15,7 +15,6 @@ class UrlTest extends TestCase
 		yield ['http:///domain.tld'];
 		yield ['http://:80'];
 		yield ['http://user@:80'];
-		yield ['foo:bar@domain.tld'];
 		yield ['http://domain.tld:90000'];
 	}
 	
@@ -25,14 +24,6 @@ class UrlTest extends TestCase
 		$this->expectException(UrlException::class);
 		
 		new Url($invalidUrl);
-	}
-	
-	public function testUnsupportedScheme(): void
-	{
-		$this->expectException(UrlException::class);
-		$this->expectExceptionMessage('Unsupported URL scheme "foo"');
-		
-		new Url('foo://bar');
 	}
 	
 	public function testAbsoluteUrl(): void
@@ -174,15 +165,6 @@ class UrlTest extends TestCase
 		$url->setScheme('http');
 		
 		$this->assertSame($urlString, strval($url));
-	}
-	
-	public function testSetSchemeInvalid(): void
-	{
-		$this->expectException(UrlException::class);
-		$this->expectExceptionMessage('Unsupported URL scheme "foo"');
-		
-		$url = new Url('http://hostname:9090/path?arg=value#fragment');
-		$url->setScheme('foo');
 	}
 	
 	public function testSetAuthValidSame(): void

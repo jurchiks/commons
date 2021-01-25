@@ -41,7 +41,7 @@ class Url
 		$this->password = $parts['pass'] ?? '';
 		$this->host = $parts['host'] ?? '';
 		$this->port = $parts['port'] ?? null;
-		$this->path = $parts['path'] ?? '/';
+		$this->path = $parts['path'] ?? '';
 		$this->fragment = $parts['fragment'] ?? '';
 		
 		if (isset($parts['query']))
@@ -177,7 +177,13 @@ class Url
 	
 	public function setPath(string $path): self
 	{
-		$path = '/' . trim($path, '/');
+		$path = trim($path);
+		
+		if ($path !== '')
+		{
+			$path = '/' . $path;
+			$path = preg_replace('~//+~', '/', $path);
+		}
 		
 		self::validatePath($path);
 		
@@ -198,11 +204,11 @@ class Url
 		}
 		
 		return '?' . http_build_query(
-			$this->parameters->getAll(),
-			'',
-			'&',
-			$isRawUrl ? PHP_QUERY_RFC3986 : PHP_QUERY_RFC1738
-		);
+				$this->parameters->getAll(),
+				'',
+				'&',
+				$isRawUrl ? PHP_QUERY_RFC3986 : PHP_QUERY_RFC1738
+			);
 	}
 	
 	public function setQuery(string $query): self
@@ -364,8 +370,7 @@ class Url
 			if (($data === false)
 				|| !isset($data['user'])
 				|| ($data['user'] !== $username)
-				|| (isset($data['pass']) && ($data['pass'] !== $password))
-			)
+				|| (isset($data['pass']) && ($data['pass'] !== $password)))
 			{
 				throw new UriException('Invalid auth credentials');
 			}

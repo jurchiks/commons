@@ -11,6 +11,7 @@ class UriTest extends TestCase
 {
 	public function invalidUrlDataset(): iterable
 	{
+		yield ['///foo'];
 		yield ['http:///domain.tld'];
 		yield ['http://:80'];
 		yield ['http://user@:80'];
@@ -83,14 +84,14 @@ class UriTest extends TestCase
 		$this->assertSame('password', $uri->getPassword());
 		$this->assertSame('hostname', $uri->getHost());
 		$this->assertSame(9090, $uri->getPort());
-		$this->assertSame('/', $uri->getPath());
+		$this->assertSame('', $uri->getPath());
 		$this->assertSame('', $uri->getQuery());
 		$this->assertSame([], $uri->getQueryParameters()->getAll());
 		$this->assertSame('', $uri->getFragment());
-		$this->assertSame($urlString . '/', $uri->getAbsolute());
-		$this->assertSame('/', $uri->getRelative());
-		$this->assertSame('/', $uri->get());
-		$this->assertSame('/', strval($uri));
+		$this->assertSame($urlString, $uri->getAbsolute());
+		$this->assertSame('', $uri->getRelative());
+		$this->assertSame('', $uri->get());
+		$this->assertSame('', strval($uri));
 		$this->assertTrue($uri->isAbsolute());
 	}
 	
@@ -292,9 +293,9 @@ class UriTest extends TestCase
 	public function testSetPathValid(): void
 	{
 		$uri = new Url('http://hostname:9090/');
-		$uri->setPath('///foo///');
+		$uri->setPath('/////foo/////');
 		
-		$this->assertSame('/foo', strval($uri));
+		$this->assertSame('/foo/', strval($uri));
 	}
 	
 	public function testSetPathInvalid(): void

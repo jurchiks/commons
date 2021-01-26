@@ -128,11 +128,9 @@ HTML;
 	
 	public function testInvalidDataAccess(): void
 	{
-		$this->expectException(TemplateException::class);
-		$this->expectExceptionMessage('Trying to access undefined variable "foo"');
-		
 		$template = new Template(__DIR__ . '/templates/basic.phtml');
-		$template->foo;
+		
+		$this->assertNull($template->foo);
 	}
 	
 	public function testDataWrite(): void

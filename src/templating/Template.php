@@ -58,11 +58,6 @@ class Template
 	
 	public function __get(string $name)
 	{
-		if (!$this->exists($name))
-		{
-			throw new TemplateException('Trying to access undefined variable "' . $name . '"');
-		}
-		
 		return $this->get($name);
 	}
 	

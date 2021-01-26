@@ -97,7 +97,7 @@ class UploadedFile
 	/**
 	 * Get the name of the UPLOAD_ERR_* constant that corresponds
 	 * to the error code of the upload status.
-	 * The value of the constant can be retrieved via {@link constant}().
+	 * The value of the constant can be retrieved via {@link constant()}.
 	 *
 	 * @see http://php.net/manual/en/features.file-upload.errors.php
 	 */

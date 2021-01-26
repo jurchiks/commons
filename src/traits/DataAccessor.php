@@ -7,9 +7,11 @@ use js\tools\commons\collections\Option;
 use js\tools\commons\collections\Some;
 
 /**
- * This trait adds the ability to access array data in a convenient manner, i.e. by using dot notation for nested
- * arrays. There are also convenience methods for casting to a specific data type.
- * Data can be loaded either by calling the init() method or by overriding the load() method for lazy loading.
+ * This trait adds the ability to access array data in a convenient manner,
+ * e.g. by using dot notation or a list of keys for nested arrays.
+ * There are also convenience methods for casting to a specific data type.
+ * Data can be loaded either by calling the init() method
+ *  or by overriding the load() method for lazy loading.
  */
 trait DataAccessor
 {
@@ -47,8 +49,12 @@ trait DataAccessor
 	
 	/**
 	 * @param array<int|string>|string|int $key The key/index of the property to search for.
-	 * Can be a dot-separated string for convenient access to nested properties,
-	 * e.g. "database.host" will find $data["database"]["host"] if it exists.
+	 * Examples:
+	 * <ul>
+	 * <li>exists('foo')</li>
+	 * <li>exists(['foo', 0])</li>
+	 * <li>exists('foo.bar')</li>
+	 * </ul>
 	 * @return bool whether or not the key was found
 	 * @throws InvalidArgumentException If $key is invalid.
 	 */
@@ -59,8 +65,12 @@ trait DataAccessor
 	
 	/**
 	 * @param array<int|string>|string|int $key The key/index of the property to retrieve.
-	 * Can be a dot-separated string for convenient access to nested properties,
-	 * e.g. "database.host" will retrieve $data["database"]["host"] if it exists.
+	 * Examples:
+	 * <ul>
+	 * <li>get('foo')</li>
+	 * <li>get(['foo', 0])</li>
+	 * <li>get('foo.bar', 'not found')</li>
+	 * </ul>
 	 * @param mixed $default The default value to return if property was not found.
 	 * @return mixed Whatever the found value or default value is.
 	 * @throws InvalidArgumentException If $key is invalid.

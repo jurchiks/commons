@@ -36,8 +36,11 @@ abstract class Collection implements Iterator, ArrayAccess
 	/**
 	 * Check if a given value is contained in this collection.
 	 *
-	 * @param mixed $value : the value to check
-	 * @return bool true if the collection contains the value, false otherwise
+	 * @param mixed $value The value to check.
+	 * @return bool True if the collection contains the value, false otherwise.
+	 * @see getValue()
+	 * @see findValue()
+	 * @see findValues()
 	 */
 	public function containsValue($value): bool
 	{
@@ -47,8 +50,12 @@ abstract class Collection implements Iterator, ArrayAccess
 	/**
 	 * Check if a given key/index exists in this collection.
 	 *
-	 * @param mixed $key : the key to check
-	 * @return bool true if the collection contains a mapping to the key, false otherwise
+	 * @param int|string $key The key to check.
+	 * @return bool True if the collection contains a mapping to the key, false otherwise.
+	 * @see getKey()
+	 * @see getKeys()
+	 * @see findKey()
+	 * @see findKeys()
 	 */
 	public function containsKey($key): bool
 	{
@@ -58,8 +65,11 @@ abstract class Collection implements Iterator, ArrayAccess
 	/**
 	 * Get a value by its key/index.
 	 *
-	 * @param mixed $key : the key to look for
-	 * @return Option an Option possibly containing the found value
+	 * @param int|string $key The key to look for.
+	 * @return Option An {@link Option} possibly containing the found value.
+	 * @see containsValue()
+	 * @see findValue()
+	 * @see findValues()
 	 */
 	public function getValue($key): Option
 	{
@@ -76,12 +86,12 @@ abstract class Collection implements Iterator, ArrayAccess
 	/**
 	 * Get the first key/index of a given value.
 	 *
-	 * @param mixed $value : the value of the key to get
-	 * @return Option an Option possibly containing the found key
-	 * @see containsKey
-	 * @see getKeys
-	 * @see findKey
-	 * @see findKeys
+	 * @param mixed $value The value of the key to get.
+	 * @return Option An {@link Option} possibly containing the found key.
+	 * @see containsKey()
+	 * @see getKeys()
+	 * @see findKey()
+	 * @see findKeys()
 	 */
 	public function getKey($value): Option
 	{
@@ -98,9 +108,13 @@ abstract class Collection implements Iterator, ArrayAccess
 	/**
 	 * Get all keys of a given value.
 	 *
-	 * @param mixed $value : the value whose keys to get
-	 * @param int $limit : the maximum amount of keys to get; 0 - no limit, negative value - get the last N keys
-	 * @return array an array containing all keys that were found
+	 * @param mixed $value The value whose keys to get.
+	 * @param int $limit The maximum amount of keys to get; 0 - no limit, negative value - get the last N keys.
+	 * @return array An array containing all keys that were found.
+	 * @see containsKey()
+	 * @see getKey()
+	 * @see findKey()
+	 * @see findKeys()
 	 */
 	public function getKeys($value, int $limit = 0): array
 	{
@@ -110,10 +124,13 @@ abstract class Collection implements Iterator, ArrayAccess
 	/**
 	 * Find a value that matches the given criteria.
 	 *
-	 * @param callable $predicate : the callback function to use to find the value.
-	 * Callback signature - ($value, $key) => bool
-	 * @param bool $findFirst : if true, find the first value, otherwise find the last value
-	 * @return Option an Option possibly containing the found value
+	 * @param callable $predicate The callback function to use to find the value.
+	 * Callback signature - `(mixed $value, int|string $key): bool`.
+	 * @param bool $findFirst If true, find the first value, otherwise find the last value.
+	 * @return Option An {@link Option} possibly containing the found value.
+	 * @see containsValue()
+	 * @see getValue()
+	 * @see findValues()
 	 */
 	public function findValue(callable $predicate, bool $findFirst = true): Option
 	{
@@ -125,10 +142,14 @@ abstract class Collection implements Iterator, ArrayAccess
 	/**
 	 * Find the key of a value that matches the given criteria.
 	 *
-	 * @param callable $predicate : the callback function to use to find the value.
-	 * Callback signature - ($value, $key) => bool
-	 * @param bool $findFirst : if true, find the first value, otherwise find the last value
-	 * @return Option an Option possibly containing the found key
+	 * @param callable $predicate The callback function to use to find the value.
+	 * Callback signature - `(mixed $value, int|string $key): bool`.
+	 * @param bool $findFirst If true, find the first value, otherwise find the last value.
+	 * @return Option An {@link Option} possibly containing the found key.
+	 * @see containsKey()
+	 * @see getKey()
+	 * @see getKeys()
+	 * @see findKeys()
 	 */
 	public function findKey(callable $predicate, bool $findFirst = true): Option
 	{
@@ -140,11 +161,14 @@ abstract class Collection implements Iterator, ArrayAccess
 	/**
 	 * Find all values that match the given criteria.
 	 *
-	 * @param callable $predicate : the callback function to use to find the value.
-	 * Callback signature - ($value, $key) => bool
-	 * @param int $limit : maximum amount of values to return. If positive, will return the first N values, otherwise
+	 * @param callable $predicate The callback function to use to find the value.
+	 * Callback signature - `(mixed $value, int|string $key): bool`.
+	 * @param int $limit Maximum amount of values to return. If positive, will return the first N values, otherwise
 	 * the last N values.
-	 * @return array an array containing the matches found
+	 * @return array An array containing the matches found.
+	 * @see containsValue()
+	 * @see getValue()
+	 * @see findValue()
 	 */
 	public function findValues(callable $predicate, int $limit = 0): array
 	{
@@ -154,11 +178,15 @@ abstract class Collection implements Iterator, ArrayAccess
 	/**
 	 * Find all keys that match the given criteria.
 	 *
-	 * @param callable $predicate : the callback function to use to find the value.
-	 * Callback signature - ($value, $key) => bool
-	 * @param int $limit : maximum amount of keys to return. If positive, will return the first N keys, otherwise
+	 * @param callable $predicate The callback function to use to find the value.
+	 * Callback signature - `(mixed $value, int|string $key): bool`.
+	 * @param int $limit Maximum amount of keys to return. If positive, will return the first N keys, otherwise
 	 * the last N keys.
-	 * @return array an array containing the matches found
+	 * @return array An array containing the matches found.
+	 * @see containsKey()
+	 * @see getKey()
+	 * @see getKeys()
+	 * @see findKey()
 	 */
 	public function findKeys(callable $predicate, int $limit = 0): array
 	{
@@ -168,13 +196,13 @@ abstract class Collection implements Iterator, ArrayAccess
 	/**
 	 * Find all entries that match the given criteria.
 	 *
-	 * @param callable $predicate : the callback function to use to find the match.
-	 * Callback signature - ($value, $key) => bool
-	 * @param bool $findKeys : if true, return an array containing only the matched keys; if false,
+	 * @param callable $predicate The callback function to use to find the match.
+	 * Callback signature - `(mixed $value, int|string $key): bool`.
+	 * @param bool $findKeys If true, return an array containing only the matched keys; if false,
 	 * return matched values; and if NULL - return the original key => value pairs.
-	 * @param int $limit : maximum amount of keys to return. If positive, will return the first N keys, otherwise
+	 * @param int $limit Maximum amount of keys to return. If positive, will return the first N keys, otherwise
 	 * the last N keys.
-	 * @return array an array containing the matches found
+	 * @return array An array containing the matches found.
 	 */
 	public function find(callable $predicate, bool $findKeys = null, int $limit = 0): array
 	{
@@ -207,7 +235,7 @@ abstract class Collection implements Iterator, ArrayAccess
 		}
 		else
 		{
-			// iterate in reverse rather than reversing the whole array or trimming all matches to the limit
+			// Iterate in reverse rather than reversing the whole array or trimming all matches to the limit.
 			end($this->data);
 			
 			for ($i = 0; $i < count($this->data); $i++)
@@ -246,6 +274,13 @@ abstract class Collection implements Iterator, ArrayAccess
 		return $data;
 	}
 	
+	/**
+	 * Iterate over the entries in the collection.
+	 *
+	 * @param callable $callback The callback function to access each entry.
+	 * Callback signature - `(mixed $value, int|string $key): bool|null`.
+	 * If the callback returns `true`, the iteration will be stopped immediately.
+	 */
 	public function each(callable $callback): void
 	{
 		foreach ($this->data as $key => $value)
@@ -288,7 +323,7 @@ abstract class Collection implements Iterator, ArrayAccess
 	
 	// endregion
 	
-	// not officially part of the Iterator interface, but good to have just in case
+	// Not officially part of the Iterator interface, but good to have just in case.
 	public function prev(): void
 	{
 		prev($this->data);

@@ -16,6 +16,12 @@ class Template
 	private ?string $lastBlock = null;
 	private string $content = '';
 	
+	/**
+	 * @param string $path
+	 * @param array $data
+	 * @param Engine|null $engine
+	 * @throws TemplateException If the path is invalid.
+	 */
 	public function __construct(string $path, array $data = [], Engine $engine = null)
 	{
 		if (substr($path, -6) !== '.phtml')
@@ -60,11 +66,22 @@ class Template
 		return $this->get($name);
 	}
 	
+	/**
+	 * @param string $name
+	 * @param $value
+	 * @throws TemplateException
+	 */
 	public function __set(string $name, $value): void
 	{
 		throw new TemplateException('Template values are read-only');
 	}
 	
+	/**
+	 * @param string $name
+	 * @param array $arguments
+	 * @return mixed
+	 * @throws TemplateException If a templating engine is not used to render this template.
+	 */
 	public function __call(string $name, array $arguments)
 	{
 		if ($this->engine === null)
@@ -75,6 +92,10 @@ class Template
 		return $this->engine->callFunction($name, $arguments);
 	}
 	
+	/**
+	 * @param string $name
+	 * @throws TemplateException If a block is already started.
+	 */
 	protected function start(string $name): void
 	{
 		if ($this->lastBlock !== null)
@@ -102,17 +123,31 @@ class Template
 		}
 	}
 	
+	/**
+	 * @param string $path
+	 * @param array $data
+	 * @throws TemplateException If the path is invalid.
+	 */
 	protected function parent(string $path, array $data = []): void
 	{
 		// construct the parent immediately to fail-fast in case the $path is invalid
 		$this->parent = $this->getTemplate($path, $data);
 	}
 	
+	/**
+	 * @param string $path
+	 * @param array $data
+	 * @throws TemplateException If rendering of the included template failed.
+	 */
 	protected function include(string $path, array $data = []): void
 	{
 		echo $this->getTemplate($path, $data)->render();
 	}
 	
+	/**
+	 * @return string
+	 * @throws TemplateException If rendering failed.
+	 */
 	public function render(): string
 	{
 		ob_start();
@@ -149,11 +184,21 @@ class Template
 		return $content;
 	}
 	
+	/**
+	 * @return string
+	 * @throws TemplateException If rendering failed.
+	 */
 	public function __toString(): string
 	{
 		return $this->render();
 	}
 	
+	/**
+	 * @param string $path
+	 * @param array $data
+	 * @return $this
+	 * @throws TemplateException If the path is invalid.
+	 */
 	private function getTemplate(string $path, array $data = []): self
 	{
 		if ($this->engine === null)

@@ -37,6 +37,12 @@ class Engine
 		$this->functions[$name] = $function;
 	}
 	
+	/**
+	 * @param string $name
+	 * @param array $arguments
+	 * @return mixed
+	 * @throws TemplateException If the function was not found.
+	 */
 	public function callFunction(string $name, array $arguments)
 	{
 		foreach ($this->extensions as $extension)
@@ -56,10 +62,10 @@ class Engine
 	}
 	
 	/**
-	 * @param string $path : a path to the template file, relative to the template root directory
-	 * @param array $data : optional data to provide to the template
+	 * @param string $path A path to the template file, relative to the template root directory.
+	 * @param array $data Optional data to provide to the template.
 	 * @return Template
-	 * @throws TemplateException
+	 * @throws TemplateException If the template was not found.
 	 */
 	public function getTemplate(string $path, array $data = []): Template
 	{
@@ -88,10 +94,10 @@ class Engine
 	}
 	
 	/**
-	 * @param string $path : a path to the template file, relative to the template root directory
-	 * @param array $data : optional data to provide to the template
+	 * @param string $path A path to the template file, relative to the template root directory.
+	 * @param array $data Optional data to provide to the template.
 	 * @return string
-	 * @throws TemplateException
+	 * @throws TemplateException If the template was not found.
 	 */
 	public function render(string $path, array $data = []): string
 	{

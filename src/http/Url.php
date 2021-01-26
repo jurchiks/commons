@@ -362,6 +362,8 @@ class Url
 	 * @return string
 	 * @see getAbsolute
 	 * @see getRelative
+	 * @noinspection PhpDocMissingThrowsInspection
+	 * @noinspection PhpUnhandledExceptionInspection
 	 */
 	public function get(bool $isRawUrl = false): string
 	{

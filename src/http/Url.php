@@ -303,7 +303,7 @@ class Url
 	}
 	
 	/**
-	 * @param bool $isRawUrl if true, spaces in query parameters are encoded as %20, otherwise as +.
+	 * @param bool $isRawUrl If true, spaces in query parameters are encoded as %20, otherwise as +.
 	 * @return string The relative part of the URL, e.g. "/foo/bar?baz=random#hash".
 	 */
 	public function getRelative(bool $isRawUrl = false): string

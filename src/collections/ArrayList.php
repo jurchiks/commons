@@ -27,7 +27,7 @@ abstract class ArrayList extends Collection
 	/**
 	 * Clone this list into another, mutable list.
 	 *
-	 * @return MutableList a mutable list containing the same data as this list
+	 * @return MutableList A mutable list containing the same data as this list.
 	 * @see toImmutable()
 	 * @see toMutableMap()
 	 * @see toImmutableMap()
@@ -40,7 +40,7 @@ abstract class ArrayList extends Collection
 	/**
 	 * Clone this list into another, immutable list.
 	 *
-	 * @return ImmutableList an immutable list containing the same data as this list
+	 * @return ImmutableList An immutable list containing the same data as this list.
 	 * @see toMutable()
 	 * @see toMutableMap()
 	 * @see toImmutableMap()
@@ -79,8 +79,8 @@ abstract class ArrayList extends Collection
 	/**
 	 * Modify items in the list. Callback returns the modified value.
 	 *
-	 * @param callable $callback : the callback function to apply to each item in the list.
-	 * Callback signature - ($value, $index) => mixed
+	 * @param callable $callback The callback function to apply to each item in the list.
+	 * Callback signature - `(mixed $value, int $index): mixed`.
 	 * @return ArrayList
 	 */
 	public abstract function map(callable $callback): ArrayList;
@@ -88,8 +88,8 @@ abstract class ArrayList extends Collection
 	/**
 	 * Filter items in the list. Callback returns whether to keep the item in the list or remove it.
 	 *
-	 * @param callable $predicate : the callback function to apply to each item in the list.
-	 * Callback signature - ($value, $index) => bool
+	 * @param callable $predicate The callback function to apply to each item in the list.
+	 * Callback signature - `(mixed $value, int $index): bool`.
 	 * @return ArrayList
 	 */
 	public abstract function filter(callable $predicate): ArrayList;
@@ -97,8 +97,8 @@ abstract class ArrayList extends Collection
 	/**
 	 * Split items into groups. Callback returns the name/key of the group. Note that this returns a map, not a list!
 	 *
-	 * @param callable $callback : the callback function to apply to each item in the list.
-	 * Callback signature - ($value, $index) => scalar
+	 * @param callable $callback The callback function to apply to each item in the list.
+	 * Callback signature - `(mixed $value, int $index): scalar`.
 	 * @return ArrayMap
 	 */
 	public abstract function group(callable $callback): ArrayMap;
@@ -113,8 +113,8 @@ abstract class ArrayList extends Collection
 	/**
 	 * Sort the list using built-in comparison functions.
 	 *
-	 * @param bool $ascending : true if the list values are to be sorted in ascending order, false otherwise
-	 * @param int $flags : one of the following flags:
+	 * @param bool $ascending True if the list values are to be sorted in ascending order, false otherwise.
+	 * @param int $flags One of the following flags:
 	 * <ul>
 	 * <li>SORT_REGULAR - compare items normally (don't change types)</li>
 	 * <li>SORT_NUMERIC - compare items numerically</li>
@@ -131,8 +131,8 @@ abstract class ArrayList extends Collection
 	 * Sort the list using a custom comparison function.
 	 * Callback returns the standard string comparison values (-1, 0, 1).
 	 *
-	 * @param callable $callback : the callback function to determine the sort order.
-	 * Callback signature - ($a, $b) => int
+	 * @param callable $callback The callback function to determine the sort order.
+	 * Callback signature - `(mixed $a, mixed $b): int`.
 	 * @return ArrayList
 	 */
 	public abstract function sortManual(callable $callback): ArrayList;
@@ -140,9 +140,9 @@ abstract class ArrayList extends Collection
 	/**
 	 * Reduce the list to a single value using a user-provided callback.
 	 *
-	 * @param callable $callback : the callback function to apply.
-	 * Callback signature - ($value, $previous) => mixed
-	 * @param mixed $initialValue : the initial value to provide for parameter $previous
+	 * @param callable $callback The callback function to apply.
+	 * Callback signature - `(mixed $value, mixed $previous): mixed`.
+	 * @param mixed $initialValue The initial value to provide for parameter $previous.
 	 * @return mixed
 	 */
 	public function reduce(callable $callback, $initialValue = null)

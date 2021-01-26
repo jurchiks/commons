@@ -5,11 +5,11 @@ use js\tools\commons\exceptions\TemplateException;
 
 class Engine
 {
-	private $templateRoots = [];
+	private array $templateRoots = [];
 	/** @var callable[] */
-	private $functions = [];
+	private array $functions = [];
 	/** @var Extension[] */
-	private $extensions = [];
+	private array $extensions = [];
 	
 	public function __construct(string $templateRoot)
 	{
@@ -19,24 +19,30 @@ class Engine
 	/**
 	 * Add another template root. Note that the roots are searched through in the order they were added,
 	 * and if a template was found in the first root then the following roots will not be searched.
-	 * 
+	 *
 	 * @param string $templateRoot
 	 */
-	public function addRoot(string $templateRoot)
+	public function addRoot(string $templateRoot): void
 	{
 		$this->templateRoots[] = rtrim($templateRoot, '\\/') . DIRECTORY_SEPARATOR;
 	}
 	
-	public function addExtension(Extension $extension)
+	public function addExtension(Extension $extension): void
 	{
 		$this->extensions[get_class($extension)] = $extension;
 	}
 	
-	public function addFunction(string $name, callable $function)
+	public function addFunction(string $name, callable $function): void
 	{
 		$this->functions[$name] = $function;
 	}
 	
+	/**
+	 * @param string $name
+	 * @param array $arguments
+	 * @return mixed
+	 * @throws TemplateException If the function was not found.
+	 */
 	public function callFunction(string $name, array $arguments)
 	{
 		foreach ($this->extensions as $extension)
@@ -56,12 +62,12 @@ class Engine
 	}
 	
 	/**
-	 * @param string $path : a path to the template file, relative to the template root directory
-	 * @param array $data : optional data to provide to the template
+	 * @param string $path A path to the template file, relative to the template root directory.
+	 * @param array $data Optional data to provide to the template.
 	 * @return Template
-	 * @throws TemplateException
+	 * @throws TemplateException If the template was not found.
 	 */
-	public function getTemplate(string $path, array $data = [])
+	public function getTemplate(string $path, array $data = []): Template
 	{
 		if (substr($path, -6) !== '.phtml')
 		{
@@ -88,12 +94,12 @@ class Engine
 	}
 	
 	/**
-	 * @param string $path : a path to the template file, relative to the template root directory
-	 * @param array $data : optional data to provide to the template
+	 * @param string $path A path to the template file, relative to the template root directory.
+	 * @param array $data Optional data to provide to the template.
 	 * @return string
-	 * @throws TemplateException
+	 * @throws TemplateException If the template was not found.
 	 */
-	public function render(string $path, array $data = [])
+	public function render(string $path, array $data = []): string
 	{
 		return $this->getTemplate($path, $data)->render();
 	}

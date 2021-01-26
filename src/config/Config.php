@@ -11,7 +11,13 @@ class Config
 {
 	use DataAccessor;
 	
-	public static function loadFromFile(string $pathToFile, $isJson = false)
+	/**
+	 * @param string $pathToFile
+	 * @param bool $isJson
+	 * @return self
+	 * @throws ConfigException If the file is not readable or returns invalid data.
+	 */
+	public static function loadFromFile(string $pathToFile, bool $isJson = false): self
 	{
 		if (!is_readable($pathToFile))
 		{
@@ -35,7 +41,12 @@ class Config
 		return new static($data);
 	}
 	
-	public static function loadFromJson(string $json)
+	/**
+	 * @param string $json
+	 * @return self
+	 * @throws ConfigException If JSON does not contain an array or object.
+	 */
+	public static function loadFromJson(string $json): self
 	{
 		$data = json_decode($json, true);
 		
@@ -47,7 +58,7 @@ class Config
 		return new static($data);
 	}
 	
-	public static function loadFromArray(array $data)
+	public static function loadFromArray(array $data): self
 	{
 		return new static($data);
 	}

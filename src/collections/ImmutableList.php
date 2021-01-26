@@ -55,7 +55,7 @@ class ImmutableList extends ArrayList
 	
 	public function sort(bool $ascending, int $flags = SORT_REGULAR): ArrayList
 	{
-		return new static($this->sortData($ascending, $flags, false, false, null));
+		return new static($this->sortData($ascending, $flags, false, false));
 	}
 	
 	public function sortManual(callable $callback): ArrayList

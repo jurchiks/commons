@@ -2,26 +2,29 @@
 namespace js\tools\commons\http;
 
 use js\tools\commons\exceptions\HttpException;
+use js\tools\commons\exceptions\upload\UploadException;
+use js\tools\commons\exceptions\UrlException;
 use js\tools\commons\upload\UploadedFileCollection;
 
 class Request
 {
 	const METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'];
 	
-	private $method;
-	private $url;
-	private $data;
-	private $files;
-	private $referer;
+	private string $method;
+	private Url $url;
+	private Parameters $data;
+	private UploadedFileCollection $files;
+	private string $referer;
 	
 	/**
-	 * @param string $method : the request method used for this request (e.g. GET, POST)
-	 * @param Url $url : the URL that was requested
-	 * @param array $data : the request data, if any (GET, POST, PUT, PATCH, DELETE etc).
+	 * @param string $method The request method used for this request (e.g. GET, POST).
+	 * @param Url $url The URL that was requested.
+	 * @param array $data The request data, if any (GET, POST, PUT, PATCH, DELETE etc).
 	 * In the case of a GET request, the same data is available via the $url object.
-	 * @param array $files : the $_FILES array or its equivalent
-	 * @param string $referer : the URL that referred to this URL
-	 * @throws HttpException if the request method is invalid
+	 * @param array $files The $_FILES array or its equivalent.
+	 * @param string $referer The URL that referred to this URL.
+	 * @throws HttpException If the request method is unsupported.
+	 * @throws UploadException If the uploaded files contain errors.
 	 */
 	public function __construct(string $method, Url $url, array $data, array $files = [], string $referer = '')
 	{
@@ -37,11 +40,19 @@ class Request
 		$this->referer = $referer;
 	}
 	
-	public static function createFromGlobals()
+	/**
+	 * @return static
+	 * @throws HttpException If the required data is missing from the globals, or the request method is unsupported.
+	 * @throws UploadException If the uploaded files contain errors.
+	 * @throws UrlException If the URL comprised from the globals is invalid.
+	 */
+	public static function createFromGlobals(): self
 	{
 		if (!isset($_SERVER['REQUEST_METHOD'], $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']))
 		{
-			throw new HttpException('Missing required fields in global $_SERVER - [REQUEST_METHOD, HTTP_HOST, REQUEST_URI]');
+			throw new HttpException(
+				'Missing required fields in global $_SERVER - [REQUEST_METHOD, HTTP_HOST, REQUEST_URI]'
+			);
 		}
 		
 		$method = strtolower($_SERVER['REQUEST_METHOD']);
@@ -90,9 +101,9 @@ class Request
 	/**
 	 * Get the request method.
 	 *
-	 * @return string one of [get, post, put, delete, head, options]
+	 * @return string One of the {@link Request::METHODS}.
 	 */
-	public function getMethod()
+	public function getMethod(): string
 	{
 		return $this->method;
 	}
@@ -100,8 +111,8 @@ class Request
 	/**
 	 * Compare the request method.
 	 *
-	 * @param string $method one of [get, post, put, delete, head, options]
-	 * @return bool true if the method matches, false otherwise
+	 * @param string $method One of the {@link Request::METHODS}.
+	 * @return bool True if the method matches, false otherwise.
 	 */
 	public function isMethod(string $method): bool
 	{
@@ -124,6 +135,7 @@ class Request
 	
 	/**
 	 * Retrieve request data.
+	 * For GET requests, this contains query parameters.
 	 */
 	public function getData(): Parameters
 	{

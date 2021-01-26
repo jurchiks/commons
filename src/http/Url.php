@@ -6,14 +6,14 @@ use js\tools\commons\exceptions\UrlException;
 
 class Url
 {
-	private $scheme;
-	private $username;
-	private $password;
-	private $host;
-	private $port;
-	private $path;
-	private $parameters;
-	private $fragment;
+	private string $scheme;
+	private string $username;
+	private string $password;
+	private string $host;
+	private ?int $port;
+	private string $path;
+	private Parameters $parameters;
+	private string $fragment;
 	
 	/**
 	 * @param string $url A complete or partial URL.
@@ -55,7 +55,7 @@ class Url
 	 * @throws HttpException If the globals are missing some required fields.
 	 * @throws UrlException If the URL comprised from the globals is invalid.
 	 */
-	public static function createFromGlobals()
+	public static function createFromGlobals(): self
 	{
 		if (!isset($_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']))
 		{
@@ -70,7 +70,7 @@ class Url
 		return new self($url);
 	}
 	
-	public function copy()
+	public function copy(): self
 	{
 		return clone $this;
 	}
@@ -362,6 +362,8 @@ class Url
 	 * @return string
 	 * @see getAbsolute
 	 * @see getRelative
+	 * @noinspection PhpDocMissingThrowsInspection
+	 * @noinspection PhpUnhandledExceptionInspection
 	 */
 	public function get(bool $isRawUrl = false): string
 	{
@@ -370,7 +372,7 @@ class Url
 			: $this->getRelative($isRawUrl);
 	}
 	
-	public function __toString()
+	public function __toString(): string
 	{
 		return $this->get();
 	}

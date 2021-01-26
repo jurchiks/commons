@@ -246,7 +246,7 @@ abstract class Collection implements Iterator, ArrayAccess
 		return $data;
 	}
 	
-	public function each(callable $callback)
+	public function each(callable $callback): void
 	{
 		foreach ($this->data as $key => $value)
 		{
@@ -259,12 +259,12 @@ abstract class Collection implements Iterator, ArrayAccess
 	
 	// region Iterator methods
 	
-	public function rewind()
+	public function rewind(): void
 	{
 		reset($this->data);
 	}
 	
-	public function valid()
+	public function valid(): bool
 	{
 		// array keys cannot be null; PHP automatically converts null keys to empty strings
 		// i.e. [null => false] is actually ['' => false]
@@ -281,7 +281,7 @@ abstract class Collection implements Iterator, ArrayAccess
 		return current($this->data);
 	}
 	
-	public function next()
+	public function next(): void
 	{
 		next($this->data);
 	}
@@ -289,7 +289,7 @@ abstract class Collection implements Iterator, ArrayAccess
 	// endregion
 	
 	// not officially part of the Iterator interface, but good to have just in case
-	public function prev()
+	public function prev(): void
 	{
 		prev($this->data);
 	}

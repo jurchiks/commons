@@ -9,18 +9,12 @@ use finfo;
  */
 class UploadedFile
 {
-	/** @var string */
-	private $name;
-	/** @var int */
-	private $statusCode;
-	/** @var int */
-	private $size;
-	/** @var string */
-	private $path;
-	/** @var string */
-	private $type = null;
-	/** @var string */
-	private $originalType;
+	private string $name;
+	private int $statusCode;
+	private int $size;
+	private string $path;
+	private ?string $type = null;
+	private string $originalType;
 	
 	public function __construct(array $data)
 	{

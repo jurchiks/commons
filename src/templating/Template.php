@@ -9,14 +9,19 @@ class Template
 {
 	use DataAccessor;
 	
-	private $path;
-	private $engine;
-	/** @var Template */
-	private $parent = null;
-	private $blocks = [];
-	private $lastBlock = false;
-	private $content = '';
+	private string $path;
+	private ?Engine $engine;
+	private ?Template $parent = null;
+	private array $blocks = [];
+	private ?string $lastBlock = null;
+	private string $content = '';
 	
+	/**
+	 * @param string $path
+	 * @param array $data
+	 * @param Engine|null $engine
+	 * @throws TemplateException If the path is invalid.
+	 */
 	public function __construct(string $path, array $data = [], Engine $engine = null)
 	{
 		if (substr($path, -6) !== '.phtml')
@@ -34,19 +39,19 @@ class Template
 		$this->init($data);
 	}
 	
-	protected function block(string $name)
+	protected function block(string $name): ?string
 	{
 		return ((isset($this->blocks[$name]) && is_string($this->blocks[$name]))
 			? $this->blocks[$name]
 			: null);
 	}
 	
-	protected function content()
+	protected function content(): string
 	{
 		return $this->content;
 	}
 	
-	public function __isset(string $name)
+	public function __isset(string $name): bool
 	{
 		return $this->exists($name);
 	}
@@ -61,11 +66,22 @@ class Template
 		return $this->get($name);
 	}
 	
-	public function __set(string $name, $value)
+	/**
+	 * @param string $name
+	 * @param $value
+	 * @throws TemplateException
+	 */
+	public function __set(string $name, $value): void
 	{
 		throw new TemplateException('Template values are read-only');
 	}
 	
+	/**
+	 * @param string $name
+	 * @param array $arguments
+	 * @return mixed
+	 * @throws TemplateException If a templating engine is not used to render this template.
+	 */
 	public function __call(string $name, array $arguments)
 	{
 		if ($this->engine === null)
@@ -76,9 +92,13 @@ class Template
 		return $this->engine->callFunction($name, $arguments);
 	}
 	
-	protected function start(string $name)
+	/**
+	 * @param string $name
+	 * @throws TemplateException If a block is already started.
+	 */
+	protected function start(string $name): void
 	{
-		if ($this->lastBlock !== false)
+		if ($this->lastBlock !== null)
 		{
 			ob_end_clean(); // Clean after previous block.
 			throw new TemplateException('Nested blocks are not allowed');
@@ -94,27 +114,41 @@ class Template
 		}
 	}
 	
-	protected function end()
+	protected function end(): void
 	{
-		if ($this->lastBlock !== false)
+		if ($this->lastBlock !== null)
 		{
 			$this->blocks[$this->lastBlock] = ob_get_clean();
-			$this->lastBlock = false;
+			$this->lastBlock = null;
 		}
 	}
 	
-	protected function parent(string $path, array $data = [])
+	/**
+	 * @param string $path
+	 * @param array $data
+	 * @throws TemplateException If the path is invalid.
+	 */
+	protected function parent(string $path, array $data = []): void
 	{
 		// construct the parent immediately to fail-fast in case the $path is invalid
 		$this->parent = $this->getTemplate($path, $data);
 	}
 	
-	protected function include(string $path, array $data = [])
+	/**
+	 * @param string $path
+	 * @param array $data
+	 * @throws TemplateException If rendering of the included template failed.
+	 */
+	protected function include(string $path, array $data = []): void
 	{
 		echo $this->getTemplate($path, $data)->render();
 	}
 	
-	public function render()
+	/**
+	 * @return string
+	 * @throws TemplateException If rendering failed.
+	 */
+	public function render(): string
 	{
 		ob_start();
 		
@@ -122,7 +156,7 @@ class Template
 		{
 			include $this->path;
 			
-			if ($this->lastBlock !== false)
+			if ($this->lastBlock !== null)
 			{
 				ob_end_clean(); // Clean up after previous block.
 				throw new TemplateException('Unclosed block "' . $this->lastBlock . '"');
@@ -150,12 +184,22 @@ class Template
 		return $content;
 	}
 	
+	/**
+	 * @return string
+	 * @throws TemplateException If rendering failed.
+	 */
 	public function __toString(): string
 	{
 		return $this->render();
 	}
 	
-	private function getTemplate(string $path, array $data = [])
+	/**
+	 * @param string $path
+	 * @param array $data
+	 * @return $this
+	 * @throws TemplateException If the path is invalid.
+	 */
+	private function getTemplate(string $path, array $data = []): self
 	{
 		if ($this->engine === null)
 		{

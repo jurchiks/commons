@@ -69,7 +69,7 @@ class MutableMap extends ArrayMap
 		bool $preserveKeys = true
 	): ArrayMap
 	{
-		$this->data = $this->sortData($ascending, $flags, $sortByKeys, $preserveKeys, null);
+		$this->data = $this->sortData($ascending, $flags, $sortByKeys, $preserveKeys);
 		
 		return $this;
 	}

@@ -4,19 +4,18 @@ namespace js\tools\commons\logging;
 class CustomLogger extends Logger
 {
 	/** @var callable */
-	private $callback;
+	private $writer;
 	
 	/**
-	 * @param callable $callback : the function to call on writes;
-	 * this function will receive two parameters - string $message and int $level
+	 * @param callable $writer The function to call on writes; signature: `(string $message, int $level): void`.
 	 */
-	public function __construct(callable $callback)
+	public function __construct(callable $writer)
 	{
-		$this->callback = $callback;
+		$this->writer = $writer;
 	}
 	
-	protected function write(string $message, int $level)
+	protected function write(string $message, int $level): void
 	{
-		call_user_func($this->callback, $message, $level);
+		call_user_func($this->writer, $message, $level);
 	}
 }

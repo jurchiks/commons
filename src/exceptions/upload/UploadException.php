@@ -4,14 +4,9 @@ namespace js\tools\commons\exceptions\upload;
 use Exception;
 use js\tools\commons\upload\UploadedFile;
 
-/**
- * This exception is thrown if a file was not uploaded successfully.
- * 
- * @see UploadException::getUploadedFile()
- */
 class UploadException extends Exception
 {
-	private $uploadedFile;
+	private UploadedFile $uploadedFile;
 	
 	public function __construct(UploadedFile $file)
 	{
@@ -19,12 +14,7 @@ class UploadException extends Exception
 		$this->uploadedFile = $file;
 	}
 	
-	/**
-	 * Get the file that was not uploaded successfully.
-	 * 
-	 * @return UploadedFile
-	 */
-	public function getUploadedFile()
+	public function getUploadedFile(): UploadedFile
 	{
 		return $this->uploadedFile;
 	}

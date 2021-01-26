@@ -69,7 +69,7 @@ class MutableList extends ArrayList
 	
 	public function sort(bool $ascending, int $flags = SORT_REGULAR): ArrayList
 	{
-		$this->data = $this->sortData($ascending, $flags, false, false, null);
+		$this->data = $this->sortData($ascending, $flags, false, false);
 		
 		return $this;
 	}

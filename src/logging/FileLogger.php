@@ -5,19 +5,21 @@ use js\tools\commons\exceptions\LogException;
 
 class FileLogger extends Logger
 {
-	private $logDirectory;
+	private string $logDirectory;
 	
 	/**
-	 * @param string $logDirectory : the directory in which to put the log files
-	 * @param int $permissions : the folder permissions to use in case the log directory does not exist and has to be
-	 *     created
-	 * @throws LogException if something is wrong with the log directory
+	 * @param string $logDirectory The directory in which to put the log files.
+	 * @param int $permissions The folder permissions to use in case the log directory does not exist and has to be
+	 *     created.
+	 * @throws LogException If something is wrong with the log directory.
 	 */
 	public function __construct(string $logDirectory, int $permissions = 0666)
 	{
 		if (!is_dir($logDirectory) && !mkdir($logDirectory, $permissions, true))
 		{
-			throw new LogException('Log directory does not exist and cannot be made, check permissions: ' . $logDirectory);
+			throw new LogException(
+				'Log directory does not exist and cannot be made, check permissions: ' . $logDirectory
+			);
 		}
 		
 		if (!is_writable($logDirectory))
@@ -28,12 +30,12 @@ class FileLogger extends Logger
 		$this->logDirectory = rtrim($logDirectory, '\\/');
 	}
 	
-	protected function formatMessage(string $message, int $level)
+	protected function formatMessage(string $message, int $level): string
 	{
 		return '[' . date('Y-m-d H:i:s') . '] ' . strtoupper(self::getLevelName($level)) . ' ' . $message . PHP_EOL;
 	}
 	
-	protected function write(string $message, int $level)
+	protected function write(string $message, int $level): void
 	{
 		$path = $this->logDirectory . '/' . self::getLevelName($level) . '.log';
 		$success = file_put_contents($path, $message, FILE_APPEND | LOCK_EX);

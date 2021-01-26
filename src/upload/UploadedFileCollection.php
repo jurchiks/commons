@@ -26,11 +26,11 @@ class UploadedFileCollection
 	 * </ul>
 	 * And so on.
 	 *
-	 * @param array $files : the $_FILES array to normalize
-	 * @param bool $throwException : if true, an {@link UploadException}
+	 * @param array $files The $_FILES array to normalize.
+	 * @param bool $throwException If true, an {@link UploadException}
 	 * will be thrown if any of the files did not upload successfully.
-	 * If this is parameter is false, you have to check the error values manually
-	 * @throws UploadException if $throwException is true and any of the files failed to upload
+	 * If this is parameter is false, you have to check the error values manually.
+	 * @throws UploadException If $throwException is true and any of the files failed to upload.
 	 */
 	public function __construct(array $files, bool $throwException = true)
 	{
@@ -42,6 +42,12 @@ class UploadedFileCollection
 		$this->init($files);
 	}
 	
+	/**
+	 * @param array $file
+	 * @param bool $throwException
+	 * @return UploadedFile|UploadedFile[]
+	 * @throws UploadException
+	 */
 	private static function normalizeFile(array $file, bool $throwException)
 	{
 		if (is_string($file['name']))
@@ -78,7 +84,13 @@ class UploadedFileCollection
 		return $files;
 	}
 	
-	private static function makeFile(array $data, bool $throwException)
+	/**
+	 * @param array $data
+	 * @param bool $throwException
+	 * @return UploadedFile
+	 * @throws UploadException
+	 */
+	private static function makeFile(array $data, bool $throwException): UploadedFile
 	{
 		$file = new UploadedFile($data);
 		

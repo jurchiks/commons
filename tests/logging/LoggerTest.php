@@ -1,8 +1,8 @@
 <?php
 namespace js\tools\commons\tests\logging;
 
-use js\tools\commons\exceptions\LogException;
 use js\tools\commons\logging\Logger;
+use js\tools\commons\logging\LogLevel;
 use PHPUnit\Framework\TestCase;
 
 class TestLogger extends Logger
@@ -17,27 +17,13 @@ class LoggerTest extends TestCase
 {
 	public function validLevelNamesDataset(): iterable
 	{
-		yield [Logger::DEBUG, 'debug'];
-		yield [Logger::NOTICE, 'notice'];
-		yield [Logger::INFO, 'info'];
-		yield [Logger::WARNING, 'warning'];
-		yield [Logger::ERROR, 'error'];
-		yield [Logger::CRITICAL, 'critical'];
-		yield [Logger::FATAL, 'fatal'];
-	}
-	
-	/** @dataProvider validLevelNamesDataset */
-	public function testValidLevelNames(int $logLevel, string $name): void
-	{
-		$this->assertSame($name, Logger::getLevelName($logLevel));
-	}
-	
-	public function testInvalidLevelName(): void
-	{
-		$this->expectException(LogException::class);
-		$this->expectExceptionMessage('Invalid log level: ' . PHP_INT_MAX);
-		
-		Logger::getLevelName(PHP_INT_MAX);
+		yield [LogLevel::DEBUG, 'debug'];
+		yield [LogLevel::NOTICE, 'notice'];
+		yield [LogLevel::INFO, 'info'];
+		yield [LogLevel::WARNING, 'warning'];
+		yield [LogLevel::ERROR, 'error'];
+		yield [LogLevel::CRITICAL, 'critical'];
+		yield [LogLevel::FATAL, 'fatal'];
 	}
 	
 	/** @dataProvider validLevelNamesDataset */

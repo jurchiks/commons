@@ -5,16 +5,8 @@ use js\tools\commons\exceptions\LogException;
 
 abstract class Logger
 {
-	const DEBUG = 1;
-	const NOTICE = 2;
-	const INFO = 3;
-	const WARNING = 4;
-	const ERROR = 5;
-	const CRITICAL = 6;
-	const FATAL = 7;
-	
 	/**
-	 * @param int $level One of the Logger class constants.
+	 * @param int $level One of the {@link LogLevel} constants.
 	 * @param string $message The message to log; may contain parameter placeholders in sprintf()-accepted format.
 	 * @param string[] $parameters The message parameters.
 	 * @throws LogException If the log level is invalid or message failed to be written.
@@ -42,7 +34,7 @@ abstract class Logger
 	 */
 	public final function debug(string $message, ...$parameters): void
 	{
-		$this->log(self::DEBUG, $message, ...$parameters);
+		$this->log(LogLevel::DEBUG, $message, ...$parameters);
 	}
 	
 	/**
@@ -53,7 +45,7 @@ abstract class Logger
 	 */
 	public final function notice(string $message, ...$parameters): void
 	{
-		$this->log(self::NOTICE, $message, ...$parameters);
+		$this->log(LogLevel::NOTICE, $message, ...$parameters);
 	}
 	
 	/**
@@ -64,7 +56,7 @@ abstract class Logger
 	 */
 	public final function info(string $message, ...$parameters): void
 	{
-		$this->log(self::INFO, $message, ...$parameters);
+		$this->log(LogLevel::INFO, $message, ...$parameters);
 	}
 	
 	/**
@@ -75,7 +67,7 @@ abstract class Logger
 	 */
 	public final function warning(string $message, ...$parameters): void
 	{
-		$this->log(self::WARNING, $message, ...$parameters);
+		$this->log(LogLevel::WARNING, $message, ...$parameters);
 	}
 	
 	/**
@@ -86,7 +78,7 @@ abstract class Logger
 	 */
 	public final function error(string $message, ...$parameters): void
 	{
-		$this->log(self::ERROR, $message, ...$parameters);
+		$this->log(LogLevel::ERROR, $message, ...$parameters);
 	}
 	
 	/**
@@ -97,7 +89,7 @@ abstract class Logger
 	 */
 	public final function critical(string $message, ...$parameters): void
 	{
-		$this->log(self::CRITICAL, $message, ...$parameters);
+		$this->log(LogLevel::CRITICAL, $message, ...$parameters);
 	}
 	
 	/**
@@ -108,7 +100,7 @@ abstract class Logger
 	 */
 	public final function fatal(string $message, ...$parameters): void
 	{
-		$this->log(self::FATAL, $message, ...$parameters);
+		$this->log(LogLevel::FATAL, $message, ...$parameters);
 	}
 	
 	protected function prepareMessage(string $message, ...$parameters): string
@@ -118,7 +110,7 @@ abstract class Logger
 	
 	/**
 	 * @param string $message The source message received from the logging methods.
-	 * @param int $level One of the {@link Logger} constants.
+	 * @param int $level One of the {@link LogLevel} constants.
 	 * @return string The formatted message.
 	 * @throws LogException If the log level is invalid.
 	 * @noinspection PhpDocRedundantThrowsInspection
@@ -131,33 +123,8 @@ abstract class Logger
 	
 	/**
 	 * @param string $message The formatted message received from {@link formatMessage()}.
-	 * @param int $level One of the {@link Logger} constants.
+	 * @param int $level One of the {@link LogLevel} constants.
 	 * @throws LogException If the log level is invalid or message failed to be written.
 	 */
 	protected abstract function write(string $message, int $level): void;
-	
-	/**
-	 * @param int $level One of the {@link Logger} constants.
-	 * @return string The name of the log level.
-	 * @throws LogException If the level is invalid.
-	 */
-	public static final function getLevelName(int $level): string
-	{
-		static $names = [
-			self::DEBUG    => 'debug',
-			self::NOTICE   => 'notice',
-			self::INFO     => 'info',
-			self::WARNING  => 'warning',
-			self::ERROR    => 'error',
-			self::CRITICAL => 'critical',
-			self::FATAL    => 'fatal',
-		];
-		
-		if (!isset($names[$level]))
-		{
-			throw new LogException('Invalid log level: ' . $level);
-		}
-		
-		return $names[$level];
-	}
 }

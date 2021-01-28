@@ -20,6 +20,7 @@ abstract class Logger
 	 */
 	public final function log(int $level, string $message, ...$parameters): void
 	{
+		LogLevel::getName($level); // Fail-fast in case of invalid $level, ensuring it won't happen later.
 		$message = $this->prepareMessage($message, ...$parameters);
 		$message = $this->formatMessage($message, $level);
 		
@@ -112,8 +113,6 @@ abstract class Logger
 	 * @param string $message The source message received from the logging methods.
 	 * @param int $level One of the {@link LogLevel} constants.
 	 * @return string The formatted message.
-	 * @throws LogException If the log level is invalid.
-	 * @noinspection PhpDocRedundantThrowsInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	protected function formatMessage(string $message, int $level): string
@@ -124,7 +123,7 @@ abstract class Logger
 	/**
 	 * @param string $message The formatted message received from {@link formatMessage()}.
 	 * @param int $level One of the {@link LogLevel} constants.
-	 * @throws LogException If the log level is invalid or message failed to be written.
+	 * @throws LogException If the message failed to be written.
 	 */
 	protected abstract function write(string $message, int $level): void;
 }

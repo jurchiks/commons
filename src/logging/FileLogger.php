@@ -32,12 +32,12 @@ class FileLogger extends Logger
 	
 	protected function formatMessage(string $message, int $level): string
 	{
-		return '[' . date('Y-m-d H:i:s') . '] ' . strtoupper(self::getLevelName($level)) . ' ' . $message . PHP_EOL;
+		return '[' . date('Y-m-d H:i:s') . '] ' . strtoupper(LogLevel::getName($level)) . ' ' . $message . PHP_EOL;
 	}
 	
 	protected function write(string $message, int $level): void
 	{
-		$path = $this->logDirectory . '/' . self::getLevelName($level) . '.log';
+		$path = $this->logDirectory . '/' . LogLevel::getName($level) . '.log';
 		$success = file_put_contents($path, $message, FILE_APPEND | LOCK_EX);
 		
 		if ($success === false)

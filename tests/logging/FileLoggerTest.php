@@ -2,7 +2,7 @@
 namespace js\tools\commons\tests\logging;
 
 use js\tools\commons\logging\FileLogger;
-use js\tools\commons\logging\Logger;
+use js\tools\commons\logging\LogLevel;
 use PHPUnit\Framework\TestCase;
 
 class FileLoggerTest extends TestCase
@@ -24,7 +24,7 @@ class FileLoggerTest extends TestCase
 		$this->assertFileExists($logFile);
 		$this->assertStringEqualsFile(
 			$logFile,
-			'[' . date('Y-m-d H:i:s') . '] ' . strtoupper(Logger::getLevelName(Logger::INFO)) . ' foo' . PHP_EOL
+			'[' . date('Y-m-d H:i:s') . '] ' . strtoupper(LogLevel::getName(LogLevel::INFO)) . ' foo' . PHP_EOL
 		);
 	}
 }

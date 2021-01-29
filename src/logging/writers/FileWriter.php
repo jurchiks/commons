@@ -1,9 +1,10 @@
 <?php
-namespace js\tools\commons\logging;
+namespace js\tools\commons\logging\writers;
 
 use js\tools\commons\exceptions\LogException;
+use js\tools\commons\logging\LogLevel;
 
-class FileLogger extends Logger
+class FileWriter implements LogWriter
 {
 	private string $logDirectory;
 	
@@ -30,14 +31,10 @@ class FileLogger extends Logger
 		$this->logDirectory = rtrim($logDirectory, '\\/');
 	}
 	
-	protected function formatMessage(string $message, int $level): string
+	public function writeMessage(string $message, int $logLevel): void
 	{
-		return '[' . date('Y-m-d H:i:s') . '] ' . strtoupper(LogLevel::getName($level)) . ' ' . $message . PHP_EOL;
-	}
-	
-	protected function write(string $message, int $level): void
-	{
-		$path = $this->logDirectory . '/' . LogLevel::getName($level) . '.log';
+		$message .= PHP_EOL; // Add a line break after each message, otherwise the logs will become unreadable.
+		$path = $this->logDirectory . '/' . LogLevel::getName($logLevel) . '.log';
 		$success = file_put_contents($path, $message, FILE_APPEND | LOCK_EX);
 		
 		if ($success === false)

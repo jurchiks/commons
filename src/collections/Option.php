@@ -3,6 +3,16 @@ namespace js\tools\commons\collections;
 
 abstract class Option
 {
+	public static function empty(): None
+	{
+		return new None();
+	}
+	
+	public static function of($value): Some
+	{
+		return new Some($value);
+	}
+	
 	public function isEmpty(): bool
 	{
 		return ($this instanceof None);

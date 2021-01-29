@@ -2,9 +2,7 @@
 namespace js\tools\commons\traits;
 
 use InvalidArgumentException;
-use js\tools\commons\collections\None;
 use js\tools\commons\collections\Option;
-use js\tools\commons\collections\Some;
 
 /**
  * This trait adds the ability to access array data in a convenient manner,
@@ -124,14 +122,14 @@ trait DataAccessor
 		// Necessary because down the line the string is split into parts.
 		if (is_string($key) && isset($data[$key]))
 		{
-			return new Some($data[$key]);
+			return Option::of($data[$key]);
 		}
 		
 		$parts = self::getKeyParts($key);
 		
 		if (empty($parts))
 		{
-			return new None();
+			return Option::empty();
 		}
 		
 		$value = $data;
@@ -144,11 +142,11 @@ trait DataAccessor
 			}
 			else
 			{
-				return new None();
+				return Option::empty();
 			}
 		}
 		
-		return new Some($value);
+		return Option::of($value);
 	}
 	
 	/**

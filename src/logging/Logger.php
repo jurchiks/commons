@@ -2,9 +2,20 @@
 namespace js\tools\commons\logging;
 
 use js\tools\commons\exceptions\LogException;
+use js\tools\commons\logging\formatters\LogFormatter;
+use js\tools\commons\logging\writers\LogWriter;
 
-abstract class Logger
+class Logger
 {
+	private LogWriter $writer;
+	private ?LogFormatter $formatter;
+	
+	public function __construct(LogWriter $writer, LogFormatter $formatter = null)
+	{
+		$this->writer = $writer;
+		$this->formatter = $formatter;
+	}
+	
 	/**
 	 * @param int $level One of the {@link LogLevel} constants.
 	 * @param string $message The message to log; may contain parameter placeholders in sprintf()-accepted format.
@@ -21,10 +32,15 @@ abstract class Logger
 	public final function log(int $level, string $message, ...$parameters): void
 	{
 		LogLevel::getName($level); // Fail-fast in case of invalid $level, ensuring it won't happen later.
-		$message = $this->prepareMessage($message, ...$parameters);
-		$message = $this->formatMessage($message, $level);
 		
-		$this->write($message, $level);
+		$message = $this->prepareMessage($message, ...$parameters);
+		
+		if ($this->formatter)
+		{
+			$message = $this->formatter->getFormattedMessage($message, $level);
+		}
+		
+		$this->writer->writeMessage($message, $level);
 	}
 	
 	/**
@@ -108,22 +124,4 @@ abstract class Logger
 	{
 		return sprintf(trim($message), ...$parameters);
 	}
-	
-	/**
-	 * @param string $message The source message received from the logging methods.
-	 * @param int $level One of the {@link LogLevel} constants.
-	 * @return string The formatted message.
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	protected function formatMessage(string $message, int $level): string
-	{
-		return $message;
-	}
-	
-	/**
-	 * @param string $message The formatted message received from {@link formatMessage()}.
-	 * @param int $level One of the {@link LogLevel} constants.
-	 * @throws LogException If the message failed to be written.
-	 */
-	protected abstract function write(string $message, int $level): void;
 }

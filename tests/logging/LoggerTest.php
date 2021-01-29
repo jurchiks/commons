@@ -1,20 +1,27 @@
 <?php
 namespace js\tools\commons\tests\logging;
 
+use js\tools\commons\logging\formatters\LogLevelFormatter;
 use js\tools\commons\logging\Logger;
 use js\tools\commons\logging\LogLevel;
+use js\tools\commons\logging\writers\LogWriter;
 use PHPUnit\Framework\TestCase;
-
-class TestLogger extends Logger
-{
-	protected function write(string $message, int $level): void
-	{
-		echo $message;
-	}
-}
 
 class LoggerTest extends TestCase
 {
+	private static LogWriter $writer;
+	
+	public static function setUpBeforeClass(): void
+	{
+		self::$writer = new class implements LogWriter
+		{
+			public function writeMessage(string $message, int $logLevel): void
+			{
+				echo $message;
+			}
+		};
+	}
+	
 	public function validLevelNamesDataset(): iterable
 	{
 		yield [LogLevel::DEBUG, 'debug'];
@@ -31,7 +38,7 @@ class LoggerTest extends TestCase
 	{
 		$this->expectOutputString('foo');
 		
-		$logger = new TestLogger();
+		$logger = new Logger(self::$writer);
 		$logger->log($logLevel, 'foo');
 	}
 	
@@ -40,15 +47,23 @@ class LoggerTest extends TestCase
 	{
 		$this->expectOutputString('foo');
 		
-		$logger = new TestLogger();
+		$logger = new Logger(self::$writer);
 		$logger->$name('foo');
 	}
 	
-	public function testMessageFormatting(): void
+	public function testMessageParameters(): void
 	{
 		$this->expectOutputString('foo bar baz');
 		
-		$logger = new TestLogger();
+		$logger = new Logger(self::$writer);
 		$logger->info('foo %s %s', 'bar', 'baz');
+	}
+	
+	public function testWithFormatter(): void
+	{
+		$this->expectOutputString('INFO foo');
+		
+		$logger = new Logger(self::$writer, new LogLevelFormatter());
+		$logger->info('foo');
 	}
 }

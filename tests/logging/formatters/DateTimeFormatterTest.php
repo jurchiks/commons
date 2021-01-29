@@ -16,4 +16,13 @@ class DateTimeFormatterTest extends TestCase
 			$formatter->getFormattedMessage('foo', LogLevel::INFO)
 		);
 	}
+	public function testInvalidFormat(): void
+	{
+		$formatter = new DateTimeFormatter(null, '1234');
+		
+		$this->assertStringMatchesFormat(
+			'[1234] foo',
+			$formatter->getFormattedMessage('foo', LogLevel::INFO)
+		);
+	}
 }

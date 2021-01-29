@@ -23,4 +23,20 @@ class OptionTest extends TestCase
 		$this->assertInstanceOf(Some::class, $notEmpty);
 		$this->assertSame($value, $notEmpty->get());
 	}
+	
+	public function testOfNullableEmpty(): void
+	{
+		$empty = Option::ofNullable(null);
+		
+		$this->assertInstanceOf(None::class, $empty);
+	}
+	
+	public function testOfNullableNotEmpty(): void
+	{
+		$value = 'some value';
+		$notEmpty = Option::ofNullable($value);
+		
+		$this->assertInstanceOf(Some::class, $notEmpty);
+		$this->assertSame($value, $notEmpty->get());
+	}
 }

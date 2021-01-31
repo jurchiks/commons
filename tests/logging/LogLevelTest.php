@@ -19,16 +19,34 @@ class LogLevelTest extends TestCase
 	}
 	
 	/** @dataProvider validLevelNamesDataset */
-	public function testValidLevelNames(int $logLevel, string $name): void
+	public function testValidLevels(int $logLevel, string $name): void
 	{
 		$this->assertSame($name, LogLevel::getName($logLevel));
 	}
 	
+	public function testInvalidLevel(): void
+	{
+		$invalidLevel = PHP_INT_MAX;
+		
+		$this->expectException(LogException::class);
+		$this->expectExceptionMessage('Invalid log level: ' . $invalidLevel);
+		
+		LogLevel::getName($invalidLevel);
+	}
+	
+	/** @dataProvider validLevelNamesDataset */
+	public function testValidLevelNames(int $logLevel, string $name): void
+	{
+		$this->assertSame($logLevel, LogLevel::getByName($name));
+	}
+	
 	public function testInvalidLevelName(): void
 	{
-		$this->expectException(LogException::class);
-		$this->expectExceptionMessage('Invalid log level: ' . PHP_INT_MAX);
+		$invalidName = 'nonsense';
 		
-		LogLevel::getName(PHP_INT_MAX);
+		$this->expectException(LogException::class);
+		$this->expectExceptionMessage('Invalid log level name: ' . $invalidName);
+		
+		LogLevel::getByName($invalidName);
 	}
 }

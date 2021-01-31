@@ -51,14 +51,6 @@ class LoggerTest extends TestCase
 		$logger->$name('foo');
 	}
 	
-	public function testMessageParameters(): void
-	{
-		$this->expectOutputString('foo bar baz');
-		
-		$logger = new Logger(self::$writer);
-		$logger->info('foo %s %s', 'bar', 'baz');
-	}
-	
 	public function testWithFormatter(): void
 	{
 		$this->expectOutputString('INFO foo');

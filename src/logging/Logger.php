@@ -5,6 +5,15 @@ use js\tools\commons\exceptions\LogException;
 use js\tools\commons\logging\formatters\LogFormatter;
 use js\tools\commons\logging\writers\LogWriter;
 
+/**
+ * @method void debug(string $message) @throws LogException If the message failed to be written.
+ * @method void notice(string $message) @throws LogException If the message failed to be written.
+ * @method void info(string $message) @throws LogException If the message failed to be written.
+ * @method void warning(string $message) @throws LogException If the message failed to be written.
+ * @method void error(string $message) @throws LogException If the message failed to be written.
+ * @method void critical(string $message) @throws LogException If the message failed to be written.
+ * @method void fatal(string $message) @throws LogException If the message failed to be written.
+ */
 class Logger
 {
 	private LogWriter $writer;
@@ -41,72 +50,13 @@ class Logger
 	}
 	
 	/**
-	 * @param string $message
-	 * @throws LogException If the log level is invalid or message failed to be written.
-	 * @see log
+	 * @param string $method The name of the log level.
+	 * @param array $arguments An array containing the message to log.
+	 * @throws LogException If the log level name is invalid or message failed to be written.
+	 * @see log()
 	 */
-	public final function debug(string $message): void
+	public final function __call(string $method, array $arguments): void
 	{
-		$this->log(LogLevel::DEBUG, $message);
-	}
-	
-	/**
-	 * @param string $message
-	 * @throws LogException If the log level is invalid or message failed to be written.
-	 * @see log
-	 */
-	public final function notice(string $message): void
-	{
-		$this->log(LogLevel::NOTICE, $message);
-	}
-	
-	/**
-	 * @param string $message
-	 * @throws LogException If the log level is invalid or message failed to be written.
-	 * @see log
-	 */
-	public final function info(string $message): void
-	{
-		$this->log(LogLevel::INFO, $message);
-	}
-	
-	/**
-	 * @param string $message
-	 * @throws LogException If the log level is invalid or message failed to be written.
-	 * @see log
-	 */
-	public final function warning(string $message): void
-	{
-		$this->log(LogLevel::WARNING, $message);
-	}
-	
-	/**
-	 * @param string $message
-	 * @throws LogException If the log level is invalid or message failed to be written.
-	 * @see log
-	 */
-	public final function error(string $message): void
-	{
-		$this->log(LogLevel::ERROR, $message);
-	}
-	
-	/**
-	 * @param string $message
-	 * @throws LogException If the log level is invalid or message failed to be written.
-	 * @see log
-	 */
-	public final function critical(string $message): void
-	{
-		$this->log(LogLevel::CRITICAL, $message);
-	}
-	
-	/**
-	 * @param string $message
-	 * @throws LogException If the log level is invalid or message failed to be written.
-	 * @see log
-	 */
-	public final function fatal(string $message): void
-	{
-		$this->log(LogLevel::FATAL, $message);
+		$this->log(LogLevel::getByName($method), ...$arguments);
 	}
 }

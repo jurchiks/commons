@@ -1,6 +1,7 @@
 <?php
 namespace js\tools\commons\tests\logging;
 
+use ArgumentCountError;
 use js\tools\commons\logging\formatters\LogLevelFormatter;
 use js\tools\commons\logging\Logger;
 use js\tools\commons\logging\LogLevel;
@@ -49,6 +50,15 @@ class LoggerTest extends TestCase
 		
 		$logger = new Logger(self::$writer);
 		$logger->$name('foo');
+	}
+	
+	public function testMissingMessage(): void
+	{
+		$this->expectException(ArgumentCountError::class);
+		$this->expectExceptionMessage('Too few arguments to function');
+		
+		$logger = new Logger(self::$writer);
+		$logger->info();
 	}
 	
 	public function testWithFormatter(): void

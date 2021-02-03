@@ -44,17 +44,20 @@ class ShortInterval
 	
 	/**
 	 * @param DateInterval $interval
-	 * @return string The interval converted into a common short notation, e.g. "1h20i" or "1y4m15d".
+	 * @return string The interval converted into a common short notation, e.g. "1h20m" or "1y4m15d".
 	 */
 	public static function build(DateInterval $interval): string
 	{
 		$shortInterval = '';
+		$unitMap = [
+			'i' => (($interval->d > 0) || ($interval->h > 0)) ? 'm' : 'i',
+		];
 		
 		foreach (self::DATE_INTERVAL_PROPERTIES as $unit => $propertyName)
 		{
 			if ($interval->$propertyName > 0)
 			{
-				$shortInterval .= $interval->$propertyName . $propertyName;
+				$shortInterval .= $interval->$propertyName . ($unitMap[$propertyName] ?? $propertyName);
 			}
 		}
 		

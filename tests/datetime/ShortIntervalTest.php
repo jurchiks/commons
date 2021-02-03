@@ -16,15 +16,14 @@ class ShortIntervalTest extends TestCase
 		yield ['1i', ['i' => 1], null];
 		yield ['1s', ['s' => 1], null];
 		yield ['1y1m1d', ['y' => 1, 'm' => 1, 'd' => 1], null];
-		yield ['1h1i1s', ['h' => 1, 'i' => 1, 's' => 1], null];
-		yield ['1y1m1d1h1i1s', ['y' => 1, 'm' => 1, 'd' => 1, 'h' => 1, 'i' => 1, 's' => 1], null];
+		yield ['1h1i1s', ['h' => 1, 'i' => 1, 's' => 1], '1h1m1s'];
+		yield ['1h1m1s', ['h' => 1, 'i' => 1, 's' => 1], null];
+		yield ['1y1m1d1h1i1s', ['y' => 1, 'm' => 1, 'd' => 1, 'h' => 1, 'i' => 1, 's' => 1], '1y1m1d1h1m1s'];
+		yield ['1y1m1d1h1m1s', ['y' => 1, 'm' => 1, 'd' => 1, 'h' => 1, 'i' => 1, 's' => 1], null];
 		
 		// Special cases:
-		yield ['1d1m1s', ['d' => 1, 'i' => 1, 's' => 1], '1d1i1s']; // If m is after d, it is resolved as minutes.
-		yield ['1h1m1s', ['h' => 1, 'i' => 1, 's' => 1], '1h1i1s']; // If m is after h, it is resolved as minutes.
-		yield ['1y1m1d1h1m1s', ['y' => 1, 'm' => 1, 'd' => 1, 'h' => 1, 'i' => 1, 's' => 1], '1y1m1d1h1i1s'];
-		yield ['69h69i69s', ['h' => 69, 'i' => 69, 's' => 69], null]; // Overflows not resolved.
-		yield ['69m69s', ['m' => 69, 's' => 69], null]; // First matching segment = months, not minutes.
+		yield ['1m1s', ['m' => 1, 's' => 1], null]; // First matching segment = months, not minutes.
+		yield ['69h69m69s', ['h' => 69, 'i' => 69, 's' => 69], null]; // Overflows are not resolved.
 	}
 	
 	/** @dataProvider validIntervalsDataset */

@@ -8,6 +8,10 @@ abstract class Option
 		return new None();
 	}
 	
+	/**
+	 * @param mixed $value
+	 * @return Some
+	 */
 	public static function of($value): Some
 	{
 		return new Some($value);

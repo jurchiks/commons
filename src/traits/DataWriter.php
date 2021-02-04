@@ -10,7 +10,7 @@ trait DataWriter
 {
 	use DataAccessor;
 	
-	public function set($key, $value)
+	public function set($key, $value): void
 	{
 		$this->getAll(); // ensure the load() method is called first
 		

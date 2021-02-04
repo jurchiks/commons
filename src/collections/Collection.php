@@ -381,6 +381,13 @@ abstract class Collection implements Iterator, ArrayAccess
 		return $data;
 	}
 	
+	/**
+	 * @param callable $callback
+	 * @param bool $preserveKeys
+	 * @return array[]
+	 *
+	 * @psalm-return array<scalar, array>
+	 */
 	protected final function groupData(callable $callback, bool $preserveKeys): array
 	{
 		$data = [];
@@ -411,7 +418,7 @@ abstract class Collection implements Iterator, ArrayAccess
 	{
 		$data = [];
 		
-		$callback = function ($value, $key) use (&$data, $preserveKeys)
+		$callback = function ($value, $key) use (&$data, $preserveKeys): void
 		{
 			if ($preserveKeys)
 			{

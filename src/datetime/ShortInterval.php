@@ -66,7 +66,7 @@ class ShortInterval
 	
 	private static function buildInterval(array $matches): DateInterval
 	{
-		$mapDateUnits = function (array $unitMap) use ($matches)
+		$mapDateUnits = function (array $unitMap) use ($matches): string
 		{
 			$interval = '';
 			

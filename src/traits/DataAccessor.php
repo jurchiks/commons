@@ -15,7 +15,7 @@ trait DataAccessor
 {
 	private ?array $data = null;
 	
-	protected function init(array $data)
+	protected function init(array $data): void
 	{
 		$this->data = $data;
 	}
@@ -156,7 +156,7 @@ trait DataAccessor
 	 */
 	protected static function getKeyParts($key): array
 	{
-		$validateKey = function ($key)
+		$validateKey = function ($key): void
 		{
 			if (!is_int($key) && !is_string($key))
 			{

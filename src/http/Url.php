@@ -382,7 +382,7 @@ class Url
 	 * @param string $password
 	 * @throws UrlException
 	 */
-	private static function validateAuth(string $username, string $password)
+	private static function validateAuth(string $username, string $password): void
 	{
 		if (!empty($username))
 		{
@@ -407,7 +407,7 @@ class Url
 	 * @param string $hostOrIp
 	 * @throws UrlException
 	 */
-	private static function validateHost(string $hostOrIp)
+	private static function validateHost(string $hostOrIp): void
 	{
 		if ((filter_var($hostOrIp, FILTER_VALIDATE_IP) === false)
 			&& ((strpos($hostOrIp, '/') !== false) // host must only be in the format "domain.tld" or a valid IP
@@ -423,7 +423,7 @@ class Url
 	 * @param string $path
 	 * @throws UrlException
 	 */
-	private static function validatePath(string $path)
+	private static function validatePath(string $path): void
 	{
 		$data = parse_url('http://domain.tld' . $path);
 		
@@ -437,7 +437,7 @@ class Url
 	 * @param string $query
 	 * @throws UrlException
 	 */
-	private static function validateQuery(string $query)
+	private static function validateQuery(string $query): void
 	{
 		$data = parse_url('http://domain.tld?' . $query);
 		
@@ -450,9 +450,11 @@ class Url
 	/**
 	 * @param $key
 	 * @param $value
+	 * @param (int|string)|(int|string)[] $key
+	 * @param (int|string)[]|int|string $value
 	 * @throws UrlException
 	 */
-	private static function validateQueryParameter($key, $value)
+	private static function validateQueryParameter($key, $value): void
 	{
 		if (is_array($value))
 		{

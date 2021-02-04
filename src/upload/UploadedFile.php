@@ -16,6 +16,9 @@ class UploadedFile
 	private ?string $type = null;
 	private string $originalType;
 	
+	/**
+	 * @param array{name: string, type: string, error: int, size: int, tmp_name: string} $data An entry from $_FILES.
+	 */
 	public function __construct(array $data)
 	{
 		$this->name = $data['name'];

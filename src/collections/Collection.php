@@ -343,8 +343,14 @@ abstract class Collection implements Iterator, ArrayAccess
 	
 	// endregion
 	
+	/**
+	 * @return Collection
+	 */
 	public abstract function toMutable();
 	
+	/**
+	 * @return Collection
+	 */
 	public abstract function toImmutable();
 	
 	protected final function mapData(callable $callback): array

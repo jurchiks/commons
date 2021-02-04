@@ -48,7 +48,7 @@ class UploadedFileCollection
 	 * @return UploadedFile|UploadedFile[]|UploadedFile[][]|UploadedFile[][][]
 	 * @throws UploadException
 	 *
-	 * @psalm-return UploadedFile|array<array-key, UploadedFile|array<array-key, UploadedFile|array<array-key, UploadedFile>>>
+	 * @psalm-suppress InvalidReturnType, InvalidReturnStatement
 	 */
 	private static function normalizeFile(array $file, bool $throwException)
 	{

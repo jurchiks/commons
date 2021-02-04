@@ -17,6 +17,7 @@ abstract class Collection implements Iterator, ArrayAccess
 	
 	public function __clone()
 	{
+		/** @psalm-suppress UnsafeInstantiation */
 		return new static($this->data);
 	}
 	

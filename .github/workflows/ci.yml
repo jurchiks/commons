@@ -85,3 +85,39 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: .phpunit.cache/code-coverage/clover.xml
           flags: unittests
+
+  rector:
+    name: Run Rector
+    runs-on: ubuntu-latest
+    needs: composer-validate
+
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: source-code
+
+      - name: Setup PHP for Rector
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          coverage: none
+          tools: cs2pr
+
+      - name: Get Composer cache directory
+        id: composer-cache-dir
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Ensure usage of cached dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Run Rector and comment any issues on PR
+        run: vendor/bin/rector process --ansi --dry-run --output-format=checkstyle | cs2pr

@@ -1,6 +1,7 @@
 # commons
 
-[![codecov](https://codecov.io/gh/jurchiks/commons/branch/master/graph/badge.svg?token=o0UHqqXQAv)](https://codecov.io/gh/jurchiks/commons)
+[![Test Coverage](https://codecov.io/gh/jurchiks/commons/branch/master/graph/badge.svg?token=o0UHqqXQAv)](https://codecov.io/gh/jurchiks/commons)
+[![Type Coverage](https://shepherd.dev/github/jurchiks/commons/coverage.svg)](https://shepherd.dev/github/jurchiks/commons)
 
 Common general purpose utility code:
 

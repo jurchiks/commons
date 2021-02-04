@@ -392,7 +392,7 @@ abstract class Collection implements Iterator, ArrayAccess
 	 * @param bool $preserveKeys
 	 * @return array[]
 	 *
-	 * @psalm-return array<scalar, array>
+	 * @psalm-return array<array-key, array<array-key, mixed>>
 	 */
 	protected final function groupData(callable $callback, bool $preserveKeys): array
 	{
@@ -402,9 +402,9 @@ abstract class Collection implements Iterator, ArrayAccess
 		{
 			$groupKey = $callback($value, $key);
 			
-			if (!is_scalar($groupKey))
+			if (!is_int($groupKey) && !is_string($groupKey))
 			{
-				throw new InvalidArgumentException('group() callback must return a scalar value');
+				throw new InvalidArgumentException('group() callback must return an int|string');
 			}
 			
 			if ($preserveKeys)

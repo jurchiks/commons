@@ -346,9 +346,9 @@ class Url
 		
 		$source .= $this->getHost();
 		
-		if ($this->getPort() !== null)
+		if (($port = $this->getPort()) !== null)
 		{
-			$source .= ':' . $this->getPort();
+			$source .= ':' . $port;
 		}
 		
 		return $source . $this->getRelative($isRawUrl);
@@ -448,10 +448,8 @@ class Url
 	}
 	
 	/**
-	 * @param $key
-	 * @param $value
-	 * @param (int|string)|(int|string)[] $key
-	 * @param (int|string)[]|int|string $value
+	 * @param int|string|int[]|string[] $key
+	 * @param mixed $value
 	 * @throws UrlException
 	 */
 	private static function validateQueryParameter($key, $value): void

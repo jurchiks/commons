@@ -38,10 +38,17 @@ abstract class Option
 		return ($this instanceof Some);
 	}
 	
+	/**
+	 * @param mixed $default
+	 * @return mixed
+	 */
 	public function getOrElse($default)
 	{
 		return ($this->isFound() ? $this->get() : $default);
 	}
 	
+	/**
+	 * @return mixed
+	 */
 	public abstract function get();
 }

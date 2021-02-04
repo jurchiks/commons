@@ -3,10 +3,23 @@ namespace js\tools\commons\collections;
 
 abstract class ArrayMap extends Collection
 {
+	/**
+	 * @param int|string $key
+	 * @param mixed $value
+	 * @return ArrayMap
+	 */
 	public abstract function set($key, $value): ArrayMap;
 	
+	/**
+	 * @param int|string ...$keys
+	 * @return ArrayMap
+	 */
 	public abstract function unset(...$keys): ArrayMap;
 	
+	/**
+	 * @param mixed $value
+	 * @return ArrayMap
+	 */
 	public function remove($value): ArrayMap
 	{
 		return $this->filter(fn ($v) => ($v !== $value), true);
@@ -83,7 +96,7 @@ abstract class ArrayMap extends Collection
 	 * Group items together.
 	 *
 	 * @param callable $callback The callback function to apply to each item in the collection.
-	 * Callback signature - `(mixed $value, int|string $key): scalar`.
+	 * Callback signature - `(mixed $value, int|string $key): int|string`.
 	 * @param bool $preserveKeys If true, the original keys of the values will be preserved in the newly grouped arrays.
 	 * @return ArrayMap A map containing the mapping of $callback return values => [matching items].
 	 */

@@ -30,6 +30,10 @@ class Config
 		}
 		else
 		{
+			/**
+			 * @noinspection PhpIncludeInspection
+			 * @psalm-suppress UnresolvableInclude
+			 */
 			$data = require $pathToFile;
 		}
 		
@@ -38,7 +42,7 @@ class Config
 			throw new ConfigException('Config file must return an array');
 		}
 		
-		return new static($data);
+		return new self($data);
 	}
 	
 	/**
@@ -55,12 +59,12 @@ class Config
 			throw new ConfigException('Json data must contain an array');
 		}
 		
-		return new static($data);
+		return new self($data);
 	}
 	
 	public static function loadFromArray(array $data): self
 	{
-		return new static($data);
+		return new self($data);
 	}
 	
 	private function __construct(array $data)

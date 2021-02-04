@@ -24,7 +24,7 @@ class ImmutableMap extends ArrayMap
 		$data = $this->data;
 		$data[$key] = $value;
 		
-		return new static($data);
+		return new self($data);
 	}
 	
 	public function unset(...$keys): ArrayMap
@@ -36,27 +36,27 @@ class ImmutableMap extends ArrayMap
 			unset($data[$key]);
 		}
 		
-		return new static($data);
+		return new self($data);
 	}
 	
 	public function map(callable $callback): ArrayMap
 	{
-		return new static($this->mapData($callback));
+		return new self($this->mapData($callback));
 	}
 	
 	public function filter(callable $predicate, bool $preserveKeys = false): ArrayMap
 	{
-		return new static($this->filterData($predicate, $preserveKeys));
+		return new self($this->filterData($predicate, $preserveKeys));
 	}
 	
 	public function group(callable $callback, bool $preserveKeys = false): ArrayMap
 	{
-		return new static($this->groupData($callback, $preserveKeys));
+		return new self($this->groupData($callback, $preserveKeys));
 	}
 	
 	public function flatten(bool $preserveKeys = false): ArrayMap
 	{
-		return new static($this->flattenData($preserveKeys));
+		return new self($this->flattenData($preserveKeys));
 	}
 	
 	public function sort(
@@ -66,11 +66,11 @@ class ImmutableMap extends ArrayMap
 		bool $preserveKeys = true
 	): ArrayMap
 	{
-		return new static($this->sortData($ascending, $flags, $sortByKeys, $preserveKeys));
+		return new self($this->sortData($ascending, $flags, $sortByKeys, $preserveKeys));
 	}
 	
 	public function sortManual(callable $callback, bool $sortByKeys = false, bool $preserveKeys = true): ArrayMap
 	{
-		return new static($this->sortData(false, 0, $sortByKeys, $preserveKeys, $callback));
+		return new self($this->sortData(false, 0, $sortByKeys, $preserveKeys, $callback));
 	}
 }

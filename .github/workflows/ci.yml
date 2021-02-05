@@ -19,7 +19,6 @@ jobs:
           name: source-code
           path: |
             .
-            !.git/
             !.github/
             !.idea/
 

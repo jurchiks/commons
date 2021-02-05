@@ -17,7 +17,8 @@
     "ext-intl": "*",
     "ext-fileinfo": "*",
     "phpunit/phpunit": "^9.5",
-    "rector/rector": "^0.9.18"
+    "rector/rector": "^0.9.18",
+    "vimeo/psalm": "^4.4"
   },
   "autoload": {
     "psr-4": {

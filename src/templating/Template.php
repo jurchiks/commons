@@ -63,7 +63,7 @@ class Template
 	
 	/**
 	 * @param string $name
-	 * @param $value
+	 * @param mixed $value
 	 * @throws TemplateException
 	 */
 	public function __set(string $name, $value): void
@@ -149,6 +149,10 @@ class Template
 		
 		try
 		{
+			/**
+			 * @noinspection PhpIncludeInspection
+			 * @psalm-suppress UnresolvableInclude
+			 */
 			include $this->path;
 			
 			if ($this->lastBlock !== null)
@@ -191,14 +195,14 @@ class Template
 	/**
 	 * @param string $path
 	 * @param array $data
-	 * @return $this
+	 * @return self
 	 * @throws TemplateException If the path is invalid.
 	 */
 	private function getTemplate(string $path, array $data = []): self
 	{
 		if ($this->engine === null)
 		{
-			return new static($path, $data);
+			return new self($path, $data);
 		}
 		else
 		{

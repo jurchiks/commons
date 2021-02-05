@@ -15,10 +15,22 @@ abstract class ArrayList extends Collection
 		parent::__construct(array_values($data));
 	}
 	
+	/**
+	 * @param mixed ...$values
+	 * @return ArrayList
+	 */
 	public abstract function append(...$values): ArrayList;
 	
+	/**
+	 * @param mixed ...$values
+	 * @return ArrayList
+	 */
 	public abstract function prepend(...$values): ArrayList;
 	
+	/**
+	 * @param mixed $value
+	 * @return ArrayList
+	 */
 	public function remove($value): ArrayList
 	{
 		return $this->filter(fn ($v) => ($v !== $value));
@@ -98,7 +110,7 @@ abstract class ArrayList extends Collection
 	 * Split items into groups. Callback returns the name/key of the group. Note that this returns a map, not a list!
 	 *
 	 * @param callable $callback The callback function to apply to each item in the list.
-	 * Callback signature - `(mixed $value, int $index): scalar`.
+	 * Callback signature - `(mixed $value, int $index): int|string`.
 	 * @return ArrayMap
 	 */
 	public abstract function group(callable $callback): ArrayMap;

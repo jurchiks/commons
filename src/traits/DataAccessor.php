@@ -15,7 +15,7 @@ trait DataAccessor
 {
 	private ?array $data = null;
 	
-	protected function init(array $data)
+	protected function init(array $data): void
 	{
 		$this->data = $data;
 	}
@@ -32,7 +32,7 @@ trait DataAccessor
 	
 	public function size(): int
 	{
-		return count($this->data);
+		return count($this->data ?? []);
 	}
 	
 	public function getAll(): array
@@ -78,6 +78,18 @@ trait DataAccessor
 		return $this->search($key)->getOrElse($default);
 	}
 	
+	/**
+	 * @param array<int|string>|string|int $key The key/index of the property to retrieve.
+	 * Examples:
+	 * <ul>
+	 * <li>get('foo')</li>
+	 * <li>get(['foo', 0])</li>
+	 * <li>get('foo.bar', 5)</li>
+	 * </ul>
+	 * @param int $default The default value to return if property was not found.
+	 * @return int Whatever the found value or default value is.
+	 * @throws InvalidArgumentException If $key is invalid.
+	 */
 	public function getInt($key, int $default = 0): int
 	{
 		$value = $this->get($key, $default);
@@ -85,6 +97,18 @@ trait DataAccessor
 		return (is_numeric($value) ? intval($value) : $default);
 	}
 	
+	/**
+	 * @param array<int|string>|string|int $key The key/index of the property to retrieve.
+	 * Examples:
+	 * <ul>
+	 * <li>get('foo')</li>
+	 * <li>get(['foo', 0])</li>
+	 * <li>get('foo.bar', 5.0)</li>
+	 * </ul>
+	 * @param float $default The default value to return if property was not found.
+	 * @return float Whatever the found value or default value is.
+	 * @throws InvalidArgumentException If $key is invalid.
+	 */
 	public function getFloat($key, float $default = 0): float
 	{
 		$value = $this->get($key, $default);
@@ -92,16 +116,52 @@ trait DataAccessor
 		return (is_numeric($value) ? floatval($value) : $default);
 	}
 	
+	/**
+	 * @param array<int|string>|string|int $key The key/index of the property to retrieve.
+	 * Examples:
+	 * <ul>
+	 * <li>get('foo')</li>
+	 * <li>get(['foo', 0])</li>
+	 * <li>get('foo.bar', 'not found')</li>
+	 * </ul>
+	 * @param string $default The default value to return if property was not found.
+	 * @return string Whatever the found value or default value is.
+	 * @throws InvalidArgumentException If $key is invalid.
+	 */
 	public function getString($key, string $default = ''): string
 	{
 		return strval($this->get($key, $default));
 	}
 	
+	/**
+	 * @param array<int|string>|string|int $key The key/index of the property to retrieve.
+	 * Examples:
+	 * <ul>
+	 * <li>get('foo')</li>
+	 * <li>get(['foo', 0])</li>
+	 * <li>get('foo.bar', false)</li>
+	 * </ul>
+	 * @param bool $default The default value to return if property was not found.
+	 * @return bool Whatever the found value or default value is.
+	 * @throws InvalidArgumentException If $key is invalid.
+	 */
 	public function getBool($key, bool $default = false): bool
 	{
 		return boolval($this->get($key, $default));
 	}
 	
+	/**
+	 * @param array<int|string>|string|int $key The key/index of the property to retrieve.
+	 * Examples:
+	 * <ul>
+	 * <li>get('foo')</li>
+	 * <li>get(['foo', 0])</li>
+	 * <li>get('foo.bar', [1, 2, 3])</li>
+	 * </ul>
+	 * @param array $default The default value to return if property was not found.
+	 * @return array Whatever the found value or default value is.
+	 * @throws InvalidArgumentException If $key is invalid.
+	 */
 	public function getArray($key, array $default = []): array
 	{
 		$value = $this->get($key, $default);
@@ -150,13 +210,13 @@ trait DataAccessor
 	}
 	
 	/**
-	 * @param $key
+	 * @param mixed $key
 	 * @return array
 	 * @throws InvalidArgumentException
 	 */
 	protected static function getKeyParts($key): array
 	{
-		$validateKey = function ($key)
+		$validateKey = function ($key): void
 		{
 			if (!is_int($key) && !is_string($key))
 			{

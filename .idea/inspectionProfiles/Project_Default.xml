@@ -7,5 +7,10 @@
     <inspection_tool class="PhpUndefinedMethodInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="DOWNGRADE_SEVERITY" value="true" />
     </inspection_tool>
+    <inspection_tool class="PsalmGlobal" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="config" value="C:\workspace\commons\psalm.xml" />
+      <option name="showInfo" value="true" />
+      <option name="findUnusedCode" value="true" />
+    </inspection_tool>
   </profile>
 </component>

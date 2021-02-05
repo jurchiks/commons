@@ -8,6 +8,10 @@ abstract class Option
 		return new None();
 	}
 	
+	/**
+	 * @param mixed $value
+	 * @return Some
+	 */
 	public static function of($value): Some
 	{
 		return new Some($value);
@@ -34,10 +38,17 @@ abstract class Option
 		return ($this instanceof Some);
 	}
 	
+	/**
+	 * @param mixed $default
+	 * @return mixed
+	 */
 	public function getOrElse($default)
 	{
 		return ($this->isFound() ? $this->get() : $default);
 	}
 	
+	/**
+	 * @return mixed
+	 */
 	public abstract function get();
 }

@@ -10,7 +10,11 @@ trait DataWriter
 {
 	use DataAccessor;
 	
-	public function set($key, $value)
+	/**
+	 * @param int|string|int[]|string[] $key
+	 * @param mixed $value
+	 */
+	public function set($key, $value): void
 	{
 		$this->getAll(); // ensure the load() method is called first
 		

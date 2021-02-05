@@ -17,6 +17,23 @@ class Accessor
 	}
 }
 
+class LazyAccessor
+{
+	use DataAccessor;
+	
+	private array $tmp;
+	
+	public function __construct(array $data)
+	{
+		$this->tmp = $data;
+	}
+	
+	protected function load(): array
+	{
+		return $this->tmp;
+	}
+}
+
 class DataAccessorTest extends TestCase
 {
 	public function testInit(): void
@@ -27,7 +44,7 @@ class DataAccessorTest extends TestCase
 		$this->assertSame($data, $accessor->getAll());
 	}
 	
-	public function testLoadDefault(): void
+	public function testLazyInitDefault(): void
 	{
 		$accessor = new class
 		{
@@ -37,17 +54,9 @@ class DataAccessorTest extends TestCase
 		$this->assertSame([], $accessor->getAll());
 	}
 	
-	public function testLoadOverloaded(): void
+	public function testLazyInitWithData(): void
 	{
-		$accessor = new class
-		{
-			use DataAccessor;
-			
-			protected function load(): array
-			{
-				return ['foo' => 1];
-			}
-		};
+		$accessor = new LazyAccessor(['foo' => 1]);
 		
 		$this->assertSame(['foo' => 1], $accessor->getAll());
 	}
@@ -66,6 +75,14 @@ class DataAccessorTest extends TestCase
 		$this->assertSame($isEmpty, $accessor->isEmpty());
 	}
 	
+	/** @dataProvider isEmptyDataset */
+	public function testIsEmptyLazy(array $data, bool $isEmpty): void
+	{
+		$accessor = new LazyAccessor($data);
+		
+		$this->assertSame($isEmpty, $accessor->isEmpty());
+	}
+	
 	public function sizeDataset(): iterable
 	{
 		yield [[], 0];
@@ -77,6 +94,14 @@ class DataAccessorTest extends TestCase
 	public function testSize(array $data, int $size): void
 	{
 		$accessor = new Accessor($data);
+		
+		$this->assertSame($size, $accessor->size());
+	}
+	
+	/** @dataProvider sizeDataset */
+	public function testSizeLazy(array $data, int $size): void
+	{
+		$accessor = new LazyAccessor($data);
 		
 		$this->assertSame($size, $accessor->size());
 	}

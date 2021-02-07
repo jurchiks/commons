@@ -102,7 +102,7 @@ class ArrayHelper
 	
 	/**
 	 * @param mixed $key
-	 * @return array
+	 * @return array<int|string>
 	 * @throws InvalidArgumentException
 	 */
 	private static function normalizeKey($key): array

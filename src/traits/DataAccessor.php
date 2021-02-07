@@ -46,7 +46,7 @@ trait DataAccessor
 	}
 	
 	/**
-	 * @param array<int|string>|string|int $key The key/index of the property to search for.
+	 * @param int|string|array<int|string> $key The key/index of the property to search for.
 	 * Examples:
 	 * <ul>
 	 * <li>exists('foo')</li>
@@ -62,7 +62,7 @@ trait DataAccessor
 	}
 	
 	/**
-	 * @param array<int|string>|string|int $key The key/index of the property to retrieve.
+	 * @param int|string|array<int|string> $key The key/index of the property to retrieve.
 	 * Examples:
 	 * <ul>
 	 * <li>get('foo')</li>
@@ -79,7 +79,7 @@ trait DataAccessor
 	}
 	
 	/**
-	 * @param array<int|string>|string|int $key The key/index of the property to retrieve.
+	 * @param int|string|array<int|string> $key The key/index of the property to retrieve.
 	 * Examples:
 	 * <ul>
 	 * <li>get('foo')</li>
@@ -98,7 +98,7 @@ trait DataAccessor
 	}
 	
 	/**
-	 * @param array<int|string>|string|int $key The key/index of the property to retrieve.
+	 * @param int|string|array<int|string> $key The key/index of the property to retrieve.
 	 * Examples:
 	 * <ul>
 	 * <li>get('foo')</li>
@@ -117,7 +117,7 @@ trait DataAccessor
 	}
 	
 	/**
-	 * @param array<int|string>|string|int $key The key/index of the property to retrieve.
+	 * @param int|string|array<int|string> $key The key/index of the property to retrieve.
 	 * Examples:
 	 * <ul>
 	 * <li>get('foo')</li>
@@ -134,7 +134,7 @@ trait DataAccessor
 	}
 	
 	/**
-	 * @param array<int|string>|string|int $key The key/index of the property to retrieve.
+	 * @param int|string|array<int|string> $key The key/index of the property to retrieve.
 	 * Examples:
 	 * <ul>
 	 * <li>get('foo')</li>
@@ -151,7 +151,7 @@ trait DataAccessor
 	}
 	
 	/**
-	 * @param array<int|string>|string|int $key The key/index of the property to retrieve.
+	 * @param int|string|array<int|string> $key The key/index of the property to retrieve.
 	 * Examples:
 	 * <ul>
 	 * <li>get('foo')</li>

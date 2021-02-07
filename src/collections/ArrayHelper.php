@@ -53,6 +53,8 @@ class ArrayHelper
 	}
 	
 	/**
+	 * Set a single entry in an array.
+	 *
 	 * @param array $array
 	 * @param int|string|array<int|string> $key The key/index of the property to set.
 	 * Examples:

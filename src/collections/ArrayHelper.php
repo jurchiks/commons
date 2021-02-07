@@ -9,7 +9,7 @@ class ArrayHelper
 	 * Get a single entry from an array.
 	 *
 	 * @param array $array
-	 * @param int|string|array<int|string> $key The key/index of the property to search for.
+	 * @param int|string|array<int|string> $key The key/index of the property to retrieve.
 	 * Examples:
 	 * <ul>
 	 * <li>get($array, 'foo')</li>

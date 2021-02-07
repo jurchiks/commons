@@ -63,9 +63,9 @@ class ImmutableListTest extends TestCase
 	public function testRemove(): void
 	{
 		$list = new ImmutableList(range(1, 5));
-		$newList = $list->remove(4);
+		$newList = $list->remove(4, 5);
 		
-		$this->assertSame([1, 2, 3, 5], $newList->get());
+		$this->assertSame([1, 2, 3], $newList->get());
 		$this->assertSame(range(1, 5), $list->get());
 	}
 	

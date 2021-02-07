@@ -28,12 +28,12 @@ abstract class ArrayList extends Collection
 	public abstract function prepend(...$values): ArrayList;
 	
 	/**
-	 * @param mixed $value
+	 * @param mixed ...$values
 	 * @return ArrayList
 	 */
-	public function remove($value): ArrayList
+	public function remove(...$values): ArrayList
 	{
-		return $this->filter(fn ($v) => ($v !== $value));
+		return $this->filter(fn ($value) => !in_array($value, $values, true));
 	}
 	
 	/**

@@ -84,15 +84,12 @@
       <path value="$PROJECT_DIR$/vendor/symplify/simple-php-doc-parser" />
       <path value="$PROJECT_DIR$/vendor/symplify/set-config-resolver" />
       <path value="$PROJECT_DIR$/vendor/symplify/rule-doc-generator" />
-      <path value="$PROJECT_DIR$/vendor/symplify/php-config-printer" />
       <path value="$PROJECT_DIR$/vendor/symplify/package-builder" />
-      <path value="$PROJECT_DIR$/vendor/symplify/markdown-diff" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-normalizer" />
       <path value="$PROJECT_DIR$/vendor/symplify/easy-testing" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-grapheme" />
       <path value="$PROJECT_DIR$/vendor/symplify/console-package-builder" />
       <path value="$PROJECT_DIR$/vendor/symfony/var-dumper" />
-      <path value="$PROJECT_DIR$/vendor/symplify/console-color-diff" />
       <path value="$PROJECT_DIR$/vendor/symplify/composer-json-manipulator" />
       <path value="$PROJECT_DIR$/vendor/symfony/deprecation-contracts" />
       <path value="$PROJECT_DIR$/vendor/symfony/service-contracts" />
@@ -105,12 +102,15 @@
       <path value="$PROJECT_DIR$/vendor/amphp/amp" />
       <path value="$PROJECT_DIR$/vendor/dnoegel/php-xdg-base-dir" />
       <path value="$PROJECT_DIR$/vendor/netresearch/jsonmapper" />
+      <path value="$PROJECT_DIR$/vendor/symplify/php-config-printer" />
+      <path value="$PROJECT_DIR$/vendor/symplify/markdown-diff" />
+      <path value="$PROJECT_DIR$/vendor/symplify/console-color-diff" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />
   <component name="PhpUnit">
     <phpunit_settings>
-      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" configuration_file_path="$PROJECT_DIR$/phpunit.xml" />
+      <PhpUnitSettings configuration_file_path="$PROJECT_DIR$/phpunit.xml" custom_loader_path="$PROJECT_DIR$/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
     </phpunit_settings>
   </component>
   <component name="Psalm">

@@ -28,7 +28,7 @@ class ArrayHelper
 			return Option::of($array[$key]);
 		}
 		
-		$parts = self::getKeyParts($key);
+		$parts = self::normalizeKey($key);
 		
 		if (empty($parts))
 		{
@@ -69,7 +69,7 @@ class ArrayHelper
 	public static function set(array &$array, $key, $value): void
 	{
 		$container = &$array; // This needs to be a pointer in order for the value to be stored correctly.
-		$parts = self::getKeyParts($key);
+		$parts = self::normalizeKey($key);
 		
 		if (empty($parts))
 		{
@@ -105,7 +105,7 @@ class ArrayHelper
 	 * @return array
 	 * @throws InvalidArgumentException
 	 */
-	private static function getKeyParts($key): array
+	private static function normalizeKey($key): array
 	{
 		$validateKey = function ($key): void
 		{

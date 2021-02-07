@@ -16,8 +16,9 @@ trait DataWriter
 	 */
 	public function set($key, $value): void
 	{
-		$this->getAll(); // ensure the load() method is called first
+		$this->getAll(); // Ensure the load() method is called first.
 		
+		/** @psalm-suppress PossiblyNullArgument That's why we're calling `getAll()` above. */
 		ArrayHelper::set($this->data, $key, $value);
 	}
 }

@@ -293,6 +293,46 @@ abstract class Collection implements Iterator, ArrayAccess
 		}
 	}
 	
+	/**
+	 * Check that all entries in the collection match the desired predicate.
+	 *
+	 * @param callable $predicate The callback function to check each entry.
+	 * Callback signature - `(mixed $value, int|string $key): bool`.
+	 * @return bool True if all entries match, false otherwise.
+	 */
+	public function every(callable $predicate): bool
+	{
+		foreach ($this->data as $key => $value)
+		{
+			if ($predicate($value, $key) === false)
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Check that at least one entry in the collection matches the desired predicate.
+	 *
+	 * @param callable $predicate The callback function to check each entry.
+	 * Callback signature - `(mixed $value, int|string $key): bool`.
+	 * @return bool True if at least one entry matches, false otherwise.
+	 */
+	public function some(callable $predicate): bool
+	{
+		foreach ($this->data as $key => $value)
+		{
+			if ($predicate($value, $key) === true)
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	// region Iterator methods
 	
 	public function rewind(): void

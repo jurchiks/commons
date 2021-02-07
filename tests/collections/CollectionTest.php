@@ -315,6 +315,25 @@ class CollectionTest extends TestCase
 		$this->assertSame([1, 2, 3, 4, 5], $iterated);
 	}
 	
+	public function testEvery(): void
+	{
+		$data = range(1, 10);
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		
+		$this->assertTrue($collection->every(fn (int $value): bool => $value > 0));
+		$this->assertFalse($collection->every(fn (int $value): bool => $value > 5));
+	}
+	
+	public function testSome(): void
+	{
+		$data = range(1, 10);
+		$collection = $this->getMockForAbstractClass(Collection::class, [$data]);
+		
+		$this->assertTrue($collection->some(fn (int $value): bool => $value > 0));
+		$this->assertTrue($collection->some(fn (int $value): bool => $value > 5));
+		$this->assertFalse($collection->some(fn (int $value): bool => $value > 10));
+	}
+	
 	public function testArrayAccess(): void
 	{
 		$data = range(1, 10);

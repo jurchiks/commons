@@ -2,7 +2,7 @@
 namespace js\tools\commons\traits;
 
 use InvalidArgumentException;
-use js\tools\commons\collections\Option;
+use js\tools\commons\collections\ArrayHelper;
 
 /**
  * This trait adds the ability to access array data in a convenient manner,
@@ -58,7 +58,7 @@ trait DataAccessor
 	 */
 	public function exists($key): bool
 	{
-		return $this->search($key)->isFound();
+		return ArrayHelper::get($this->getAll(), $key)->isFound();
 	}
 	
 	/**
@@ -75,7 +75,7 @@ trait DataAccessor
 	 */
 	public function get($key, $default = null)
 	{
-		return $this->search($key)->getOrElse($default);
+		return ArrayHelper::get($this->getAll(), $key)->getOrElse($default);
 	}
 	
 	/**
@@ -167,78 +167,5 @@ trait DataAccessor
 		$value = $this->get($key, $default);
 		
 		return (is_array($value) ? $value : $default);
-	}
-	
-	/**
-	 * @param array<int|string>|int|string $key
-	 * @return Option
-	 * @throws InvalidArgumentException If $key is invalid.
-	 */
-	private function search($key): Option
-	{
-		$data = $this->getAll();
-		
-		// Special case for plain string key access.
-		// Necessary because down the line the string is split into parts.
-		if (is_string($key) && isset($data[$key]))
-		{
-			return Option::of($data[$key]);
-		}
-		
-		$parts = self::getKeyParts($key);
-		
-		if (empty($parts))
-		{
-			return Option::empty();
-		}
-		
-		$value = $data;
-		
-		foreach ($parts as $part)
-		{
-			if (is_array($value) && array_key_exists($part, $value))
-			{
-				$value = $value[$part];
-			}
-			else
-			{
-				return Option::empty();
-			}
-		}
-		
-		return Option::of($value);
-	}
-	
-	/**
-	 * @param mixed $key
-	 * @return array
-	 * @throws InvalidArgumentException
-	 */
-	protected static function getKeyParts($key): array
-	{
-		$validateKey = function ($key): void
-		{
-			if (!is_int($key) && !is_string($key))
-			{
-				throw new InvalidArgumentException('Key must be int or string, got ' . gettype($key));
-			}
-		};
-		
-		if (is_array($key))
-		{
-			array_walk($key, $validateKey);
-			
-			return array_values($key);
-		}
-		else if (is_string($key))
-		{
-			return explode('.', $key);
-		}
-		else
-		{
-			$validateKey($key);
-			
-			return [$key];
-		}
 	}
 }

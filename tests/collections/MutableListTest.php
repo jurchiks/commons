@@ -61,9 +61,9 @@ class MutableListTest extends TestCase
 	public function testRemove(): void
 	{
 		$list = new MutableList(range(1, 5));
-		$list->remove(4);
+		$list->remove(4, 5);
 		
-		$this->assertSame([1, 2, 3, 5], $list->get());
+		$this->assertSame([1, 2, 3], $list->get());
 	}
 	
 	public function testMap(): void

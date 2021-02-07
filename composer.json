@@ -32,6 +32,12 @@
   },
   "scripts": {
     "test": "phpunit",
-    "qc": "rector process --dry-run"
+    "rector": "rector process --dry-run",
+    "psalm": "psalm",
+    "qc": [
+      "@test",
+      "@rector",
+      "@psalm"
+    ]
   }
 }

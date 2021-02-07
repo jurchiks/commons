@@ -27,12 +27,12 @@ trait DataAccessor
 	
 	public function isEmpty(): bool
 	{
-		return empty($this->data);
+		return empty($this->getAll());
 	}
 	
 	public function size(): int
 	{
-		return count($this->data ?? []);
+		return count($this->getAll());
 	}
 	
 	public function getAll(): array

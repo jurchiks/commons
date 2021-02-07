@@ -41,12 +41,12 @@ class Request
 	}
 	
 	/**
-	 * @return Request
+	 * @return self
 	 * @throws HttpException If the required data is missing from the globals, or the request method is unsupported.
 	 * @throws UploadException If the uploaded files contain errors.
 	 * @throws UrlException If the URL comprised from the globals is invalid.
 	 */
-	public static function createFromGlobals(): Request
+	public static function createFromGlobals(): self
 	{
 		if (!isset($_SERVER['REQUEST_METHOD'], $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']))
 		{
@@ -89,7 +89,7 @@ class Request
 			}
 		}
 		
-		return new Request(
+		return new self(
 			$method,
 			Url::createFromGlobals(),
 			$data,

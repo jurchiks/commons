@@ -28,7 +28,6 @@ class RequestTest extends TestCase
 	public function tearDown(): void
 	{
 		unset($_SERVER['REQUEST_METHOD'], $_SERVER['HTTPS'], $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI'], $_SERVER['CONTENT_TYPE']);
-		$_GET = [];
 		$_POST = [];
 	}
 	
@@ -71,7 +70,6 @@ class RequestTest extends TestCase
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$_SERVER['HTTP_HOST'] = 'host.name';
 		$_SERVER['REQUEST_URI'] = '/foo';
-		$_GET = ['bar' => 'baz'];
 		
 		$request = Request::createFromGlobals();
 		
@@ -79,7 +77,7 @@ class RequestTest extends TestCase
 		$this->assertTrue($request->isMethod('GET'));
 		$this->assertSame('http://host.name/foo', $request->getUrl()->getAbsolute());
 		$this->assertFalse($request->isSecure());
-		$this->assertSame(['bar' => 'baz'], $request->getData()->getAll());
+		$this->assertSame([], $request->getData()->getAll());
 		$this->assertSame('', $request->getReferer());
 	}
 	

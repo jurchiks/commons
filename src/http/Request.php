@@ -19,8 +19,7 @@ class Request
 	/**
 	 * @param string $method The request method used for this request (e.g. GET, POST).
 	 * @param Url $url The URL that was requested.
-	 * @param array $data The request data, if any (GET, POST, PUT, PATCH, DELETE etc).
-	 * In the case of a GET request, the same data is available via the $url object.
+	 * @param array $data The request body data, if any (POST, PUT, PATCH, DELETE etc).
 	 * @param array $files The $_FILES array or its equivalent.
 	 * @param string $referer The URL that referred to this URL.
 	 * @throws HttpException If the request method is unsupported.
@@ -64,7 +63,7 @@ class Request
 		
 		if ($method === 'GET')
 		{
-			$data = $_GET;
+			$data = [];
 		}
 		else if ($method === 'POST')
 		{

@@ -74,8 +74,7 @@ class Request
 			// PHP does not automatically populate $_PUT and $_DELETE variables
 			$body = static::getRequestBody();
 			
-			// HTTP_CONTENT_TYPE - PHP built-in server; CONTENT_TYPE - everything else
-			$contentType = $_SERVER['HTTP_CONTENT_TYPE'] ?? $_SERVER['CONTENT_TYPE'] ?? '';
+			$contentType = $_SERVER['CONTENT_TYPE'] ?? '';
 			$contentType = strtolower($contentType);
 			
 			if (strpos($contentType, 'application/json') !== false)

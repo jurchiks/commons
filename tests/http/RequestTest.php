@@ -43,9 +43,9 @@ class RequestTest extends TestCase
 				'size'     => 666,
 			],
 		];
-		$request = new Request('post', new Url('https://host.name/upload'), [], $files, 'https://host.name/');
+		$request = new Request('POST', new Url('https://host.name/upload'), [], $files, 'https://host.name/');
 		
-		$this->assertSame('post', $request->getMethod());
+		$this->assertSame('POST', $request->getMethod());
 		$this->assertTrue($request->isMethod('POST'));
 		$this->assertSame('https://host.name/upload', $request->getUrl()->getAbsolute());
 		$this->assertTrue($request->isSecure());
@@ -75,7 +75,7 @@ class RequestTest extends TestCase
 		
 		$request = Request::createFromGlobals();
 		
-		$this->assertSame('get', $request->getMethod());
+		$this->assertSame('GET', $request->getMethod());
 		$this->assertTrue($request->isMethod('GET'));
 		$this->assertSame('http://host.name/foo', $request->getUrl()->getAbsolute());
 		$this->assertFalse($request->isSecure());
@@ -93,7 +93,7 @@ class RequestTest extends TestCase
 		
 		$request = Request::createFromGlobals();
 		
-		$this->assertSame('post', $request->getMethod());
+		$this->assertSame('POST', $request->getMethod());
 		$this->assertTrue($request->isMethod('POST'));
 		$this->assertSame('https://host.name/foo', $request->getUrl()->getAbsolute());
 		$this->assertTrue($request->isSecure());
@@ -109,7 +109,7 @@ class RequestTest extends TestCase
 		
 		$request = RequestWithParamRequestBody::createFromGlobals();
 		
-		$this->assertSame('put', $request->getMethod());
+		$this->assertSame('PUT', $request->getMethod());
 		$this->assertTrue($request->isMethod('PUT'));
 		$this->assertSame('http://host.name/foo', $request->getUrl()->getAbsolute());
 		$this->assertFalse($request->isSecure());
@@ -126,7 +126,7 @@ class RequestTest extends TestCase
 		
 		$request = RequestWithJsonRequestBody::createFromGlobals();
 		
-		$this->assertSame('patch', $request->getMethod());
+		$this->assertSame('PATCH', $request->getMethod());
 		$this->assertTrue($request->isMethod('PATCH'));
 		$this->assertSame('http://host.name/foo', $request->getUrl()->getAbsolute());
 		$this->assertFalse($request->isSecure());
@@ -142,7 +142,7 @@ class RequestTest extends TestCase
 		
 		$request = Request::createFromGlobals();
 		
-		$this->assertSame('delete', $request->getMethod());
+		$this->assertSame('DELETE', $request->getMethod());
 		$this->assertTrue($request->isMethod('DELETE'));
 		$this->assertSame('http://host.name/foo', $request->getUrl()->getAbsolute());
 		$this->assertFalse($request->isSecure());

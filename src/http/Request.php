@@ -8,7 +8,7 @@ use js\tools\commons\upload\UploadedFileCollection;
 
 class Request
 {
-	const METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'];
+	const METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS', 'TRACE'];
 	
 	private string $method;
 	private Url $url;
@@ -55,18 +55,18 @@ class Request
 			);
 		}
 		
-		$method = strtolower($_SERVER['REQUEST_METHOD']);
+		$method = strtoupper($_SERVER['REQUEST_METHOD']);
 		
 		if (!in_array($method, self::METHODS))
 		{
-			throw new HttpException('Unsupported request method "' . $method . '"');
+			throw new HttpException('Unsupported request method "' . $_SERVER['REQUEST_METHOD'] . '"');
 		}
 		
-		if ($method === 'get')
+		if ($method === 'GET')
 		{
 			$data = $_GET;
 		}
-		else if ($method === 'post')
+		else if ($method === 'POST')
 		{
 			$data = $_POST;
 		}

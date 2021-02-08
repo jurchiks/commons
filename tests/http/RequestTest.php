@@ -159,6 +159,6 @@ class RequestTest extends TestCase
 		$_SERVER['REQUEST_URI'] = '/foo';
 		$_SERVER['CONTENT_TYPE'] = 'application/json';
 		
-		RequestWithUrlEncodedBody::createFromGlobals();
+		Request::createFromGlobals();
 	}
 }

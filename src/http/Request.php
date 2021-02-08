@@ -62,11 +62,9 @@ class Request
 			throw new HttpException('Unsupported request method "' . $_SERVER['REQUEST_METHOD'] . '"');
 		}
 		
-		if ($method === 'GET')
-		{
-			$data = [];
-		}
-		else
+		$data = [];
+		
+		if ($method !== 'GET')
 		{
 			$body = static::getRequestBody();
 			$contentType = strtolower($_SERVER['CONTENT_TYPE'] ?? '');
@@ -78,10 +76,6 @@ class Request
 			else if (strpos($contentType, 'application/json') !== false)
 			{
 				$data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
-			}
-			else
-			{
-				$data = [];
 			}
 		}
 		

@@ -5,11 +5,11 @@ use js\tools\commons\exceptions\HttpException;
 use js\tools\commons\exceptions\upload\UploadException;
 use js\tools\commons\exceptions\UrlException;
 use js\tools\commons\upload\UploadedFileCollection;
+use JsonException;
 
 class Request
 {
-	const METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'];
-	
+	const METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS', 'TRACE'];
 	private string $method;
 	private Url $url;
 	private Parameters $data;
@@ -19,8 +19,7 @@ class Request
 	/**
 	 * @param string $method The request method used for this request (e.g. GET, POST).
 	 * @param Url $url The URL that was requested.
-	 * @param array $data The request data, if any (GET, POST, PUT, PATCH, DELETE etc).
-	 * In the case of a GET request, the same data is available via the $url object.
+	 * @param array $data The request body data, if any (POST, PUT, PATCH, DELETE etc).
 	 * @param array $files The $_FILES array or its equivalent.
 	 * @param string $referer The URL that referred to this URL.
 	 * @throws HttpException If the request method is unsupported.
@@ -45,6 +44,7 @@ class Request
 	 * @throws HttpException If the required data is missing from the globals, or the request method is unsupported.
 	 * @throws UploadException If the uploaded files contain errors.
 	 * @throws UrlException If the URL comprised from the globals is invalid.
+	 * @throws JsonException If the Content-Type is JSON but the body could not be parsed as such.
 	 */
 	public static function createFromGlobals(): self
 	{
@@ -55,37 +55,27 @@ class Request
 			);
 		}
 		
-		$method = strtolower($_SERVER['REQUEST_METHOD']);
+		$method = strtoupper($_SERVER['REQUEST_METHOD']);
 		
 		if (!in_array($method, self::METHODS))
 		{
-			throw new HttpException('Unsupported request method "' . $method . '"');
+			throw new HttpException('Unsupported request method "' . $_SERVER['REQUEST_METHOD'] . '"');
 		}
 		
-		if ($method === 'get')
+		$data = [];
+		
+		if ($method !== 'GET')
 		{
-			$data = $_GET;
-		}
-		else if ($method === 'post')
-		{
-			$data = $_POST;
-		}
-		else
-		{
-			// PHP does not automatically populate $_PUT and $_DELETE variables
 			$body = static::getRequestBody();
+			$contentType = strtolower($_SERVER['CONTENT_TYPE'] ?? '');
 			
-			// HTTP_CONTENT_TYPE - PHP built-in server; CONTENT_TYPE - everything else
-			$contentType = $_SERVER['HTTP_CONTENT_TYPE'] ?? $_SERVER['CONTENT_TYPE'] ?? '';
-			$contentType = strtolower($contentType);
-			
-			if (strpos($contentType, 'application/json') !== false)
-			{
-				$data = json_decode($body, true);
-			}
-			else
+			if (strpos($contentType, 'application/x-www-form-urlencoded') !== false)
 			{
 				parse_str($body, $data);
+			}
+			else if (strpos($contentType, 'application/json') !== false)
+			{
+				$data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
 			}
 		}
 		

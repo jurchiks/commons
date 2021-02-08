@@ -5,11 +5,11 @@ use js\tools\commons\exceptions\HttpException;
 use js\tools\commons\exceptions\upload\UploadException;
 use js\tools\commons\exceptions\UrlException;
 use js\tools\commons\upload\UploadedFileCollection;
+use JsonException;
 
 class Request
 {
 	const METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS', 'TRACE'];
-	
 	private string $method;
 	private Url $url;
 	private Parameters $data;
@@ -44,6 +44,7 @@ class Request
 	 * @throws HttpException If the required data is missing from the globals, or the request method is unsupported.
 	 * @throws UploadException If the uploaded files contain errors.
 	 * @throws UrlException If the URL comprised from the globals is invalid.
+	 * @throws JsonException If the Content-Type is JSON but the body could not be parsed as such.
 	 */
 	public static function createFromGlobals(): self
 	{
@@ -76,7 +77,7 @@ class Request
 			}
 			else if (strpos($contentType, 'application/json') !== false)
 			{
-				$data = json_decode($body, true);
+				$data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
 			}
 			else
 			{

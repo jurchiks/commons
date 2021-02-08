@@ -5,6 +5,7 @@ use js\tools\commons\exceptions\HttpException;
 use js\tools\commons\http\Request;
 use js\tools\commons\http\Url;
 use js\tools\commons\upload\UploadedFile;
+use JsonException;
 use PHPUnit\Framework\TestCase;
 
 class RequestWithUrlEncodedBody extends Request
@@ -147,5 +148,17 @@ class RequestTest extends TestCase
 		$_SERVER['REQUEST_URI'] = '/foo';
 		
 		Request::createFromGlobals();
+	}
+	
+	public function testCreateFromGlobalsInvalidJsonBody(): void
+	{
+		$this->expectException(JsonException::class);
+		
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$_SERVER['HTTP_HOST'] = 'host.name';
+		$_SERVER['REQUEST_URI'] = '/foo';
+		$_SERVER['CONTENT_TYPE'] = 'application/json';
+		
+		RequestWithUrlEncodedBody::createFromGlobals();
 	}
 }

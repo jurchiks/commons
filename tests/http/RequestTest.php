@@ -7,7 +7,7 @@ use js\tools\commons\http\Url;
 use js\tools\commons\upload\UploadedFile;
 use PHPUnit\Framework\TestCase;
 
-class RequestWithParamRequestBody extends Request
+class RequestWithUrlEncodedBody extends Request
 {
 	protected static function getRequestBody(): string
 	{
@@ -15,7 +15,7 @@ class RequestWithParamRequestBody extends Request
 	}
 }
 
-class RequestWithJsonRequestBody extends Request
+class RequestWithJsonBody extends Request
 {
 	protected static function getRequestBody(): string
 	{
@@ -81,70 +81,49 @@ class RequestTest extends TestCase
 		$this->assertSame('', $request->getReferer());
 	}
 	
-	public function testCreateFromGlobalsPost(): void
+	public function methodsWithRequestBodyDataset(): iterable
 	{
-		$_SERVER['REQUEST_METHOD'] = 'POST';
+		yield ['POST'];
+		yield ['PUT'];
+		yield ['PATCH'];
+		yield ['DELETE'];
+	}
+	
+	/** @dataProvider methodsWithRequestBodyDataset() */
+	public function testCreateFromGlobalsFormSubmit(string $method): void
+	{
+		$_SERVER['REQUEST_METHOD'] = $method;
 		$_SERVER['HTTPS'] = 'on';
 		$_SERVER['HTTP_HOST'] = 'host.name';
 		$_SERVER['REQUEST_URI'] = '/foo';
-		$_POST = ['bar' => 'baz'];
+		$_SERVER['CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
 		
-		$request = Request::createFromGlobals();
+		$request = RequestWithUrlEncodedBody::createFromGlobals();
 		
-		$this->assertSame('POST', $request->getMethod());
-		$this->assertTrue($request->isMethod('POST'));
+		$this->assertSame($method, $request->getMethod());
+		$this->assertTrue($request->isMethod($method));
 		$this->assertSame('https://host.name/foo', $request->getUrl()->getAbsolute());
 		$this->assertTrue($request->isSecure());
-		$this->assertSame(['bar' => 'baz'], $request->getData()->getAll());
-		$this->assertSame('', $request->getReferer());
-	}
-	
-	public function testCreateFromGlobalsPut(): void
-	{
-		$_SERVER['REQUEST_METHOD'] = 'PUT';
-		$_SERVER['HTTP_HOST'] = 'host.name';
-		$_SERVER['REQUEST_URI'] = '/foo';
-		
-		$request = RequestWithParamRequestBody::createFromGlobals();
-		
-		$this->assertSame('PUT', $request->getMethod());
-		$this->assertTrue($request->isMethod('PUT'));
-		$this->assertSame('http://host.name/foo', $request->getUrl()->getAbsolute());
-		$this->assertFalse($request->isSecure());
 		$this->assertSame(['foo' => 'bar'], $request->getData()->getAll());
 		$this->assertSame('', $request->getReferer());
 	}
 	
-	public function testCreateFromGlobalsPatchJson(): void
+	/** @dataProvider methodsWithRequestBodyDataset() */
+	public function testCreateFromGlobalsJsonBody(string $method): void
 	{
-		$_SERVER['REQUEST_METHOD'] = 'PATCH';
+		$_SERVER['REQUEST_METHOD'] = $method;
+		$_SERVER['HTTPS'] = 'on';
 		$_SERVER['HTTP_HOST'] = 'host.name';
 		$_SERVER['REQUEST_URI'] = '/foo';
 		$_SERVER['CONTENT_TYPE'] = 'application/json';
 		
-		$request = RequestWithJsonRequestBody::createFromGlobals();
+		$request = RequestWithJsonBody::createFromGlobals();
 		
-		$this->assertSame('PATCH', $request->getMethod());
-		$this->assertTrue($request->isMethod('PATCH'));
-		$this->assertSame('http://host.name/foo', $request->getUrl()->getAbsolute());
-		$this->assertFalse($request->isSecure());
+		$this->assertSame($method, $request->getMethod());
+		$this->assertTrue($request->isMethod($method));
+		$this->assertSame('https://host.name/foo', $request->getUrl()->getAbsolute());
+		$this->assertTrue($request->isSecure());
 		$this->assertSame(['foo' => 'bar'], $request->getData()->getAll());
-		$this->assertSame('', $request->getReferer());
-	}
-	
-	public function testCreateFromGlobalsDelete(): void
-	{
-		$_SERVER['REQUEST_METHOD'] = 'DELETE';
-		$_SERVER['HTTP_HOST'] = 'host.name';
-		$_SERVER['REQUEST_URI'] = '/foo';
-		
-		$request = Request::createFromGlobals();
-		
-		$this->assertSame('DELETE', $request->getMethod());
-		$this->assertTrue($request->isMethod('DELETE'));
-		$this->assertSame('http://host.name/foo', $request->getUrl()->getAbsolute());
-		$this->assertFalse($request->isSecure());
-		$this->assertSame([], $request->getData()->getAll());
 		$this->assertSame('', $request->getReferer());
 	}
 	

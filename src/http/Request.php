@@ -65,25 +65,22 @@ class Request
 		{
 			$data = [];
 		}
-		else if ($method === 'POST')
-		{
-			$data = $_POST;
-		}
 		else
 		{
-			// PHP does not automatically populate $_PUT and $_DELETE variables
 			$body = static::getRequestBody();
+			$contentType = strtolower($_SERVER['CONTENT_TYPE'] ?? '');
 			
-			$contentType = $_SERVER['CONTENT_TYPE'] ?? '';
-			$contentType = strtolower($contentType);
-			
-			if (strpos($contentType, 'application/json') !== false)
+			if (strpos($contentType, 'application/x-www-form-urlencoded') !== false)
+			{
+				parse_str($body, $data);
+			}
+			else if (strpos($contentType, 'application/json') !== false)
 			{
 				$data = json_decode($body, true);
 			}
 			else
 			{
-				parse_str($body, $data);
+				$data = [];
 			}
 		}
 		
